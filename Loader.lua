@@ -37,7 +37,7 @@ local function ServerHop()
 	local Data = HttpService:JSONDecode(StringData).data
 	local RandomServer = Data[math.random(#Data)]
 	TeleportService:TeleportToPlaceInstance(game.PlaceId, RandomServer.id)
-	queue_on_teleport('loadstring(game:HttpGet("https://pastebin.com/raw/XLD7bLPk"))()')
+	queue_on_teleport('loadstring(game:HttpGet("https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Loader.lua"))()')
 	Relief.KillScript()
 end
 
@@ -975,7 +975,7 @@ AddCommand({"rejoin", "rj"}, function(Args)
     else
         TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId)
     end
-	queue_on_teleport('loadstring(game:HttpGet("https://pastebin.com/raw/XLD7bLPk"))()')
+	queue_on_teleport('loadstring(game:HttpGet("https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Loader.lua"))()')
 end)
 
 AddCommand({"rejointp", "rjtp"}, function(Args)
@@ -997,7 +997,7 @@ AddCommand({"rejointp", "rjtp"}, function(Args)
 		local Pos = Root.Position
 		Compile = ("P=game.Players.LocalPlayer C=P.Character or P.CharacterAdded:Wait() R=C:FindFirstChild('HumanoidRootPart') or C:WaitForChild('HumanoidRootPart') R.CFrame = CFrame.new(%s, %s, %s)"):format(Pos.X, Pos.Y, Pos.Z)
 	end)
-	queue_on_teleport('loadstring(game:HttpGet("https://pastebin.com/raw/XLD7bLPk"))()' .. Compile)
+	queue_on_teleport('loadstring(game:HttpGet("https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Loader.lua"))()' .. Compile)
 end)
 
 AddCommand({"bypass", "by"}, function(Args)
