@@ -773,7 +773,7 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 		else
 			TweenService:Create(Title, TInfo, { TextColor3 = Color3.fromRGB(255, 255, 255) }):Play()
 		end
-		if Library.SaveName and not Library.Killed and not isLoading then warn("TOGGLE SAVE") Library.Save(Library.SaveName) end
+		if Library.SaveName and not Library.Killed and not isLoading then Library.Save(Library.SaveName) end
 	end
 	
 	local SettingToggle = false
@@ -857,7 +857,7 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 				Connections[#Connections + 1] = NewTextBox.TextBox.FocusLost:Connect(function()
 					Config["Callback"](NewTextBox.TextBox.Text)
 					SettingTree.Value = NewTextBox.TextBox.Text
-					if Library.SaveName and not Library.Killed then warn("TEXTBOX SAVE") Library.Save(Library.SaveName) end
+					if Library.SaveName and not Library.Killed then Library.Save(Library.SaveName) end
 				end)
 			elseif _T == "Toggle" then
 				local NewToggle = ToggleSetting:Clone()
@@ -885,7 +885,7 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 				local function Toggled(isLoading)
 					_Toggle = not _Toggle
 					SettingTree.Value = _Toggle
-					if Library.SaveName and not Library.Killed and not isLoading then warn("TOGGLE CONFIG SAVE") Library.Save(Library.SaveName) end
+					if Library.SaveName and not Library.Killed and not isLoading then Library.Save(Library.SaveName) end
 					if _Toggle then
 						TweenService:Create(Button, TInfo, {
 							BackgroundColor3 = ThemeColor,
@@ -949,7 +949,7 @@ end
 
 Library.KillScript = function()
 	Library.Killed = 1
-	if Library.SaveName then warn("KILLSCRIPT SAVE") Library.Save(Library.SaveName) end
+	if Library.SaveName then Library.Save(Library.SaveName) end
 	
 	for _, Category in Categories do
 		for _, Module in Category.Modules do
@@ -1032,9 +1032,8 @@ Library.Load = function(Name)
 			if Name == "KillScript" then continue end
 			
 			local Module = Library.getModule(Name)
-			if not Module then warn(Name) continue end
+			if not Module then continue end
 
-			print(Module.Name, Toggled)
 			if Toggled and not Module["Default"] then
 				Module["ToggleFunction"](1)
 			elseif not Toggled and Module["Default"] then
