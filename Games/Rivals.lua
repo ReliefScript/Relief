@@ -12,13 +12,14 @@ local UserInputService = game:GetService("UserInputService")
 
 local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
+local Mouse = LocalPlayer:GetMouse()
 
 local Thread = getgenv().Thread
 
 -- Modules
 
 local AimbotFov = 300
-local AimbotStrength = 0.25
+local AimbotStrength = 0.2
 local AimbotWallcheck = true
 local AimbotTargetPart = "Closest"
 
@@ -139,6 +140,32 @@ Relief.addModule("Combat", "Aimbot", function(Toggled)
   	else
 		Thread:Disconnect("Aimbot")
 		if FovCircle then FovCircle:Remove() end
+  	end
+end)
+
+local Pressing = false
+Relief.addModule("Combat", "TriggerBot", function(Toggled)
+    if Toggled then
+        Thread:New("TriggerBot", function()
+            task.wait()
+            
+            local Target = Mouse.Target
+			if not Target then return end
+
+			if Target.Name == "Head" then
+				if not Pressing then
+					mouse2press()
+					Pressing = true
+				end
+			else
+				if Pressing then
+					mouse2release()
+					Pressing = false
+				end
+			end
+        end)
+  	else
+		Thread:Disconnect("TriggerBot")
   	end
 end)
 
