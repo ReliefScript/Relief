@@ -152,7 +152,7 @@ Relief.addModule("Combat", "TriggerBot", function(Toggled)
             local Target = Mouse.Target
 			if not Target then return end
 
-			if Target.Name == "Head" then
+			if Target.Parent and Target.Parent:FindFirstChildOfClass("Humanoid") then
 				if not Pressing then
 					mouse2press()
 				end
