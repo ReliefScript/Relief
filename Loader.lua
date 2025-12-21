@@ -4,6 +4,7 @@ local Games = {
     [11137575513] = "https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Games/TheChosenOne.lua", -- The Chosen One
     [12943245078] = "https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Games/TheChosenOne.lua", -- The Chosen One XL
     [96017656548489] = "https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Games/BanOrBeBanned.lua", -- Ban or Get Banned
+	[17625359962] = "https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Games/Rivals.lua"
 }
 
 -- Universal
@@ -198,59 +199,6 @@ function Thread:Unmaid(Name)
     Found:Disconnect()
     Thread.Connections[Name] = nil
 end
-
-getgenv().Thread = Thread
-
-local function RandomString(Length)
-    local Chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    local Result = ""
-    
-    for i = 1, Length do
-        local RNG = math.random(1, #Chars)
-        Result = Result .. Chars:sub(RNG, RNG)
-    end
-    
-    return Result
-end
-
-local ESPConnections = {}
-local HighlightInstances = {}
-
-Relief.addModule("Render", "ESP", function(Toggled)
-	if Toggled then
-		local function HandleCharacter(Char)
-			if not Char then return end
-			
-			local Highlight = Instance.new("Highlight")
-			Highlight.Parent = Char
-			table.insert(HighlightInstances, Highlight)
-		end
-
-		local function HandlePlayer(Player)
-			HandleCharacter(Player.Character)
-			table.insert(ESPConnections, Player.CharacterAdded:Connect(HandleCharacter))
-		end
-
-		for _, Player in Players:GetPlayers() do
-			HandlePlayer(Player)
-		end
-
-		table.insert(ESPConnections, Players.PlayerAdded:Connect(HandlePlayer))
-	else
-		for _, C in ESPConnections do
-			C:Disconnect()
-		end
-
-		for _, H in HighlightInstances do
-			if H then
-				H:Destroy()
-			end
-		end
-
-		HighlightInstances = {}
-		ESPConnections = {}
-	end
-end)
 
 local SH_TOGGLED = false
 local LINK = "gg/msFnMfhuhV"
