@@ -238,10 +238,19 @@ local function SimulateKey(Key)
     VirtualInputManager:SendKeyEvent(false, Key, false, game)
 end
 
+local Debounce = false
 Relief.addModule("Movement", "Bhop", function(Toggled)
 	if Toggled then
 		Thread:New("Bhop", function()
 			task.wait()
+
+			if Debounce then return end
+			Debounce = true
+
+			task.spawn(function()
+				task.wait(0.1)
+				Debounce = false
+			end)
 					
 			local Char = LocalPlayer.Character
 			if not Char then return end
@@ -252,6 +261,7 @@ Relief.addModule("Movement", "Bhop", function(Toggled)
 			SimulateKey(Enum.KeyCode.C)
 			RunService.Stepped:Wait()
 			SimulateKey(Enum.KeyCode.Space)
+			
 		end)
 	else
 		Thread:Disconnect("Bhop")
