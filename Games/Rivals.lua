@@ -16,7 +16,6 @@ local Thread = getgenv().Thread
 
 -- Modules
 
-local AimbotFov = 150
 local AimbotStrength = 0.25
 local AimbotWallcheck = true
 local AimbotTargetPart = "Closest"
@@ -56,7 +55,7 @@ local function GetClosestPlayer()
 	local Hum = Char:FindFirstChildOfClass("Humanoid")
 	if not Hum or Hum.Health <= 0 then return end
 
-	local TargetDistance, Target = AimbotFov, nil
+	local TargetDistance, Target = math.huge, nil
 	local Center = Vector2.new(Camera.ViewportSize.X / 2 , Camera.ViewportSize.Y / 2)
 
 	local Enemies = GetEnemies()
