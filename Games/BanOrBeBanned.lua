@@ -182,6 +182,8 @@ local Connections = {}
 Relief.addModule("Player", "AutoBan", function(Toggled)
 	if Toggled then
 		local function HandlePlayer(Target)
+			if getgenv().IsWhitelisted(Target) then return end
+			
 			if not Target:GetAttribute("IsBanned") then
 				Ban(Target)
 			end
