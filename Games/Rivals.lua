@@ -158,7 +158,7 @@ Relief.addModule("Combat", "TriggerBot", function(Toggled)
 
 			if Camera.CameraType ~= Enum.CameraType.Scriptable then return RELEASE() end
 
-			local C = LocalPlayer.Character if not c then RELEASE() end
+			local C = LocalPlayer.Character if not C then RELEASE() end
 			local H = C:FindFirstChildOfClass("Humanoid") if not H or H.Health <= 0 then RELEASE() end
             
             local Target = Mouse.Target
