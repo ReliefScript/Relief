@@ -155,13 +155,13 @@ Relief.addModule("Combat", "TriggerBot", function(Toggled)
 			if Target.Name == "Head" then
 				if not Pressing then
 					mouse2press()
-					Pressing = true
 				end
+				Pressing = true
 			else
 				if Pressing then
 					mouse2release()
-					Pressing = false
 				end
+				Pressing = false
 			end
         end)
   	else
