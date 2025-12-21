@@ -18,7 +18,7 @@ local Thread = getgenv().Thread
 -- Modules
 
 local AimbotFov = 300
-local AimbotStrength = 0.4
+local AimbotStrength = 0.25
 local AimbotWallcheck = true
 local AimbotTargetPart = "Closest"
 
@@ -119,9 +119,6 @@ Relief.addModule("Combat", "Aimbot", function(Toggled)
 		FovCircle.Filled = false
 		FovCircle.Visible = true
 		FovCircle.Radius = AimbotFov
-
-		local mousePos = UserInputService:GetMouseLocation()
-		FovCircle.Position = Vector2.new(mousePos.X, mousePos.Y)
 		
         Thread:New("Aimbot", function()
             task.wait()
@@ -134,6 +131,7 @@ Relief.addModule("Combat", "Aimbot", function(Toggled)
             local TargetPos = Camera:WorldToViewportPoint(Target.Position)
             local mousePos = UserInputService:GetMouseLocation()
 			local target2D = Vector2.new(TargetPos.X, TargetPos.Y)
+			FovCircle.Position = Vector2.new(mousePos.X, mousePos.Y)
 			
 			local delta = target2D - mousePos
 			mousemoverel(delta.X * AimbotStrength, delta.Y * AimbotStrength)
