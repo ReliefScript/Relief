@@ -8,7 +8,7 @@ local Games = {
 
 -- Universal
 
-local Relief = loadstring(game:HttpGet("https://raw.githubusercontent.com/PeaPattern/relief-lib/main/new.lua"))()
+local Relief = loadstring(game:HttpGet("https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Util/Ui.lua"))()
 getgenv().Relief = Relief
 
 local Notifications = loadstring(game:HttpGet("https://raw.githubusercontent.com/PeaPattern/notif-lib/main/main.lua"))()
