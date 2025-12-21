@@ -77,7 +77,7 @@ local function GetClosestPlayer()
 	local Center = Vector2.new(Camera.ViewportSize.X / 2 , Camera.ViewportSize.Y / 2)
 
 	local Enemies = GetEnemies()
-	if not Enemies then return State.Text = "ENEMIES NOT FOUND" end
+	if not Enemies then State.Text = "ENEMIES NOT FOUND"return end
 
 	for _, Player in Enemies do
 		if Player == LocalPlayer then continue end
