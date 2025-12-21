@@ -671,30 +671,7 @@ Relief.addModule("Render", "MobileButton", function(Toggled)
     Relief.MobileButton.Visible = Toggled
 end, {}, nil, true)
 
-local Commands = {}
-getgenv().Commands = Commands
-
-local function AddCommand(Aliases, Callback)
-    table.insert(Commands, {
-        Aliases = Aliases,
-        Callback = Callback,
-        Env = {},
-    })
-end
-getgenv().AddCommand = AddCommand
- 
-local function GetCommand(Query)
-    for _, Command in Commands do
-        for _, Alias in Command.Aliases do
-            if Alias:lower() == Query then
-                return Command
-            end
-        end
-    end
-end
-getgenv().GetCommand = GetCommand
-
-AddCommand({"whitelist", "wl"}, function(Args)
+Relief.AddCommand({"whitelist", "wl"}, function(Args)
 	local Targets = GetPlayer(Args[1])
 	if not Targets then return end
 
@@ -703,7 +680,7 @@ AddCommand({"whitelist", "wl"}, function(Args)
 	end
 end)
 
-AddCommand({"unwhitelist", "unwl"}, function(Args)
+Relief.AddCommand({"unwhitelist", "unwl"}, function(Args)
 	local Targets = GetPlayer(Args[1])
 	if not Targets then return end
 
@@ -716,7 +693,7 @@ AddCommand({"unwhitelist", "unwl"}, function(Args)
 end)
 
 local LoopFlinging = false
-AddCommand({"loopfling", "lf"}, function(Args)
+Relief.AddCommand({"loopfling", "lf"}, function(Args)
 	LoopFlinging = true
 	local Targets = GetPlayer(Args[1])
 	if not Targets then return end
@@ -820,12 +797,12 @@ AddCommand({"loopfling", "lf"}, function(Args)
     end)
 end)
 
-AddCommand({"unloopfling", "unlf"}, function(Args)
+Relief.AddCommand({"unloopfling", "unlf"}, function(Args)
 	Thread:Disconnect("LoopFling")
 	LoopFlinging = false
 end)
 
-AddCommand({"fling"}, function(Args)
+Relief.AddCommand({"fling"}, function(Args)
     local Targets = GetPlayer(Args[1])
     if not Targets then return end
  
@@ -922,7 +899,7 @@ AddCommand({"fling"}, function(Args)
     until (Root.Position - OldPos.Position).Magnitude < 5
 end)
  
-AddCommand({"goto"}, function(Args)
+Relief.AddCommand({"goto"}, function(Args)
     local Targets = GetPlayer(Args[1])
     if not Targets then return end
  
@@ -943,7 +920,7 @@ AddCommand({"goto"}, function(Args)
     Root.CFrame = TRoot.CFrame
 end)
  
-AddCommand({"view"}, function(Args)
+Relief.AddCommand({"view"}, function(Args)
     local Targets = GetPlayer(Args[1])
     if not Targets then return end
  
@@ -958,7 +935,7 @@ AddCommand({"view"}, function(Args)
     Camera.CameraSubject = THum
 end)
  
-AddCommand({"unview"}, function(Args)
+Relief.AddCommand({"unview"}, function(Args)
     local Char = LocalPlayer.Character
     if not Char then return end
  
@@ -968,7 +945,7 @@ AddCommand({"unview"}, function(Args)
     Camera.CameraSubject = Hum
 end)
  
-AddCommand({"rejoin", "rj"}, function(Args)
+Relief.AddCommand({"rejoin", "rj"}, function(Args)
     if #Players:GetPlayers() == 1 then
         LocalPlayer:Kick()
         TeleportService:Teleport(game.PlaceId)
@@ -978,7 +955,7 @@ AddCommand({"rejoin", "rj"}, function(Args)
 	queue_on_teleport('loadstring(game:HttpGet("https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Loader.lua"))()')
 end)
 
-AddCommand({"rejointp", "rjtp"}, function(Args)
+Relief.AddCommand({"rejointp", "rjtp"}, function(Args)
 	if #Players:GetPlayers() == 1 then
         LocalPlayer:Kick()
         TeleportService:Teleport(game.PlaceId)
@@ -1000,14 +977,14 @@ AddCommand({"rejointp", "rjtp"}, function(Args)
 	queue_on_teleport('loadstring(game:HttpGet("https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Loader.lua"))()' .. Compile)
 end)
 
-AddCommand({"bypass", "by"}, function(Args)
+Relief.AddCommand({"bypass", "by"}, function(Args)
     local Text = table.concat(Args, " ")
     task.defer(function()
         Chat(ConvertBypass(Text))
     end)
 end)
 
-AddCommand({"walkspeed", "ws", "speed"}, function(Args)
+Relief.AddCommand({"walkspeed", "ws", "speed"}, function(Args)
 	local Amount = tonumber(Args[1]) or 16
 	
 	local Char = LocalPlayer.Character
@@ -1019,7 +996,7 @@ AddCommand({"walkspeed", "ws", "speed"}, function(Args)
 	Hum.WalkSpeed = Amount
 end)
 
-AddCommand({"sit"}, function(Args)
+Relief.AddCommand({"sit"}, function(Args)
 	local Char = LocalPlayer.Character
 	if not Char then return end
 
@@ -1029,7 +1006,7 @@ AddCommand({"sit"}, function(Args)
 	Hum.Sit = true
 end)
 
-AddCommand({"tospawn"}, function()
+Relief.AddCommand({"tospawn"}, function()
 	local Char = LocalPlayer.Character
 	if not Char then return end
 	
@@ -1054,14 +1031,14 @@ AddCommand({"tospawn"}, function()
 	end
 end)
 
-AddCommand({"reset"}, function()
+Relief.AddCommand({"reset"}, function()
 	local Char = LocalPlayer.Character
 	if not Char then return end
 
 	Char:BreakJoints()
 end)
 
-AddCommand({"respawn"}, function()
+Relief.AddCommand({"respawn"}, function()
 	local Char = LocalPlayer.Character
 	if not Char then return end
 
@@ -1134,7 +1111,7 @@ local function MakeMotionCommand(Name, TargetOffsetFunc, OnStart, OnEnd)
 		end)
 	end)
 
-	AddCommand({"un" .. Name}, function()
+	Relief.AddCommand({"un" .. Name}, function()
 		Thread:Disconnect(Name)
 
 		local Char = LocalPlayer.Character
@@ -1228,7 +1205,7 @@ MakeMotionCommand(
 	function(Hum) Hum:ChangeState(2) end
 )
 
-AddCommand({"serverhop", "shop"}, ServerHop)
+Relief.AddCommand({"serverhop", "shop"}, ServerHop)
  
 local function GetKey(Query)
     for _, KC in Enum.KeyCode:GetEnumItems() do
@@ -1238,7 +1215,7 @@ local function GetKey(Query)
     end
 end
  
-AddCommand({"bind"}, function(Args)
+Relief.AddCommand({"bind"}, function(Args)
     if #Args < 2 then return end
     
     local Module = Relief.getModule(Args[1])
@@ -1255,7 +1232,7 @@ AddCommand({"bind"}, function(Args)
     end
 end)
  
-AddCommand({"commands", "cmds"}, function(Args)
+Relief.AddCommand({"commands", "cmds"}, function(Args)
     local Names = {}
     for _, Command in Commands do
         local Compile = table.concat(Command.Aliases, ", ") 
@@ -1301,31 +1278,6 @@ Relief.Load(SaveName)
 
 if not Found then
 	Notifications:Notify(("Game not found in Relief Hub. Loading universal."), 5)
-	TextChatService.OnIncomingMessage = function(Message)
-	    local Source = Message.TextSource
-	    local Text = Message.Text
-	 
-	    if Source then
-			local Sender = Players:GetPlayerByUserId(Source.UserId)
-			local Status = Message.Status
-	        
-			if Status == Enum.TextChatMessageStatus.Sending then
-				if Text:sub(1, 1) == ";" then
-					if Sender.UserId == LocalPlayer.UserId then
-						local Split = Text:sub(2, Text:len()):split(" ")
-						local Command = GetCommand(Split[1])
-						if Command then
-							table.remove(Split, 1)
-							task.spawn(function()
-								Command.Callback(Split)
-							end)
-							Message.Text = ""
-						end
-					end
-				end
-   	    	end
-   		end
-	end
 end
 
 
