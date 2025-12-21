@@ -1057,7 +1057,7 @@ end)
 local ThreadNames = {}
 local function MakeMotionCommand(Name, TargetOffsetFunc, OnStart, OnEnd)
 	table.insert(ThreadNames, Name)
-	AddCommand({Name}, function(Args)
+	Relief.AddCommand({Name}, function(Args)
 		local Targets = GetPlayer(Args[1])
 		if not Targets then return end
 
