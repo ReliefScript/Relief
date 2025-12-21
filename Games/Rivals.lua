@@ -67,8 +67,8 @@ local function GetClosestPlayer()
 	if not Char then State.Text = "NO CHAR" return end
 
 	local Params = RaycastParams.new()
-	Params.FilterDescendantsInstances = { Char }
-	Params.FilterType = Enum.RaycastFilterType.Blacklist
+	Params.FilterDescendantsInstances = { workspace.Arena }
+	Params.FilterType = Enum.RaycastFilterType.Whitelist
 
 	local Hum = Char:FindFirstChildOfClass("Humanoid")
 	if not Hum or Hum.Health <= 0 then State.Text = "NO HUM / DEAD" return end
