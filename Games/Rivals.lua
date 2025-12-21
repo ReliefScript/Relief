@@ -121,7 +121,7 @@ Relief.addModule("Combat", "Aimbot", function(Toggled)
 		FovCircle.Radius = AimbotFov
 
 		local mousePos = UserInputService:GetMouseLocation()
-		FovCircle.Position = Vector2.new(TargetPos.X, TargetPos.Y)
+		FovCircle.Position = Vector2.new(mousePos.X, mousePos.Y)
 		
         Thread:New("Aimbot", function()
             task.wait()
