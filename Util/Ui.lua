@@ -1135,8 +1135,10 @@ local function GetComplete()
 end
 
 Connections[#Connections + 1] = CommandBar:GetPropertyChangedSignal("Text"):Connect(function()
-	local Complete = GetComplete()
 	local New = CommandBar.Text
+	if #New:split() > 1 then AutoComplete.Text = "" return end
+		
+	local Complete = GetComplete()
 	AutoComplete.Text = New .. Complete:sub(New:len() + 1)
 end)
 
