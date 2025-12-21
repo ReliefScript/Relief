@@ -111,13 +111,6 @@ end
 local FovCircle = nil
 Relief.addModule("Combat", "Aimbot", function(Toggled)
     if Toggled then
-        FovCircle = Drawing.new("Circle")
-        FovCircle.Thickness = 1
-        FovCircle.Color = Color3.fromRGB(255, 0, 0)
-        FovCircle.Filled = false
-        FovCircle.Visible = true
-        FovCircle.Radius = AimbotFov
-    
         local Center = Vector2.new(Camera.ViewportSize.X /2 , Camera.ViewportSize.Y / 2)
         FovCircle.Position = Center
     
