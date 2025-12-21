@@ -6,6 +6,7 @@ if not Relief then return end
 -- Services
 
 local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
 
 -- Variables & Functions
 
@@ -120,9 +121,11 @@ Relief.addModule("Combat", "Aimbot", function(Toggled)
             if not Target then return end
       
             local TargetPos = Camera:WorldToViewportPoint(Target.Position)
-            local Center = Vector2.new(Camera.ViewportSize.X /2 , Camera.ViewportSize.Y / 2)
-            local Delta = Vector2.new(TargetPos.X, TargetPos.Y) - Center
-            mousemoverel(Delta.X * AimbotStrength, Delta.Y * AimbotStrength)
+            local mousePos = UserInputService:GetMouseLocation()
+			local target2D = Vector2.new(TargetPos.X, TargetPos.Y)
+			
+			local delta = target2D - mousePos
+			mousemoverel(delta.X * AimbotStrength, delta.Y * AimbotStrength)
         end)
   	else
 		Thread:Disconnect("Aimbot")
