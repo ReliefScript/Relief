@@ -18,7 +18,7 @@ local Thread = getgenv().Thread
 
 -- Modules
 
-local AimbotFov = 300
+local AimbotFov = 150
 local AimbotStrength = 0.2
 local AimbotWallcheck = true
 local AimbotTargetPart = "Closest"
