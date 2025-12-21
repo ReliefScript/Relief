@@ -1284,7 +1284,7 @@ end)
  
 Relief.AddCommand({"commands", "cmds"}, function(Args)
     local Names = {}
-    for _, Command in Commands do
+    for _, Command in Relief.Commands do
         local Compile = table.concat(Command.Aliases, ", ") 
         local Formatted = ("[%s]"):format(Compile)
         table.insert(Names, Formatted)
