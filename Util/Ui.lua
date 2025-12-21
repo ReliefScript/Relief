@@ -60,6 +60,7 @@ CommandSeparator.Size = UDim2.new(1, 0, 0, 2)
 CommandSeparator.Position = UDim2.new(0, 0, 1, 1)
 CommandSeparator.BackgroundColor3 = ThemeColor
 CommandSeparator.BorderSizePixel = 0
+table.insert(Recolorable, CommandSeparator)
 
 local CommandBarPadding = Instance.new("UIPadding")
 CommandBarPadding.Parent = CommandBar
