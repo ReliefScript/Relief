@@ -4,7 +4,8 @@ local Games = {
     [11137575513] = "https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Games/TheChosenOne.lua", -- The Chosen One
     [12943245078] = "https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Games/TheChosenOne.lua", -- The Chosen One XL
     [96017656548489] = "https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Games/BanOrBeBanned.lua", -- Ban or Get Banned
-	[17625359962] = "https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Games/Rivals.lua" -- Rivals
+	[17625359962] = "https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Games/Rivals.lua", -- Rivals
+	[117398147513099] = "https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Games/Rivals.lua" -- Rivals Match
 }
 
 -- Universal
