@@ -63,47 +63,47 @@ local function GetClosestPlayer()
 	if not Enemies then return end
 
 	for _, Player in Enemies do
-      if Player == LocalPlayer then continue end
-    
-      local TChar = Player.Character
-      if not TChar then continue end
-    
-      local THum = TChar:FindFirstChildOfClass("Humanoid")
-      if not THum or THum.Health <= 0 then continue end
-    
-      local TargetPart
-      if AimbotTargetPart == "Closest" then
-        local Closest = math.huge
-        for _, BP in TChar:GetChildren() do
-          if BP:IsA("BasePart") then
-            local ScreenPos, OnScreen = Camera:WorldToViewportPoint(BP.Position)
-            if OnScreen then
-              local Distance = (Vector2.new(ScreenPos.X, ScreenPos.Y) - Center).Magnitude
-              if Distance < Closest then
-                Closest = Distance
-                TargetPart = BP
-              end
-            end
-          end
-        end
-      else
-        TargetPart = TChar:FindFirstChild(AimbotTargetPart)
-      end
-      if not TargetPart then continue end
-    
-      local ScreenPos, OnScreen = Camera:WorldToViewportPoint(TargetPart.Position)
-      if not OnScreen then continue end
-    
-      local Distance = (Vector2.new(ScreenPos.X, ScreenPos.Y) - Center).Magnitude
-      if Distance > TargetDistance then continue end
-    
-      if AimbotWallcheck then
-        local IsWall = workspace:Raycast(Camera.CFrame.Position, TargetPart.Position - Camera.CFrame.Position, Params)
-        if IsWall and not IsWall.Instance:IsDescendantOf(Char) then continue end
-      end
-      
-      Target = TargetPart
-      TargetDistance = Distance
+		if Player == LocalPlayer then continue end
+		
+		local TChar = Player.Character
+		if not TChar then continue end
+		
+		local THum = TChar:FindFirstChildOfClass("Humanoid")
+		if not THum or THum.Health <= 0 then continue end
+		
+		local TargetPart
+		if AimbotTargetPart == "Closest" then
+			local Closest = math.huge
+			for _, BP in TChar:GetChildren() do
+				if BP:IsA("BasePart") then
+					local ScreenPos, OnScreen = Camera:WorldToViewportPoint(BP.Position)
+					if OnScreen then
+						local Distance = (Vector2.new(ScreenPos.X, ScreenPos.Y) - Center).Magnitude
+						if Distance < Closest then
+							Closest = Distance
+							TargetPart = BP
+						end
+					end
+				end
+			end
+		else
+			TargetPart = TChar:FindFirstChild(AimbotTargetPart)
+		end
+		if not TargetPart then continue end
+		
+		local ScreenPos, OnScreen = Camera:WorldToViewportPoint(TargetPart.Position)
+		if not OnScreen then continue end
+		
+		local Distance = (Vector2.new(ScreenPos.X, ScreenPos.Y) - Center).Magnitude
+		if Distance > TargetDistance then continue end
+		
+		if AimbotWallcheck then
+			local IsWall = workspace:Raycast(Camera.CFrame.Position, TargetPart.Position - Camera.CFrame.Position, Params)
+			if IsWall and not IsWall.Instance:IsDescendantOf(Char) then continue end
+		end
+	
+		Target = TargetPart
+		TargetDistance = Distance
     end
     
     return Target
@@ -136,8 +136,8 @@ Relief.addModule("Combat", "Aimbot", function(Toggled)
             mousemoverel(Delta.X * AimbotStrength, Delta.Y * AimbotStrength)
         end)
   	else
-    		Thread:Disconnect("Aimbot")
-    		if FovCircle then FovCircle:Remove() end
+		Thread:Disconnect("Aimbot")
+		if FovCircle then FovCircle:Remove() end
   	end
 end)
 
