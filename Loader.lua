@@ -200,6 +200,8 @@ function Thread:Unmaid(Name)
     Thread.Connections[Name] = nil
 end
 
+getgenv().Thread = Thread
+
 local SH_TOGGLED = false
 local LINK = "gg/msFnMfhuhV"
 local ADS = {"RELIEF ON TOP", "JOIN US", "BEST BOGB SCRIPT", "INF MONEY", "NO BANS"}
