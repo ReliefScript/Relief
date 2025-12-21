@@ -1327,3 +1327,17 @@ if not Found then
    		end
 	end
 end
+
+
+local AnimSocket =  loadstring(game:HttpGet("https://raw.github.com/0zBug/AnimSocket/main/main.lua"))()
+
+local Channel = AnimSocket.Connect("Relief")
+
+Channel.OnMessage:Connect(function(Player, Message)
+	if Player ~= LocalPlayer and not table.find(getgenv().Whitelist, Player) then
+		table.insert(getgenv().Whitelist, Player)
+		Channel:Send("i skidded this from 0zbug")
+	end
+end)
+
+Channel:Send("i skidded this from 0zbug")
