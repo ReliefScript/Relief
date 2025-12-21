@@ -19,7 +19,7 @@ local Thread = getgenv().Thread
 
 local AimbotStrength = 0.4
 local AimbotWallcheck = true
-local AimbotTargetPart = "Head"
+local AimbotTargetPart = "Closest"
 
 local function GetEnemies()
 	local Enemies = {}
