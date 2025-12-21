@@ -164,6 +164,7 @@ BarButton.Size = UDim2.new(1.75, 0, 1.75, 0)
 BarButton.Name = "Button"
 BarButton.BorderColor3 = Color3.new(0, 0, 0)
 BarButton.Position = UDim2.new(0, 0, 0.5, 0)
+BarButton.Text = ""
 
 local BarButtonCorner = Instance.new("UICorner")
 BarButtonCorner.Parent = BarButton
@@ -1136,7 +1137,7 @@ end
 
 Connections[#Connections + 1] = CommandBar:GetPropertyChangedSignal("Text"):Connect(function()
 	local New = CommandBar.Text
-	if #New:split() > 1 then AutoComplete.Text = "" return end
+	if #New:split(" ") > 1 then AutoComplete.Text = "" return end
 		
 	local Complete = GetComplete()
 	AutoComplete.Text = New .. Complete:sub(New:len() + 1)
