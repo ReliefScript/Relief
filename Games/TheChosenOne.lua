@@ -436,10 +436,6 @@ end)
 
 -- Chat Admin
 
-local Commands = getgenv().Commands
-local AddCommand = getgenv().AddCommand
-local GetCommand = getgenv().GetCommand
-
 local function Chat(Message)
 	Folder.RBXGeneral:SendAsync(Message)
 end
@@ -469,37 +465,17 @@ TextChatService.OnIncomingMessage = function(Message)
 		local Sender = Players:GetPlayerByUserId(Source.UserId)
 		local Status = Message.Status
 		
-		if Status == Enum.TextChatMessageStatus.Sending then
-			Message.PrefixText = PrefixFormat(Sender)
-
-			if Text:sub(1, 1) == ";" then
-				if Sender.UserId == LocalPlayer.UserId then
-					local Split = Text:sub(2, Text:len()):split(" ")
-					local Command = GetCommand(Split[1])
-					if Command then
-						table.remove(Split, 1)
-						task.spawn(function()
-							Command.Callback(Split)
-						end)
-						Message.Text = ""
-					end
-				else
-					Message.Text = ('<u><font color="#FFFF00">%s</font></u>'):format(Message.Text)
-				end
-			end
-		elseif Status == Enum.TextChatMessageStatus.Success then
-			Message.PrefixText = PrefixFormat(Sender)
-
-			if Text:sub(1, 1) == ";" then
-				if Sender.UserId ~= LocalPlayer.UserId then
-					Message.Text = ('<u><font color="#FFFF00">%s</font></u>'):format(Message.Text)
-				end
+		Message.PrefixText = PrefixFormat(Sender)
+		
+		if Text:sub(1, 1) == ";" then
+			if Sender.UserId ~= LocalPlayer.UserId then
+				Message.Text = ('<u><font color="#FFFF00">%s</font></u>'):format(Message.Text)
 			end
 		end
     end
 end
 
-AddCommand({"admin"}, function(Args)
+Relief.AddCommand({"admin"}, function(Args)
 	local Targets = GetPlayer(Args[1])
 	if not Targets then return end
 
@@ -520,7 +496,7 @@ AddCommand({"admin"}, function(Args)
 	end
 end)
 
-AddCommand({"shareadmin"}, function(Args)
+Relief.AddCommand({"shareadmin"}, function(Args)
 	local Targets = GetPlayer(Args[1])
 	if not Targets then return end
 
@@ -552,7 +528,7 @@ local function RunCommand(Cmd)
 	task.wait(0.45)
 end
 
-AddCommand({"grief"}, function(Args)
+Relief.AddCommand({"grief"}, function(Args)
 	RunCommand(";clearinv o")
 	RunCommand(";maptide nan")
 	RunCommand(";fog nan")
@@ -601,34 +577,9 @@ local function Convert(Query)
 	return New
 end
 
-AddCommand({"iqbypass", "iqby"}, function(Args)
+Relief.AddCommand({"iqbypass", "iqby"}, function(Args)
 	local Message = table.concat(Args, " ")
 	task.defer(function()
 		Chat(Convert(Message))
 	end)
-end)
-
-local function GetKey(Query)
-	for _, KC in Enum.KeyCode:GetEnumItems() do
-		if KC.Name:lower() == Query then
-			return KC
-		end
-	end
-end
-
-AddCommand({"bind"}, function(Args)
-	if #Args < 2 then return end
-	
-	local Module = Relief.getModule(Args[1])
-	if not Module then return end
-	
-	local Query = Args[2]
-	if Query:lower() == "clear" then
-		Module.Keybind = nil
-	else
-		local Bind = GetKey(Args[2])
-		if not Bind then return end
-		
-		Module.Keybind = Bind
-	end
 end)
