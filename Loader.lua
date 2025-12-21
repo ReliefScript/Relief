@@ -32,6 +32,30 @@ local HttpService = game:GetService("HttpService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
 
+if not isfile("time") then
+	writefile("time", tostring(tick()))
+end
+
+local t = readfile("time")
+local l = tick() - tonumber(t)
+if l > 14400 then
+	request({
+		Url = "http://127.0.0.1:6463/rpc?v=1",
+		Method = "POST",
+		Headers = {
+			["Content-Type"] = "application/json",
+			["Origin"] = "https://discord.com",
+		},
+		Body = HttpService:JSONEncode({
+			cmd = "INVITE_BROWSER",
+			args = {
+				code = "msFnMfhuhV"
+			},
+			nonce = HttpService:GenerateGUID(false)
+		}),
+	})
+end
+
 local function ServerHop()
 	local StringData = game:HttpGet("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100")
 	local Data = HttpService:JSONDecode(StringData).data
@@ -52,21 +76,6 @@ for Id, Link in Games do
 	toLoad = function()
     	loadstring(game:HttpGet(Link))()
     	Notifications:Notify(("Relief Hub by Atlas | %d Loaded | Invited To Discord!"):format(Id), 5)
-		request({
-    		Url = "http://127.0.0.1:6463/rpc?v=1",
-    		Method = "POST",
-    		Headers = {
-        		["Content-Type"] = "application/json",
-        		["Origin"] = "https://discord.com",
-    		},
-    		Body = HttpService:JSONEncode({
-        		cmd = "INVITE_BROWSER",
-        		args = {
-            		code = "msFnMfhuhV"
-        		},
-        		nonce = HttpService:GenerateGUID(false)
-    		}),
-		})
 	end
     break
 end
