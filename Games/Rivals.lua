@@ -159,6 +159,8 @@ Relief.addModule("Render", "ESP", function(Toggled)
 		end
 
 		local function HandlePlayer(Player)
+			local Enemies = nil
+			repeat Enemies = GetEnemies() task.wait() until Enemies ~= nil
 			HandleCharacter(Player.Character)
 			table.insert(ESPConnections, Player.CharacterAdded:Connect(HandleCharacter))
 		end
