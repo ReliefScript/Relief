@@ -720,7 +720,7 @@ Library.renderModules = function()
 	end)
 
 	for _, item in ipairs(ActiveModules) do
-		local NewList = ExampleList:Clone()
+		local NewList = List:Clone()
 		NewList.Bar.BackgroundColor3 = ThemeColor
 		table.insert(Recolorable, NewList.Bar)
 		
@@ -835,7 +835,7 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 		for _, Config in SettingConfig do
 			local _T = Config["Type"]
 			if _T == "TextBox" then
-				local NewTextBox = ExampleTBSetting:Clone()
+				local NewTextBox = TextBoxSetting:Clone()
 				NewTextBox.Parent = Settings.SF
 				NewTextBox.TextBox.PlaceholderText = Config["Placeholder"]
 				NewTextBox.Title.Text = Config["Title"]
@@ -860,7 +860,7 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 					if Library.SaveName and not Library.Killed then warn("TEXTBOX SAVE") Library.Save(Library.SaveName) end
 				end)
 			elseif _T == "Toggle" then
-				local NewToggle = ExampleToggle:Clone()
+				local NewToggle = ToggleSetting:Clone()
 				NewToggle.Parent = Settings.SF
 				NewToggle.Title.Text = Config["Title"]
 
