@@ -49,22 +49,35 @@ local function GetEnemies()
 	return Enemies
 end
 
+local Screen = Instance.new("ScreenGui")
+Screen.Parent = game:GetService("CoreGui")
+
+local State = Instance.new("TextLabel")
+State.Parent = Screen
+State.Size = UDim2.new(0.5, 0, 0.1, 0)
+State.BackgroundTransparency = 1
+State.TextScaled = true
+State.AnchorPoint = Vector2.new(0.5, 0.5)
+State.Position = UDim2.new(0.5, 0, 0.5, 0)
+State.TextColor3 = Color3.new(1, 1, 1)
+State.TextStrokeTransparency = 0
+
 local function GetClosestPlayer()
 	local Char = LocalPlayer.Character
-	if not Char then return end
+	if not Char then State.Text = "NO CHAR" return end
 
 	local Params = RaycastParams.new()
 	Params.FilterDescendantsInstances = { Char }
 	Params.FilterType = Enum.RaycastFilterType.Blacklist
 
 	local Hum = Char:FindFirstChildOfClass("Humanoid")
-	if not Hum or Hum.Health <= 0 then return end
+	if not Hum or Hum.Health <= 0 then State.Text = "NO HUM / DEAD" return end
 
 	local TargetDistance, Target = AimbotFov, nil
 	local Center = Vector2.new(Camera.ViewportSize.X / 2 , Camera.ViewportSize.Y / 2)
 
 	local Enemies = GetEnemies()
-	if not Enemies then return end
+	if not Enemies then return State.Text = "ENEMIES NOT FOUND" end
 
 	for _, Player in Enemies do
 		if Player == LocalPlayer then continue end
@@ -103,11 +116,12 @@ local function GetClosestPlayer()
 		
 		if AimbotWallcheck then
 			local IsWall = workspace:Raycast(Camera.CFrame.Position, TargetPart.Position - Camera.CFrame.Position, Params)
-			if IsWall and not IsWall.Instance:IsDescendantOf(Char) then continue end
+			if IsWall and not IsWall.Instance:IsDescendantOf(Char) then State.Text = "WALL IN WAY" continue end
 		end
 	
 		Target = TargetPart
 		TargetDistance = Distance
+		State.Text = "AIMING"
     end
     
     return Target
@@ -256,12 +270,14 @@ Relief.addModule("Movement", "Bhop", function(Toggled)
 			if not Char then return end
 	
 			local Hum = Char:FindFirstChildOfClass("Humanoid")
-			if not Hum or Hum:GetState() ~= Enum.HumanoidStateType.Running then return end
+			if not Hum then return end
+
+			local State = Hum:GetState()
+			if State ~= Enum.HumanoidStateType.Running or State ~= Enum.HumanoidStateType.Landing then return end
 
 			SimulateKey(Enum.KeyCode.C)
 			RunService.Stepped:Wait()
 			SimulateKey(Enum.KeyCode.Space)
-			
 		end)
 	else
 		Thread:Disconnect("Bhop")
