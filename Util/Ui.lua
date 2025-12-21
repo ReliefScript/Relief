@@ -147,6 +147,7 @@ ToggleBar.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", En
 ToggleBar.AnchorPoint = Vector2.new(0.5, 0.5)
 ToggleBar.Size = UDim2.new(0.15, 0, 0.4, 0)
 ToggleBar.Name = "Bar"
+ToggleBar.Text = ""
 ToggleBar.Position = UDim2.new(0.1, 0, 0.5, 0)
 
 local BarCorner = Instance.new("UICorner")
@@ -457,7 +458,7 @@ local ModuleList = Instance.new("Frame")
 ModuleList.Parent = Hud
 ModuleList.BackgroundTransparency = 1;
 ModuleList.Size = UDim2.new(0.1, 0, 1, 0);
-ModuleList.Position = UDim2.new(0.93, 0, 0, 0);
+ModuleList.Position = UDim2.new(0.9, 0, 0, 0);
 ModuleList.Name = "ModuleList"
 
 local ModuleListLayout = Instance.new("UIListLayout")
