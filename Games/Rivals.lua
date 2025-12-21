@@ -113,6 +113,13 @@ end
 local FovCircle = nil
 Relief.addModule("Combat", "Aimbot", function(Toggled)
     if Toggled then
+		FovCircle = Drawing.new("Circle")
+		FovCircle.Thickness = 1
+		FovCircle.Color = Color3.fromRGB(255,0,0)
+		FovCircle.Filled = false
+		FovCircle.Visible = true
+		FovCircle.Radius = AimbotFov
+		
         Thread:New("Aimbot", function()
             task.wait()
             
