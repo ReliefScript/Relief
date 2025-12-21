@@ -251,14 +251,6 @@ Relief.addModule("Movement", "Bhop", function(Toggled)
 	if Toggled then
 		Thread:New("Bhop", function()
 			task.wait()
-
-			if Debounce then return end
-			Debounce = true
-
-			task.spawn(function()
-				task.wait(0.1)
-				Debounce = false
-			end)
 					
 			local Char = LocalPlayer.Character
 			if not Char then return end
@@ -268,6 +260,14 @@ Relief.addModule("Movement", "Bhop", function(Toggled)
 
 			local State = Hum:GetState()
 			if State ~= Enum.HumanoidStateType.Running or State ~= Enum.HumanoidStateType.Landed then return end
+
+			if Debounce then return end
+			Debounce = true
+
+			task.spawn(function()
+				task.wait(0.1)
+				Debounce = false
+			end)
 
 			SimulateKey(Enum.KeyCode.C)
 			RunService.Stepped:Wait()
