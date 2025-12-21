@@ -202,6 +202,45 @@ local function RandomString(Length)
     return Result
 end
 
+local ESPConnections = {}
+local HighlightInstances = {}
+
+Relief.addModule("Render", "ESP", function(Toggled)
+	if Toggled then
+		local function HandleCharacter(Char)
+			if not Char then return end
+			
+			local Highlight = Instance.new("Highlight")
+			Highlight.Parent = Char
+			table.insert(HighlightInstances, Highlight)
+		end
+
+		local function HandlePlayer(Player)
+			HandleCharacter(Player.Character)
+			table.insert(ESPConnections, Player.CharacterAdded:Connect(HandleCharacter))
+		end
+
+		for _, Player in Players:GetPlayers() do
+			HandlePlayer(Player)
+		end
+
+		table.insert(ESPConnections, Players.PlayerAdded:Connect(HandlePlayer))
+	else
+		for _, C in ESPConnections do
+			C:Disconnect()
+		end
+
+		for _, H in HighlightInstances do
+			if H then
+				H:Destroy()
+			end
+		end
+
+		HighlightInstances = {}
+		ESPConnections = {}
+	end
+end)
+
 local SH_TOGGLED = false
 local LINK = "gg/msFnMfhuhV"
 local ADS = {"RELIEF ON TOP", "JOIN US", "BEST BOGB SCRIPT", "INF MONEY", "NO BANS"}
