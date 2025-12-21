@@ -111,9 +111,6 @@ end
 local FovCircle = nil
 Relief.addModule("Combat", "Aimbot", function(Toggled)
     if Toggled then
-        local Center = Vector2.new(Camera.ViewportSize.X /2 , Camera.ViewportSize.Y / 2)
-        FovCircle.Position = Center
-    
         Thread:New("Aimbot", function()
             task.wait()
             
