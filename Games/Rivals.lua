@@ -111,7 +111,7 @@ local function GetClosestPlayer()
 		
 		if AimbotWallcheck then
 			local IsWall = workspace:Raycast(Camera.CFrame.Position, TargetPart.Position - Camera.CFrame.Position, Params)
-			if IsWall and not IsWall.Instance:IsDescendantOf(Char) then ontinue end
+			if IsWall and not IsWall.Instance:IsDescendantOf(Char) then continue end
 		end
 	
 		Target = TargetPart
