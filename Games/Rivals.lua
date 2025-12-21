@@ -7,6 +7,7 @@ if not Relief then return end
 
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
+local VirtualInputManager = game:GetService("VirtualInputManager")
 
 -- Variables & Functions
 
@@ -228,5 +229,29 @@ Relief.addModule("Render", "ESP", function(Toggled)
 
 		HighlightInstances = {}
 		ESPConnections = {}
+	end
+end)
+
+local function SimulateKey(Key)
+	VirtualInputManager:SendKeyEvent(true, Key, false, game)
+    VirtualInputManager:SendKeyEvent(false, Key, false, game)
+end
+
+Relief.addModule("Movement", "Bhop", function(Toggled)
+	if Toggled then
+		Thread:New("Bhop", function()
+			task.wait()
+					
+			local Char = LocalPlayer.Character
+			if not Char then return end
+	
+			local Hum = Char:FindFirstChildOfClass("Humanoid")
+			if not Hum or Hum:GetState() ~= 8 then return end
+
+			SimulateKey(Enum.KeyCode.C)
+			SimulateKey(Enum.KeyCode.Space)
+		end)
+	else
+		Thread:Disconnect("Bhop")
 	end
 end)
