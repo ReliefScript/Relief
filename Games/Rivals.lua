@@ -264,7 +264,7 @@ Relief.addModule("Movement", "Bhop", function(Toggled)
 			Debounce = true
 
 			task.spawn(function()
-				task.wait(0.1)
+				task.wait(0.25)
 				Debounce = false
 			end)
 
