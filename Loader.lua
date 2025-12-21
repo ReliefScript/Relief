@@ -1333,7 +1333,6 @@ local AnimSocket =  loadstring(game:HttpGet("https://raw.github.com/0zBug/AnimSo
 
 local Channel = AnimSocket.Connect("Relief")
 
-warn('updated2')
 Channel.OnMessage:Connect(function(Player, Message)
 	if Player ~= LocalPlayer and not table.find(getgenv().Whitelist, Player) then
 		table.insert(getgenv().Whitelist, Player.UserId)
