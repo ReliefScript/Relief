@@ -120,6 +120,7 @@ Relief.addModule("Combat", "Aimbot", function(Toggled)
 		FovCircle.Filled = false
 		FovCircle.Visible = true
 		FovCircle.Radius = AimbotFov
+		FovCircle.Position = Vector2.new(Camera.ViewportSize.X / 2 , Camera.ViewportSize.Y / 2)
 		
         Thread:New("Aimbot", function()
             task.wait()
@@ -132,7 +133,6 @@ Relief.addModule("Combat", "Aimbot", function(Toggled)
             local TargetPos = Camera:WorldToViewportPoint(Target.Position)
             local mousePos = UserInputService:GetMouseLocation()
 			local target2D = Vector2.new(TargetPos.X, TargetPos.Y)
-			FovCircle.Position = Vector2.new(mousePos.X, mousePos.Y)
 			
 			local delta = target2D - mousePos
 			mousemoverel(delta.X * AimbotStrength, delta.Y * AimbotStrength)
@@ -148,21 +148,31 @@ Relief.addModule("Combat", "TriggerBot", function(Toggled)
     if Toggled then
         Thread:New("TriggerBot", function()
             task.wait()
-            
-            local Target = Mouse.Target
-			if not Target then return end
 
-			if Target.Parent and Target.Parent:FindFirstChildOfClass("Humanoid") then
-				if not Pressing then
-					mouse2press()
-				end
-				Pressing = true
-			else
+			local function RELEASE()
 				if Pressing then
-					mouse2release()
+					mouse1release()
 				end
 				Pressing = false
 			end
+            
+            local Target = Mouse.Target
+			if not Target then return RELEASE() end
+
+			local Char = Target.Parent
+			local Hum = Char:FindFirstChildOfClass("Humanoid")
+			if not Hum then return RELEASE() end
+
+			local Player = Players:GetPlayerFromCharacter(Char)
+			if not Player then return RELEASE() end
+
+			local Enemies = GetEnemies()
+			if not Enemies or not table.find(Enemies, Player) then return RELEASE() end
+			
+			if not Pressing then
+				mouse1press()
+			end
+			Pressing = true
         end)
   	else
 		Thread:Disconnect("TriggerBot")
