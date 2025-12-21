@@ -61,10 +61,6 @@ local function GetClosestPlayer()
 	local Char = LocalPlayer.Character
 	if not Char then return end
 
-	local Params = RaycastParams.new()
-	Params.FilterDescendantsInstances = { workspace.Arena }
-	Params.FilterType = Enum.RaycastFilterType.Whitelist
-
 	local Hum = Char:FindFirstChildOfClass("Humanoid")
 	if not Hum or Hum.Health <= 0 then return end
 
@@ -110,8 +106,11 @@ local function GetClosestPlayer()
 		if Distance > TargetDistance then continue end
 		
 		if AimbotWallcheck then
+			local Params = RaycastParams.new()
+			Params.FilterDescendantsInstances = { workspace.Arena, TChar }
+			Params.FilterType = Enum.RaycastFilterType.Whitelist
 			local IsWall = workspace:Raycast(Camera.CFrame.Position, TargetPart.Position - Camera.CFrame.Position, Params)
-			if IsWall and not IsWall.Instance:IsDescendantOf(Char) then continue end
+			if IsWall and not IsWall.Instance:IsDescendantOf(TChar) then continue end
 		end
 	
 		Target = TargetPart
