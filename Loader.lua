@@ -39,6 +39,7 @@ end
 local t = readfile("time")
 local l = tick() - tonumber(t)
 if l > 14400 then
+	delfile("time")
 	request({
 		Url = "http://127.0.0.1:6463/rpc?v=1",
 		Method = "POST",
@@ -54,6 +55,7 @@ if l > 14400 then
 			nonce = HttpService:GenerateGUID(false)
 		}),
 	})
+	writefile("time", tostring(tick()))
 end
 
 local function ServerHop()
