@@ -246,10 +246,10 @@ Relief.addModule("Movement", "Bhop", function(Toggled)
 			if not Char then return end
 	
 			local Hum = Char:FindFirstChildOfClass("Humanoid")
-			if not Hum or Hum:GetState() ~= Enum.HumanoidStateType.Running then warn('flying') return end
+			if not Hum or Hum:GetState() ~= Enum.HumanoidStateType.Running then return end
 
-			warn("bhopping")
 			SimulateKey(Enum.KeyCode.C)
+			RunService.Stepped:Wait()
 			SimulateKey(Enum.KeyCode.Space)
 		end)
 	else
