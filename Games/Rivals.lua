@@ -21,9 +21,9 @@ local Thread = getgenv().Thread
 -- Modules
 
 local AimbotFov = 200
-local AimbotStrength = 0.25
+local AimbotStrength = 1
 local AimbotWallcheck = true
-local AimbotTargetPart = "Closest"
+local AimbotTargetPart = "Head"
 
 local function GetEnemies()
 	local Enemies = {}
@@ -211,10 +211,10 @@ Relief.addModule("Render", "ESP", function(Toggled)
 			table.insert(HighlightInstances, Highlight)
 		end
 
-		local function HandlePlayer(Player)
-			local Enemies = nil
-			repeat Enemies = GetEnemies() task.wait() until Enemies ~= nil
+		local Enemies = nil
+		repeat Enemies = GetEnemies() task.wait() until Enemies ~= nil
 
+		local function HandlePlayer(Player)
 			if not table.find(Enemies, Player) then return end
 			HandleCharacter(Player.Character)
 			table.insert(ESPConnections, Player.CharacterAdded:Connect(HandleCharacter))
@@ -259,7 +259,7 @@ Relief.addModule("Movement", "Bhop", function(Toggled)
 			if not Hum then return end
 
 			local State = Hum:GetState()
-			if State ~= Enum.HumanoidStateType.Running or State ~= Enum.HumanoidStateType.Landed then return end
+			if State ~= Enum.HumanoidStateType.Running and State ~= Enum.HumanoidStateType.Landed then return end
 
 			if Debounce then return end
 			Debounce = true
