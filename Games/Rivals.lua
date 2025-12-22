@@ -259,7 +259,7 @@ local Debounce = false
 local CurrentConnection = nil
 Relief.addModule("Movement", "Bhop", function(Toggled)
 	if Toggled then
-		local HandleCharacter(Char)
+		local function HandleCharacter(Char)
 			if not Char then return end
 
 			local Hum = Char:WaitForChild("Humanoid")
