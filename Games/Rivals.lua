@@ -167,9 +167,16 @@ Relief.addModule("Combat", "Aimbot", function(Toggled)
   	end
 end)
 
-local ViewModels = workspace.ViewModels
+local ViewModels
+task.spawn(function()
+repeat task.wait() until workspace:FindFirstChild("ViewModels")
+ViewModels = workspace.ViewModels
+end)
+
 local function GetPlayerWeapons()
 	local Weapons = {}
+	if not ViewModels then return Weaposn end
+	
 	for _, Model in ViewModels:GetChildren() do
 		if Model.Name == "FirstPerson" then continue end
 		local Data = Model:split(" - ")
