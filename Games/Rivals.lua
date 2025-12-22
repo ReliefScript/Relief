@@ -193,8 +193,11 @@ Relief.addModule("Combat", "TriggerBot", function(Toggled)
 			local Enemies = GetEnemies()
 			if not Enemies or not table.find(Enemies, Player) then return RELEASE() end
 			
-			mouse1press() 
-			mouse1release()
+			task.spawn(function()
+				task.wait(0.1)
+				mouse1press() 
+				mouse1release()
+			end)
         end)
   	else
 		Thread:Disconnect("TriggerBot")
