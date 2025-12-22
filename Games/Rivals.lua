@@ -261,6 +261,7 @@ local function SimulateKey(Key)
     VirtualInputManager:SendKeyEvent(false, Key, false, game)
 end
 
+local Debounce = false
 Relief.addModule("Movement", "Bhop", function(Toggled)
 	if Toggled then
 		Thread:New("Bhop", function()
@@ -273,6 +274,13 @@ Relief.addModule("Movement", "Bhop", function(Toggled)
 			local State = Hum:GetState()
 			if State ~= Enum.HumanoidStateType.Landed and State ~= Enum.HumanoidStateType.Running then return task.wait() end
 			if Hum.FloorMaterial == Enum.Material.Air then return task.wait() end
+
+			if Debounce then return task.wait() end
+			Debounce = true
+			task.spawn(function()
+				task.wait(0.1)
+				Debounce = false
+			end)
 			
 			SimulateKey(Enum.KeyCode.C)
 			task.wait()
