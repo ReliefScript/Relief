@@ -167,6 +167,21 @@ Relief.addModule("Combat", "Aimbot", function(Toggled)
   	end
 end)
 
+local ViewModels = workspace.ViewModels
+local function GetPlayerWeapons()
+	local Weapons = {}
+	for _, Model in ViewModels:GetChildren() do
+		if Model.Name == "FirstPerson" then continue end
+		local Data = Model:split(" - ")
+		local Target = Players:FindFirstChild(Data[1])
+		table.insert(Weapons, {
+			Target = Target,
+			Name = Data[2]
+		})
+	end
+	return Weapons
+end
+
 Relief.addModule("Combat", "TriggerBot", function(Toggled)
     if Toggled then
         Thread:New("TriggerBot", function()
@@ -183,6 +198,21 @@ Relief.addModule("Combat", "TriggerBot", function(Toggled)
             
             local Target = Mouse.Target
 			if not Target then return RELEASE() end
+
+			if KatanaCheck then
+				local Weapons = GetPlayerWeapons()
+				if not Weapons then return RELEASE() end
+
+				local HasKatana = false
+				for _, Weapon in Weapons do
+					if Weapon.Player == Target and Weapon.Name == "Katana" then 
+						HasKatana
+						break
+					end
+				end
+
+				if HasKatana then return RELEASE() end
+			end
 
 			local Char = Target.Parent
 			local Hum = Char:FindFirstChildOfClass("Humanoid")
@@ -207,7 +237,15 @@ Relief.addModule("Combat", "TriggerBot", function(Toggled)
   	else
 		Thread:Disconnect("TriggerBot")
   	end
-end)
+end, {
+	{
+		["Type"] = "Toggle",
+		["Title"] = "KatanaCheck",
+		["Callback"] = function(Toggled)
+			KatanaCheck = Toggled
+		end
+	}
+})
 
 local ESPConnections = {}
 local HighlightInstances = {}
