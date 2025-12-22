@@ -263,7 +263,7 @@ end
 
 Relief.addModule("Movement", "Bhop", function(Toggled)
 	if Toggled then
-		Thread:New("Bhop")
+		Thread:New("Bhop", function()
 			local Char = LocalPlayer.Character
 			if not Char then return task.wait() end
 
