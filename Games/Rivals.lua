@@ -157,7 +157,7 @@ Relief.addModule("Combat", "Aimbot", function(Toggled)
             local target2D = Vector2.new(screenPos.X, screenPos.Y)
 			
 			local delta = target2D - screenCenter
-            delta *= Smoothness
+            delta *= AimbotStrength
             mousemoverel(delta.X, delta.Y)
         end)
   	else
