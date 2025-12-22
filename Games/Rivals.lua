@@ -179,7 +179,7 @@ local function GetPlayerWeapons()
 	
 	for _, Model in ViewModels:GetChildren() do
 		if Model.Name == "FirstPerson" then continue end
-		local Data = Model:split(" - ")
+		local Data = Model.Name:split(" - ")
 		local Target = Players:FindFirstChild(Data[1])
 		table.insert(Weapons, {
 			Target = Target,
