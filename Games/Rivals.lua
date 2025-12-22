@@ -49,14 +49,24 @@ local function GetEnemies()
 	return Enemies
 end
 
-local Arena = nil
+local Map = nil
+local MapNames = {"Arena", "Construnction", "Playground", "Backrooms"}
 task.spawn(function()
-	repeat task.wait() until workspace:FindFirstChild("Arena")
-	Arena = workspace.Arena
+	local function HasMap()
+		for _, Obj in workspace:GetChildren() do
+			for _, MapName in MapNames do
+				if Obj.Name == MapName then
+					return Obj
+				end
+			end
+		end
+	end
+	repeat task.wait() until HasMap()
+	Map = workspace.Arena
 end)
 
 local function GetClosestPlayer()
-	if not Arena then return end
+	if not Map then return end
 	
 	local Char = LocalPlayer.Character
 	if not Char then return end
@@ -107,7 +117,7 @@ local function GetClosestPlayer()
 		
 		if AimbotWallcheck then
 			local Params = RaycastParams.new()
-			Params.FilterDescendantsInstances = { workspace.Arena, TChar }
+			Params.FilterDescendantsInstances = { Map, TChar }
 			Params.FilterType = Enum.RaycastFilterType.Whitelist
 			local IsWall = workspace:Raycast(Camera.CFrame.Position, TargetPart.Position - Camera.CFrame.Position, Params)
 			if IsWall and not IsWall.Instance:IsDescendantOf(TChar) then continue end
