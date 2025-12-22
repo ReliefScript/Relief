@@ -261,30 +261,26 @@ local function SimulateKey(Key)
     VirtualInputManager:SendKeyEvent(false, Key, false, game)
 end
 
-local CurrentConnection = nil
 Relief.addModule("Movement", "Bhop", function(Toggled)
 	if Toggled then
-		local function HandleCharacter(Char)
-			if not Char then return end
+		Thread:New("Bhop")
+			local Char = LocalPlayer.Character
+			if not Char then return task.wait() end
 
-			local Hum = Char:WaitForChild("Humanoid")
-			CurrentConnection = Hum.StateChanged:Connect(function()
-				local New = Hum:GetState()
-				if New == Enum.HumanoidStateType.Landed then
-					SimulateKey(Enum.KeyCode.C)
-					wait()
-					SimulateKey(Enum.KeyCode.Space)
-				end
-			end)
-		end
+			local Hum = Char:FindFirstChildOfClass("Humanoid")
+			if not Hum then return task.wait() end
 
-		HandleCharacter(LocalPlayer.Character)
+			local State = Hum:GetState()
+			if State ~= Enum.HumanoidStateType.Landed or State ~= Enum.HumanoidStateType.Running then return task.wait() end
+			if Hum.Jump then return task.wait() end
+			
+			SimulateKey(Enum.KeyCode.C)
+			task.wait()
+			SimulateKey(Enum.KeyCode.Space)
+		end)
 		Thread:Maid("BhopCA", LocalPlayer.CharacterAdded:Connect(HandleCharacter))
 	else
+		Thread:Disconnect("Bhop")
 		Thread:Unmaid("BhopCA")
-		if CurrentConnection then
-			CurrentConnection:Disconnect()
-			CurrentConnection = nil
-		end
 	end
 end)
