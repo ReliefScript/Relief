@@ -272,7 +272,7 @@ Relief.addModule("Movement", "Bhop", function(Toggled)
 
 			local State = Hum:GetState()
 			if State ~= Enum.HumanoidStateType.Landed and State ~= Enum.HumanoidStateType.Running then return task.wait() end
-			if Hum.FloorMaterial ~= Enum.Material.Air then return task.wait() end
+			if Hum.FloorMaterial == Enum.Material.Air then return task.wait() end
 			
 			SimulateKey(Enum.KeyCode.C)
 			task.wait()
