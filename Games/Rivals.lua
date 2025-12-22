@@ -142,19 +142,20 @@ Relief.addModule("Combat", "Aimbot", function(Toggled)
 		FovCircle.Position = Vector2.new(Camera.ViewportSize.X / 2 , Camera.ViewportSize.Y / 2)
 		
         Thread:New("Aimbot", function()
-            task.wait()
+            RunService.RenderStepped:Wait()
             
             if Camera.CameraType ~= Enum.CameraType.Scriptable then return end
       
             local Target = GetClosestPlayer()
             if not Target then return end
       
-            local TargetPos = Camera:WorldToViewportPoint(Target.Position)
-            local mousePos = UserInputService:GetMouseLocation()
-			local target2D = Vector2.new(TargetPos.X, TargetPos.Y)
+            local viewport = Camera.ViewportSize
+            local screenCenter = Vector2.new(viewport.X / 2, viewport.Y / 2)
+            local target2D = Vector2.new(screenPos.X, screenPos.Y)
 			
-			local delta = target2D - mousePos
-			mousemoverel(delta.X * AimbotStrength, delta.Y * AimbotStrength)
+			local delta = target2D - screenCenter
+            delta *= Smoothness
+            mousemoverel(delta.X, delta.Y)
         end)
   	else
 		Thread:Disconnect("Aimbot")
