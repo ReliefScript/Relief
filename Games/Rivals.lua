@@ -169,8 +169,8 @@ end)
 
 local ViewModels
 task.spawn(function()
-repeat task.wait() until workspace:FindFirstChild("ViewModels")
-ViewModels = workspace.ViewModels
+	repeat task.wait() until workspace:FindFirstChild("ViewModels")
+	ViewModels = workspace.ViewModels
 end)
 
 local function GetPlayerWeapons()
@@ -189,6 +189,7 @@ local function GetPlayerWeapons()
 	return Weapons
 end
 
+local KatanaCheck = false
 Relief.addModule("Combat", "TriggerBot", function(Toggled)
     if Toggled then
         Thread:New("TriggerBot", function()
@@ -212,8 +213,8 @@ Relief.addModule("Combat", "TriggerBot", function(Toggled)
 
 				local HasKatana = false
 				for _, Weapon in Weapons do
-					if Weapon.Player == Target and Weapon.Name == "Katana" then 
-						HasKatana
+					if Weapon.Target == Target and Weapon.Name == "Katana" then 
+						HasKatana = true
 						break
 					end
 				end
@@ -236,7 +237,7 @@ Relief.addModule("Combat", "TriggerBot", function(Toggled)
 			if not Enemies or not table.find(Enemies, Player) then return RELEASE() end
 			
 			task.spawn(function()
-				task.wait(0.1)
+				task.wait(0.05)
 				mouse1press() 
 				mouse1release()
 			end)
