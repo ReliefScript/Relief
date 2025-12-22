@@ -50,7 +50,7 @@ local function GetEnemies()
 end
 
 local Map = nil
-local MapNames = {"Arena", "Construction", "Playground", "Backrooms", "Battleground", "Bridge", "Dimension", "Graveyard", "Crossroads", "Docks", "Splash", "Station"}
+local MapNames = {"Arena", "Construction", "Playground", "Backrooms", "Battleground", "Bridge", "Dimension", "Graveyard", "Crossroads", "Docks", "Splash", "Station", "Onyx"}
 task.spawn(function()
 	local function HasMap()
 		for _, Obj in workspace:GetChildren() do
