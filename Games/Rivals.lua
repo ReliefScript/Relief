@@ -50,7 +50,7 @@ local function GetEnemies()
 end
 
 local Map = nil
-local MapNames = {"Arena", "Construnction", "Playground", "Backrooms", "Battleground", "Bridge", "Dimension", "Graveyard", "Crossroads", "Docks", "Splash"}
+local MapNames = {"Arena", "Construnction", "Playground", "Backrooms", "Battleground", "Bridge", "Dimension", "Graveyard", "Crossroads", "Docks", "Splash", "Station"}
 task.spawn(function()
 	local function HasMap()
 		for _, Obj in workspace:GetChildren() do
@@ -63,6 +63,7 @@ task.spawn(function()
 	end
 	repeat task.wait() until HasMap()
 	Map = HasMap()
+	warn("Found map: " .. Map.Name)
 end)
 
 local function GetClosestPlayer()
