@@ -187,6 +187,10 @@ Relief.addModule("Combat", "TriggerBot", function(Toggled)
 			local Char = Target.Parent
 			local Hum = Char:FindFirstChildOfClass("Humanoid")
 			if not Hum or Hum.Health <= 0 then return RELEASE() end
+			
+			local TRoot = Char:FindFIrstChild("HumanoidRootPart")
+			if not TRoot then return end
+			if TRoot.Velocity.Magnitude >= 75 then return end
 
 			local Player = Players:GetPlayerFromCharacter(Char)
 			if not Player then return RELEASE() end
