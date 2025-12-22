@@ -149,7 +149,7 @@ Relief.addModule("Combat", "Aimbot", function(Toggled)
             local Target = GetClosestPlayer()
             if not Target then return end
 
-			local screenPos, onScreen = Camera:WorldToViewportPoint(target.Position)
+			local screenPos, onScreen = Camera:WorldToViewportPoint(Target.Position)
             if not onScreen then return end
       
             local viewport = Camera.ViewportSize
