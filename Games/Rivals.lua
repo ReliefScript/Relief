@@ -256,33 +256,29 @@ local function SimulateKey(Key)
 end
 
 local Debounce = false
+local CurrentConnection = nil
 Relief.addModule("Movement", "Bhop", function(Toggled)
 	if Toggled then
-		Thread:New("Bhop", function()
-			task.wait()
-					
-			local Char = LocalPlayer.Character
+		local HandleCharacter(Char)
 			if not Char then return end
-	
-			local Hum = Char:FindFirstChildOfClass("Humanoid")
-			if not Hum then return end
 
-			local State = Hum:GetState()
-			if State ~= Enum.HumanoidStateType.Landed then return end
-
-			if Debounce then return end
-			Debounce = true
-
-			task.spawn(function()
-				task.wait(0.2)
-				Debounce = false
+			local Hum = Char:WaitForChild("Humanoid")
+			CurrentConnection = Hum.StateChanged:Connect(function()
+				local New = Hum:GetState()
+				if New == Enum.HumanoidStateType.Landed then
+					SimulateKey(Enum.KeyCode.C)
+					RunService.Stepped:Wait()
+					SimulateKey(Enum.KeyCode.Space)
+				end
 			end)
+		end
 
-			SimulateKey(Enum.KeyCode.C)
-			RunService.Stepped:Wait()
-			SimulateKey(Enum.KeyCode.Space)
-		end)
+		HandleCharacter(LocalPlayer.Character)
+		LocalPlayer.CharacterAdded:Connect(HandleCharacter)
 	else
-		Thread:Disconnect("Bhop")
+		if CurrentConnection then
+			CurrentConnection:Disconnect()
+			CurrentConnection = nil
+		end
 	end
 end)
