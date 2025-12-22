@@ -162,17 +162,13 @@ Relief.addModule("Combat", "Aimbot", function(Toggled)
   	end
 end)
 
-local Pressing = false
 Relief.addModule("Combat", "TriggerBot", function(Toggled)
     if Toggled then
         Thread:New("TriggerBot", function()
             task.wait()
 
 			local function RELEASE()
-				if Pressing then
-					mouse1release()
-				end
-				Pressing = false
+				mouse1release()
 			end
 
 			if Camera.CameraType ~= Enum.CameraType.Scriptable then return RELEASE() end
@@ -193,10 +189,8 @@ Relief.addModule("Combat", "TriggerBot", function(Toggled)
 			local Enemies = GetEnemies()
 			if not Enemies or not table.find(Enemies, Player) then return RELEASE() end
 			
-			if not Pressing then
-				mouse1press()
-			end
-			Pressing = true
+			mouse1press() 
+			mouse1release()
         end)
   	else
 		Thread:Disconnect("TriggerBot")
@@ -255,7 +249,6 @@ local function SimulateKey(Key)
     VirtualInputManager:SendKeyEvent(false, Key, false, game)
 end
 
-local Debounce = false
 local CurrentConnection = nil
 Relief.addModule("Movement", "Bhop", function(Toggled)
 	if Toggled then
@@ -274,8 +267,9 @@ Relief.addModule("Movement", "Bhop", function(Toggled)
 		end
 
 		HandleCharacter(LocalPlayer.Character)
-		LocalPlayer.CharacterAdded:Connect(HandleCharacter)
+		Thread:Maid("BhopCA", LocalPlayer.CharacterAdded:Connect(HandleCharacter))
 	else
+		Thread:Unmaid("BhopCA")
 		if CurrentConnection then
 			CurrentConnection:Disconnect()
 			CurrentConnection = nil
