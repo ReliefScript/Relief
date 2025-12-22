@@ -258,13 +258,13 @@ Relief.addModule("Movement", "Bhop", function(Toggled)
 			if not Hum then return end
 
 			local State = Hum:GetState()
-			if State ~= Enum.HumanoidStateType.Running and State ~= Enum.HumanoidStateType.Landed then return end
+			if State ~= Enum.HumanoidStateType.Landed then return end
 
 			if Debounce then return end
 			Debounce = true
 
 			task.spawn(function()
-				task.wait(0.25)
+				task.wait(0.2)
 				Debounce = false
 			end)
 
