@@ -62,7 +62,7 @@ task.spawn(function()
 		end
 	end
 	repeat task.wait() until HasMap()
-	Map = workspace.Arena
+	Map = HasMap()
 end)
 
 local function GetClosestPlayer()
