@@ -21,7 +21,7 @@ local Thread = getgenv().Thread
 -- Modules
 
 local AimbotFov = 200
-local AimbotStrength = 1
+local AimbotStrength = 0.5
 local AimbotWallcheck = true
 local AimbotTargetPart = "Head"
 
@@ -50,7 +50,7 @@ local function GetEnemies()
 end
 
 local Map = nil
-local MapNames = {"Arena", "Construnction", "Playground", "Backrooms"}
+local MapNames = {"Arena", "Construnction", "Playground", "Backrooms", "Battleground", "Bridge", "Dimension", "Graveyard"}
 task.spawn(function()
 	local function HasMap()
 		for _, Obj in workspace:GetChildren() do
@@ -260,7 +260,7 @@ Relief.addModule("Movement", "Bhop", function(Toggled)
 				local New = Hum:GetState()
 				if New == Enum.HumanoidStateType.Landed then
 					SimulateKey(Enum.KeyCode.C)
-					RunService.Stepped:Wait()
+					wait()
 					SimulateKey(Enum.KeyCode.Space)
 				end
 			end)
