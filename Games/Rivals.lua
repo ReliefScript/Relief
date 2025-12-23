@@ -22,14 +22,61 @@ local Thread = getgenv().Thread
 
 local AimbotWallcheck = true
 
+local function GetInterface()
+	local Interfaces = LocalPlayer.PlayerGui
+		:WaitForChild("MainGui")
+		:WaitForChild("MainFrame")
+		:WaitForChild("DuelInterfaces")
+	
+	for _, Interface in Interfaces:GetChildren() do
+		local Top = Interface:FindFirstChild("Top")
+		if not Top then continue end
+
+		local Scores = Top:FindFirstChild("Scores")
+		if not Scores then continue end
+
+		local Teams = Scores:FindFirstChild("Teams")
+		if not Teams then continue end
+		
+		local Left = Teams:FindFirstChild("Left")
+		if not Left then continue end
+		
+		local Scores = Left:FindFirstChild("DuelScoresTeamSlot")
+		if not Scores then continue end
+
+		local Container = Scores:FindFirstChild("Container")
+		if not Container then continue end
+
+		local Teammates = Container:FindFirstChild("Teammates")
+		if not Teammates then continue end
+		
+		local Targets = {}
+
+		for _, Slot in Teammates:GetChildren() do
+			if Slot:IsA("Frame") and Slot.Name == "TeammateSlot" then
+				local Headshot = Slot.Container.Headshot.Image
+				local Isolated = Headshot:match("userId=(%d+)")
+				local Id = tonumber(Isolated)
+				local Target = Players:GetPlayerByUserId(Id)
+				if Target then
+					table.insert(Targets, Target)
+				end
+			end
+		end
+
+		if table.find(Targets, LocalPlayer) then
+			return Interface
+		end
+	end
+end
+
 local function GetEnemies()
 	local Enemies = {}
 
-	local Container
-	pcall(function()
-		Container = LocalPlayer.PlayerGui.MainGui.MainFrame.DuelInterfaces.DuelInterface.Top.Scores.Teams.Right.DuelScoresTeamSlot.Container.Teammates
-	end)
-	if not Container then return Enemies end
+	local Interface = GetInterface()
+	if not Interface then return Enemies end
+
+	local Container = Interface.Top.Scores.Teams.Right.DuelScoresTeamSlot.Container.Teammates
 
 	for _, Slot in Container:GetChildren() do
 		if Slot:IsA("Frame") then
@@ -46,26 +93,7 @@ local function GetEnemies()
 	return Enemies
 end
 
-local Map = nil
-local MapNames = {"Arena", "Construction", "Playground", "Backrooms", "Battleground", "Bridge", "Dimension", "Graveyard", "Crossroads", "Docks", "Splash", "Station", "Onyx"}
-task.spawn(function()
-	local function HasMap()
-		for _, Obj in workspace:GetChildren() do
-			for _, MapName in MapNames do
-				if Obj.Name == MapName then
-					return Obj
-				end
-			end
-		end
-	end
-	repeat task.wait() until HasMap()
-	Map = HasMap()
-	warn("Found map: " .. Map.Name)
-end)
-
 local function GetClosestPlayer()
-	if not Map then return end
-	
 	local Char = LocalPlayer.Character
 	if not Char then return end
 
@@ -116,10 +144,7 @@ local function GetClosestPlayer()
 		if Distance > TargetDistance then continue end
 		
 		if Relief.getSetting("Aimbot", "Wall Check") then
-			local Params = RaycastParams.new()
-			Params.FilterDescendantsInstances = { Map, TChar }
-			Params.FilterType = Enum.RaycastFilterType.Whitelist
-			local IsWall = workspace:Raycast(Camera.CFrame.Position, TargetPart.Position - Camera.CFrame.Position, Params)
+			local IsWall = workspace:Raycast(Camera.CFrame.Position, TargetPart.Position - Camera.CFrame.Position)
 			if IsWall and not IsWall.Instance:IsDescendantOf(TChar) then continue end
 		end
 	
