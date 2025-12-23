@@ -20,10 +20,7 @@ local Thread = getgenv().Thread
 
 -- Modules
 
-local AimbotFov = 200
-local AimbotStrength = 1
 local AimbotWallcheck = true
-local AimbotTargetPart = "Head"
 
 local function GetEnemies()
 	local Enemies = {}
@@ -75,11 +72,13 @@ local function GetClosestPlayer()
 	local Hum = Char:FindFirstChildOfClass("Humanoid")
 	if not Hum or Hum.Health <= 0 then return end
 
-	local TargetDistance, Target = AimbotFov, nil
+	local TargetDistance, Target = Relief.getSetting("Aimbot", "FOV"), nil
 	local Center = Vector2.new(Camera.ViewportSize.X / 2 , Camera.ViewportSize.Y / 2)
 
 	local Enemies = GetEnemies()
 	if not Enemies then return end
+
+	local AimbotTargetPart = Relief.getSetting("Aimbot", "Target Part")
 
 	for _, Player in Enemies do
 		if Player == LocalPlayer then continue end
@@ -116,7 +115,7 @@ local function GetClosestPlayer()
 		local Distance = (Vector2.new(ScreenPos.X, ScreenPos.Y) - Center).Magnitude
 		if Distance > TargetDistance then continue end
 		
-		if AimbotWallcheck then
+		if Relief.getSetting("Aimbot", "Wall Check") then
 			local Params = RaycastParams.new()
 			Params.FilterDescendantsInstances = { Map, TChar }
 			Params.FilterType = Enum.RaycastFilterType.Whitelist
@@ -132,16 +131,21 @@ local function GetClosestPlayer()
 end
 
 local FovCircle = nil
+local WillDraw = true
+local function DrawFov()
+	if not WillDraw then return end
+	FovCircle = Drawing.new("Circle")
+	FovCircle.Thickness = 1
+	FovCircle.Color = Color3.fromRGB(255,0,0)
+	FovCircle.Filled = false
+	FovCircle.Visible = true
+	FovCircle.Radius = Relief.getSetting("Aimbot", "FOV")
+	FovCircle.Position = Vector2.new(Camera.ViewportSize.X / 2 , Camera.ViewportSize.Y / 2)
+end
+
 Relief.addModule("Combat", "Aimbot", function(Toggled)
     if Toggled then
-		FovCircle = Drawing.new("Circle")
-		FovCircle.Thickness = 1
-		FovCircle.Color = Color3.fromRGB(255,0,0)
-		FovCircle.Filled = false
-		FovCircle.Visible = true
-		FovCircle.Radius = AimbotFov
-		FovCircle.Position = Vector2.new(Camera.ViewportSize.X / 2 , Camera.ViewportSize.Y / 2)
-		
+		DrawFov()
         Thread:New("Aimbot", function()
             RunService.RenderStepped:Wait()
             
@@ -158,14 +162,62 @@ Relief.addModule("Combat", "Aimbot", function(Toggled)
             local target2D = Vector2.new(screenPos.X, screenPos.Y)
 			
 			local delta = target2D - screenCenter
-            delta *= AimbotStrength
-            mousemoverel(delta.X, delta.Y)
+            delta *= Relief.getSetting("Aimbot", "Strength")
+
+            VirtualInputManager:SendMouseMoveDeltaEvent(
+                delta.X,
+                delta.Y,
+                game
+            )
         end)
   	else
 		Thread:Disconnect("Aimbot")
 		if FovCircle then FovCircle:Remove() end
   	end
-end)
+end, {
+	{
+		["Type"] = "Dropdown",
+		["Options"] = {"Head", "Closest"},
+		["Default"] = "Head",
+		["Title"] = "Target Part",
+		["Callback"] = function(Option)end
+	},
+	{
+		["Type"] = "Slider",
+		["Default"] = 200,
+		["Min"] = 0,
+		["Max"] = 1000,
+		["Title"] = "FOV",
+		["Callback"] = function(Num)
+			if FovCircle then FovCircle:Remove() end
+			DrawFov()
+		end
+	},
+	{
+		["Type"] = "Slider",
+		["Default"] = 0.25,
+		["Min"] = 0,
+		["Max"] = 1,
+		["Title"] = "Strength",
+		["Callback"] = function(Num)end
+	},
+	{
+		["Type"] = "Toggle",
+		["Title"] = "Wall Check",
+		["Default"] = true,
+		["Callback"] = function(Toggled)end
+	},
+	{
+		["Type"] = "Toggle",
+		["Title"] = "Draw FOV",
+		["Default"] = true,
+		["Callback"] = function(Toggled)
+			if not Toggled and FovCircle then
+				FovCircle:Remove()
+			end
+		end
+	}
+})
 
 local ViewModels
 task.spawn(function()
@@ -189,27 +241,31 @@ local function GetPlayerWeapons()
 	return Weapons
 end
 
+local function MouseClick()
+	VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
+	task.wait()
+	VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0)
+end
+
 local KatanaCheck = false
+local TriggerDelay = 0.05
+
 Relief.addModule("Combat", "TriggerBot", function(Toggled)
     if Toggled then
         Thread:New("TriggerBot", function()
             task.wait()
 
-			local function RELEASE()
-				mouse1release()
-			end
+			if Camera.CameraType ~= Enum.CameraType.Scriptable then return end
 
-			if Camera.CameraType ~= Enum.CameraType.Scriptable then return RELEASE() end
-
-			local C = LocalPlayer.Character if not C then return RELEASE() end
-			local H = C:FindFirstChildOfClass("Humanoid") if not H or H.Health <= 0 then return RELEASE() end
+			local C = LocalPlayer.Character if not C then return end
+			local H = C:FindFirstChildOfClass("Humanoid") if not H or H.Health <= 0 then return end
             
             local Target = Mouse.Target
-			if not Target then return RELEASE() end
+			if not Target then return end
 
 			if KatanaCheck then
 				local Weapons = GetPlayerWeapons()
-				if not Weapons then return RELEASE() end
+				if not Weapons then return end
 
 				local HasKatana = false
 				for _, Weapon in Weapons do
@@ -219,27 +275,26 @@ Relief.addModule("Combat", "TriggerBot", function(Toggled)
 					end
 				end
 
-				if HasKatana then return RELEASE() end
+				if HasKatana then return end
 			end
 
 			local Char = Target.Parent
 			local Hum = Char:FindFirstChildOfClass("Humanoid")
-			if not Hum or Hum.Health <= 0 then return RELEASE() end
+			if not Hum or Hum.Health <= 0 then return end
 			
 			local TRoot = Char:FindFirstChild("HumanoidRootPart")
 			if not TRoot then return end
 			if TRoot.Velocity.Magnitude >= 75 then return end
 
 			local Player = Players:GetPlayerFromCharacter(Char)
-			if not Player then return RELEASE() end
+			if not Player then return end
 
 			local Enemies = GetEnemies()
-			if not Enemies or not table.find(Enemies, Player) then return RELEASE() end
+			if not Enemies or not table.find(Enemies, Player) then return end
 			
 			task.spawn(function()
-				task.wait(0.05)
-				mouse1press() 
-				mouse1release()
+				task.wait(TriggerDelay)
+				MouseClick()
 			end)
         end)
   	else
@@ -249,56 +304,81 @@ end, {
 	{
 		["Type"] = "Toggle",
 		["Title"] = "KatanaCheck",
+		["Default"] = true,
 		["Callback"] = function(Toggled)
 			KatanaCheck = Toggled
+		end
+	},
+	{
+		["Type"] = "Slider",
+		["Title"] = "Delay",
+		["Default"] = 0.05,
+		["Min"] = 0,
+		["Max"] = 0.3,
+		["Callback"] = function(Num)
+			TriggerDelay = Num
 		end
 	}
 })
 
-local ESPConnections = {}
-local HighlightInstances = {}
+local Old = {}
 
 Relief.addModule("Render", "ESP", function(Toggled)
 	if Toggled then
-		local function HandleCharacter(Char)
-			if not Char then return end
-			
-			local Highlight = Instance.new("Highlight")
-			Highlight.OutlineTransparency = 0.75
-			Highlight.OutlineColor = Color3.new(0, 0, 0)
-			Highlight.FillTransparency = 0.75
-			Highlight.Parent = Char
+		Thread:New("ESP", function()
+			task.wait()
 
-			table.insert(HighlightInstances, Highlight)
-		end
-
-		local Enemies = nil
-		repeat Enemies = GetEnemies() task.wait() until Enemies ~= nil
-
-		local function HandlePlayer(Player)
-			if not table.find(Enemies, Player) then return end
-			HandleCharacter(Player.Character)
-			table.insert(ESPConnections, Player.CharacterAdded:Connect(HandleCharacter))
-		end
-
-		for _, Player in Players:GetPlayers() do
-			HandlePlayer(Player)
-		end
-
-		table.insert(ESPConnections, Players.PlayerAdded:Connect(HandlePlayer))
-	else
-		for _, C in ESPConnections do
-			C:Disconnect()
-		end
-
-		for _, H in HighlightInstances do
-			if H then
-				H:Destroy()
+			for _, Box in Old do
+				Box:Remove()
 			end
+
+			Old = {}
+
+			local Enemies = GetEnemies()
+			if not Enemies then return end
+
+			for _, Enemy in Enemies do
+				local Char = Enemy.Character
+				if not Char then continue end
+
+				local Hum = Char:FindFirstChildOfClass("Humanoid")
+				if not Hum or Hum.Health <= 0 then continue end
+
+				local Root = Char:FindFirstChild("HumanoidRootPart")
+				if not Root then continue end
+
+				local CF, Size = Char:GetBoundingBox()
+
+					local Top = CF.Position + Vector3.new(0, Size.Y / 2, 0)
+					local Bottom = CF.Position - Vector3.new(0, Size.Y / 2, 0)
+
+					local Top2D, OnTop = Camera:WorldToViewportPoint(Top)
+					local Bot2D, OnBot = Camera:WorldToViewportPoint(Bottom)
+					if not (OnTop and OnBot) then continue end
+
+					local Height = math.abs(Top2D.Y - Bot2D.Y)
+					local Width = Height * 0.6
+
+					local Box = Drawing.new("Square")
+					Box.Thickness = 1
+					Box.Color = Color3.new(1, 0, 0)
+					Box.Size = Vector2.new(Width, Height)
+					Box.Position = Vector2.new(
+						Top2D.X - (Width / 2),
+						Top2D.Y
+					)
+
+				table.insert(Old, Box)
+			end
+		end)
+	else
+		Thread:Disconnect("ESP")
+
+		for _, Box in Old do
+			Box:Remove()
 		end
 
-		HighlightInstances = {}
-		ESPConnections = {}
+		Old = {}
 	end
 end)
 
