@@ -252,7 +252,7 @@ end)
 
 local function GetPlayerWeapons()
 	local Weapons = {}
-	if not ViewModels then return Weaposn end
+	if not ViewModels then return Weapons end
 	
 	for _, Model in ViewModels:GetChildren() do
 		if Model.Name == "FirstPerson" then continue end
@@ -263,6 +263,7 @@ local function GetPlayerWeapons()
 			Name = Data[2]
 		})
 	end
+	
 	return Weapons
 end
 
