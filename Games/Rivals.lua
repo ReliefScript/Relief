@@ -194,6 +194,26 @@ Relief.addModule("Combat", "Aimbot", function(Toggled)
 				camPos,
 				camPos + smoothLook
 			)
+
+			local Char = LocalPlayer.Character
+			if not Char then return end
+			
+			local Root = Char:FindFirstChild("HumanoidRootPart")
+			if not Root then return end
+			
+			local rootPos = Root.Position
+			local targetPos = Target.Position
+			
+			local flatDir = Vector3.new(
+				targetPos.X - rootPos.X,
+				0,
+				targetPos.Z - rootPos.Z
+			)
+			
+			local desiredCF = CFrame.lookAt(rootPos, rootPos + flatDir)
+			local strength = Relief.getSetting("Aimbot", "Strength")
+			
+			Root.CFrame = Root.CFrame:Lerp(desiredCF, strength)
         end)
   	else
 		Thread:Disconnect("Aimbot")
