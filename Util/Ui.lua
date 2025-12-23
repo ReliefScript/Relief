@@ -1222,7 +1222,7 @@ Library.Save = function(Name)
 				table.insert(Settings, {
 					Title = Setting.Title,
 					Value = Setting.Value,
-					Bind = Setting.Keybind.Name
+					Bind = Setting.Keybind and Setting.Keybind.Name or "None"
 				})
 			end
 			
