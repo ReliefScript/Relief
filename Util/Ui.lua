@@ -4,6 +4,10 @@ local Lighting = game:GetService("Lighting")
 local TextService = game:GetService("TextService")
 local CoreGui = game:GetService("CoreGui")
 local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
+local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
 
 local Recolorable = {}
 local Connections = {}
@@ -68,6 +72,18 @@ CommandBarPadding.PaddingTop = UDim.new(0.2, 0)
 CommandBarPadding.PaddingBottom = UDim.new(0.2, 0)
 CommandBarPadding.PaddingLeft = UDim.new(0.01, 0)
 
+local Arrow = Instance.new("ImageButton")
+Arrow.Parent = Holder
+Arrow.BackgroundTransparency = 1
+Arrow.AnchorPoint = Vector2.new(0.5, 0)
+Arrow.Position = UDim2.new(0.5, 0, 1, 0)
+Arrow.Image = "rbxassetid://16844851226"
+Arrow.Size = UDim2.new(1, 0, 1, 0)
+Arrow.Rotation = 180
+
+local ArrowRatio = Instance.new("UIAspectRatioConstraint")
+ArrowRatio.Parent = Arrow
+
 local ClickGui = Instance.new("Frame")
 ClickGui.Parent = Screen
 ClickGui.ZIndex = 0
@@ -112,115 +128,6 @@ ModuleExpand.Position = UDim2.new(0.85, 0, 0.13, 0)
 
 local ExpandRatio = Instance.new("UIAspectRatioConstraint")
 ExpandRatio.Parent = ModuleExpand
-
-local ToggleSetting = Instance.new("Frame")
-ToggleSetting.BackgroundTransparency = 1
-ToggleSetting.Size = UDim2.new(0.8, 0, 0, 50)
-ToggleSetting.Name = "ToggleSetting"
-
-local ToggleTitle = Instance.new("TextLabel")
-ToggleTitle.Parent = ToggleSetting
-ToggleTitle.TextScaled = true
-ToggleTitle.TextXAlignment = Enum.TextXAlignment.Left
-ToggleTitle.FontFace = Font.new("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
-ToggleTitle.TextColor3 = Color3.new(1, 1, 1)
-ToggleTitle.Size = UDim2.new(0.7, 0, 25, 0)
-ToggleTitle.Name = "Title"
-ToggleTitle.BackgroundTransparency = 1
-ToggleTitle.Position = UDim2.new(0.3, 0, 0.5, 0)
-ToggleTitle.AnchorPoint = Vector2.new(0, 0.5)
-
-local ToggleTitlePadding = Instance.new("UIPadding")
-ToggleTitlePadding.Parent = ToggleTitle
-ToggleTitlePadding.PaddingTop = UDim.new(0.1, 0);
-ToggleTitlePadding.PaddingBottom = UDim.new(0.1, 0);
-
-local ToggleTitleRatio = Instance.new("UIAspectRatioConstraint")
-ToggleTitleRatio.Parent = ToggleTitle
-ToggleTitleRatio.AspectRatio = 4.03
-
-local ToggleBar = Instance.new("TextButton")
-ToggleBar.Parent = ToggleSetting
-ToggleBar.BorderSizePixel = 0
-ToggleBar.AutoButtonColor = false
-ToggleBar.BackgroundColor3 = Color3.fromRGB(167, 167, 167)
-ToggleBar.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
-ToggleBar.AnchorPoint = Vector2.new(0.5, 0.5)
-ToggleBar.Size = UDim2.new(0.15, 0, 0.4, 0)
-ToggleBar.Name = "Bar"
-ToggleBar.Text = ""
-ToggleBar.Position = UDim2.new(0.1, 0, 0.5, 0)
-
-local BarCorner = Instance.new("UICorner")
-BarCorner.Parent = ToggleBar
-BarCorner.CornerRadius = UDim.new(1, 0)
-
-local BarButton = Instance.new("TextButton")
-BarButton.Parent = ToggleBar
-BarButton.BorderSizePixel = 0
-BarButton.AutoButtonColor = false
-BarButton.BackgroundColor3 = Color3.new(1, 1, 1)
-BarButton.AnchorPoint = Vector2.new(0.5, 0.5)
-BarButton.Size = UDim2.new(1.75, 0, 1.75, 0)
-BarButton.Name = "Button"
-BarButton.BorderColor3 = Color3.new(0, 0, 0)
-BarButton.Position = UDim2.new(0, 0, 0.5, 0)
-BarButton.Text = ""
-
-local BarButtonCorner = Instance.new("UICorner")
-BarButtonCorner.Parent = BarButton
-BarButtonCorner.CornerRadius = UDim.new(1, 0)
-
-local BarButtonRatio = Instance.new("UIAspectRatioConstraint", BarButton)
-BarButtonRatio.Parent = BarButton
-
-local ToggleBarRatio = Instance.new("UIAspectRatioConstraint")
-ToggleBarRatio.Parent = ToggleBar
-ToggleBarRatio.AspectRatio = 2.157
-
-local TextBoxSetting = Instance.new("Frame")
-TextBoxSetting.BackgroundTransparency = 1
-TextBoxSetting.Size = UDim2.new(0.8, 0, 0, 50)
-TextBoxSetting.Name = "TextBoxSetting"
-
-local TextBox = Instance.new("TextBox")
-TextBox.Parent = TextBoxSetting
-TextBox.BorderSizePixel = 0
-TextBox.TextXAlignment = Enum.TextXAlignment.Left
-TextBox.TextScaled = true
-TextBox.BackgroundColor3 = Color3.new(0, 0, 0)
-TextBox.TextColor3 = Color3.new(1, 1, 1)
-TextBox.FontFace = Font.new("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
-TextBox.BackgroundTransparency = 0.5
-TextBox.Size = UDim2.new(0.8, 0, 0, 50)
-TextBox.Name = "TextBox"
-TextBox.Size = UDim2.new(1, 0, 0.75, 0)
-TextBox.Position = UDim2.new(0, 0, 0.25, 0)
-
-local SettingCorner = Instance.new("UICorner")
-SettingCorner.Parent = TextBox
-SettingCorner.CornerRadius = UDim.new(0.2, 0)
-
-local SettingPadding = Instance.new("UIPadding")
-SettingPadding.Parent = TextBox
-SettingPadding.PaddingTop = UDim.new(0.2, 0)
-SettingPadding.PaddingRight = UDim.new(0.1, 0)
-SettingPadding.PaddingBottom = UDim.new(0.2, 0)
-SettingPadding.PaddingLeft = UDim.new(0.1, 0)
-
-local TBTitle = Instance.new("TextLabel")
-TBTitle.Parent = TextBoxSetting
-TBTitle.TextScaled = true
-TBTitle.TextXAlignment = Enum.TextXAlignment.Left
-TBTitle.FontFace = Font.new("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
-TBTitle.TextColor3 = Color3.new(1, 1, 1)
-TBTitle.Size = UDim2.new(1, 0, 0.2, 0)
-TBTitle.Name = "Title"
-TBTitle.BackgroundTransparency = 1
-
-local TitleRatio = Instance.new("UIAspectRatioConstraint")
-TitleRatio.Parent = TBTitle
-TitleRatio.AspectRatio = 11.502
 
 local Settings = Instance.new("CanvasGroup")
 Settings.BackgroundTransparency = 1
@@ -838,39 +745,136 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 		for _, Config in SettingConfig do
 			local _T = Config["Type"]
 			if _T == "TextBox" then
-				local NewTextBox = TextBoxSetting:Clone()
-				NewTextBox.Parent = Settings.SF
-				NewTextBox.TextBox.PlaceholderText = Config["Placeholder"]
-				NewTextBox.Title.Text = Config["Title"]
+				local TextBoxSetting = Instance.new("Frame")
+				TextBoxSetting.BackgroundTransparency = 1
+				TextBoxSetting.Size = UDim2.new(0.8, 0, 0, 60)
+				TextBoxSetting.Name = "TextBoxSetting"
+				TextBoxSetting.Parent = Settings.SF
+
+				local TextBox = Instance.new("TextBox")
+				TextBox.Parent = TextBoxSetting
+				TextBox.BorderSizePixel = 0
+				TextBox.TextXAlignment = Enum.TextXAlignment.Left
+				TextBox.TextScaled = true
+				TextBox.BackgroundColor3 = Color3.new(0, 0, 0)
+				TextBox.TextColor3 = Color3.new(1, 1, 1)
+				TextBox.FontFace = Font.new("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+				TextBox.BackgroundTransparency = 0.5
+				TextBox.Size = UDim2.new(0.8, 0, 0, 50)
+				TextBox.Name = "TextBox"
+				TextBox.Size = UDim2.new(1, 0, 0.6, 0)
+				TextBox.Position = UDim2.new(0, 0, 0.4, 0)
+				TextBox.PlaceholderText = Config["Placeholder"]
+				TextBox.Text = ""
+
+				local SettingCorner = Instance.new("UICorner")
+				SettingCorner.Parent = TextBox
+				SettingCorner.CornerRadius = UDim.new(0.2, 0)
+
+				local SettingPadding = Instance.new("UIPadding")
+				SettingPadding.Parent = TextBox
+				SettingPadding.PaddingTop = UDim.new(0.2, 0)
+				SettingPadding.PaddingRight = UDim.new(0.1, 0)
+				SettingPadding.PaddingBottom = UDim.new(0.2, 0)
+				SettingPadding.PaddingLeft = UDim.new(0.1, 0)
+
+				local Title = Instance.new("TextLabel")
+				Title.Parent = TextBoxSetting
+				Title.BackgroundTransparency = 1
+				Title.TextScaled = true
+				Title.Text = Config["Title"]
+				Title.FontFace = Font.new("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+				Title.TextColor3 = Color3.new(1, 1, 1)
+				Title.TextXAlignment = Enum.TextXAlignment.Left
+				Title.Size = UDim2.new(0.5, 0, 0.3, 0)
+				Title.Position = UDim2.new(0, 0, 0.05, 0)
+
+				local TitleRatio = Instance.new("UIAspectRatioConstraint")
+				TitleRatio.Parent = TBTitle
+				TitleRatio.AspectRatio = 11.502
 
 				local SettingTree = {
 					Title = Config.Title,
 					Type = _T,
-					Value = NewTextBox.TextBox.Text
+					Value = TextBox.Text
 				}
 
 				SettingTree.Load = function(Value)
 					SettingTree.Value = Value
-					NewTextBox.TextBox.Text = Value
+					TextBox.Text = Value
 					Config.Callback(Value)
 				end
 
 				table.insert(Tree.Settings, SettingTree)
 
-				Connections[#Connections + 1] = NewTextBox.TextBox.FocusLost:Connect(function()
-					Config["Callback"](NewTextBox.TextBox.Text)
-					SettingTree.Value = NewTextBox.TextBox.Text
+				Connections[#Connections + 1] = TextBox.FocusLost:Connect(function()
+					Config["Callback"](TextBox.Text)
+					SettingTree.Value = TextBox.Text
 					if Library.SaveName and not Library.Killed then Library.Save(Library.SaveName) end
 				end)
 			elseif _T == "Toggle" then
-				local NewToggle = ToggleSetting:Clone()
-				NewToggle.Parent = Settings.SF
-				NewToggle.Title.Text = Config["Title"]
+				local ToggleSetting = Instance.new("Frame")
+				ToggleSetting.BackgroundTransparency = 1
+				ToggleSetting.Size = UDim2.new(0.8, 0, 0, 50)
+				ToggleSetting.Parent = Settings.SF
 
-				local Bar = NewToggle.Bar
-				local Button = Bar.Button
-				table.insert(Recolorable, Button)
-				table.insert(Recolorable, Bar)
+				local Title = Instance.new("TextLabel")
+				Title.Parent = ToggleSetting
+				Title.BackgroundTransparency = 1
+				Title.TextScaled = true
+				Title.Text = Config["Title"]
+				Title.FontFace = Font.new("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+				Title.TextColor3 = Color3.new(1, 1, 1)
+				Title.TextXAlignment = Enum.TextXAlignment.Left
+				Title.Size = UDim2.new(0.5, 0, 0.35, 0)
+
+				local ToggleTitlePadding = Instance.new("UIPadding")
+				ToggleTitlePadding.Parent = ToggleTitle
+				ToggleTitlePadding.PaddingTop = UDim.new(0.1, 0);
+				ToggleTitlePadding.PaddingBottom = UDim.new(0.1, 0);
+
+				local ToggleTitleRatio = Instance.new("UIAspectRatioConstraint")
+				ToggleTitleRatio.Parent = ToggleTitle
+				ToggleTitleRatio.AspectRatio = 4.03
+
+				local ToggleBar = Instance.new("TextButton")
+				ToggleBar.Parent = ToggleSetting
+				ToggleBar.BorderSizePixel = 0
+				ToggleBar.AutoButtonColor = false
+				ToggleBar.BackgroundColor3 = Color3.fromRGB(167, 167, 167)
+				ToggleBar.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+				ToggleBar.AnchorPoint = Vector2.new(0.5, 0)
+				ToggleBar.Size = UDim2.new(0.15, 0, 0.4, 0)
+				ToggleBar.Text = ""
+				ToggleBar.Position = UDim2.new(0.1, 0, 0.6, 0)
+				table.insert(Recolorable, ToggleBar)
+
+				local BarCorner = Instance.new("UICorner")
+				BarCorner.Parent = ToggleBar
+				BarCorner.CornerRadius = UDim.new(1, 0)
+
+				local BarButton = Instance.new("TextButton")
+				BarButton.Parent = ToggleBar
+				BarButton.BorderSizePixel = 0
+				BarButton.AutoButtonColor = false
+				BarButton.BackgroundColor3 = Color3.new(1, 1, 1)
+				BarButton.AnchorPoint = Vector2.new(0.5, 0.5)
+				BarButton.Size = UDim2.new(1.75, 0, 1.75, 0)
+				BarButton.BorderColor3 = Color3.new(0, 0, 0)
+				BarButton.Position = UDim2.new(0, 0, 0.5, 0)
+				BarButton.Text = ""
+				table.insert(Recolorable, BarButton)
+
+				local BarButtonCorner = Instance.new("UICorner")
+				BarButtonCorner.Parent = BarButton
+				BarButtonCorner.CornerRadius = UDim.new(1, 0)
+
+				local BarButtonRatio = Instance.new("UIAspectRatioConstraint", BarButton)
+				BarButtonRatio.Parent = BarButton
+
+				local ToggleBarRatio = Instance.new("UIAspectRatioConstraint")
+				ToggleBarRatio.Parent = ToggleBar
+				ToggleBarRatio.AspectRatio = 2.157
 
 				local function ApplyBrightness(Col, Amplitude)
 					return Color3.new(Col.R * Amplitude, Col.G * Amplitude, Col.B * Amplitude)
@@ -882,41 +886,228 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 					Value = false
 				}
 
-				table.insert(Tree.Settings, SettingTree)
-
 				local _Toggle = false
 				local function Toggled(isLoading)
 					_Toggle = not _Toggle
 					SettingTree.Value = _Toggle
 					if Library.SaveName and not Library.Killed and not isLoading then Library.Save(Library.SaveName) end
 					if _Toggle then
-						TweenService:Create(Button, TInfo, {
+						TweenService:Create(BarButton, TInfo, {
 							BackgroundColor3 = ThemeColor,
 							Position = UDim2.new(1, 0, 0.5, 0),
 						}):Play()
-						TweenService:Create(Bar, TInfo, {
+						TweenService:Create(ToggleBar, TInfo, {
 							BackgroundColor3 = ApplyBrightness(ThemeColor, 0.8),
 						}):Play()
 					else
-						TweenService:Create(Button, TInfo, {
+						TweenService:Create(BarButton, TInfo, {
 							BackgroundColor3 = Color3.fromRGB(255, 255, 255),
 							Position = UDim2.new(0, 0, 0.5, 0),
 						}):Play()
-						TweenService:Create(Bar, TInfo, {
+						TweenService:Create(ToggleBar, TInfo, {
 							BackgroundColor3 = Color3.fromRGB(166, 166, 166),
 						}):Play()
 					end
 					Config["Callback"](_Toggle)
 				end
 
-				SettingTree.Load = function(Value)
-					if Value then
-						Toggled(1)
-					end
+				if Config["Default"] then
+					Toggled(1)
 				end
 
-				Button.MouseButton1Click:Connect(Toggled)
-				Bar.MouseButton1Click:Connect(Toggled)
+				SettingTree.Load = function(Value)
+					_Toggle = Value
+					SettingTree.Value = _Toggle
+					if _Toggle then
+						TweenService:Create(BarButton, TInfo, {
+							BackgroundColor3 = ThemeColor,
+							Position = UDim2.new(1, 0, 0.5, 0),
+						}):Play()
+						TweenService:Create(ToggleBar, TInfo, {
+							BackgroundColor3 = ApplyBrightness(ThemeColor, 0.8),
+						}):Play()
+					else
+						TweenService:Create(BarButton, TInfo, {
+							BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+							Position = UDim2.new(0, 0, 0.5, 0),
+						}):Play()
+						TweenService:Create(ToggleBar, TInfo, {
+							BackgroundColor3 = Color3.fromRGB(166, 166, 166),
+						}):Play()
+					end
+					Config["Callback"](_Toggle)
+				end
+
+				table.insert(Tree.Settings, SettingTree)
+
+				Connections[#Connections + 1] = BarButton.MouseButton1Click:Connect(Toggled)
+				Connections[#Connections + 1] = ToggleBar.MouseButton1Click:Connect(Toggled)
+			elseif _T == "Dropdown" then
+				local Dropdown = Instance.new("Frame")
+				Dropdown.BackgroundTransparency = 1
+				Dropdown.Size = UDim2.new(0.8, 0, 0, 50)
+				Dropdown.Parent = Settings.SF
+				Dropdown.ZIndex = 9
+
+				local Selected = Instance.new("TextButton")
+				Selected.Parent = Dropdown
+				Selected.Size = UDim2.new(1, 0, 0.75, 0)
+				Selected.TextScaled = true
+				Selected.Text = Config["Title"] .. " · " .. Config["Default"]
+				Selected.BackgroundColor3 = Color3.new(0, 0, 0)
+				Selected.BackgroundTransparency = 0--0.85
+				Selected.FontFace = Font.new("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+				Selected.TextColor3 = Color3.new(1, 1, 1)
+				Selected.BackgroundColor3 = ThemeColor
+				Selected.BorderSizePixel = 0
+				Selected.TextXAlignment = Enum.TextXAlignment.Left
+				Selected.ZIndex = 10
+				table.insert(Recolorable, Selected)
+
+				local SelectedPadding = Instance.new("UIPadding")
+				SelectedPadding.Parent = Selected
+				SelectedPadding.PaddingTop = UDim.new(0.2, 0)
+				SelectedPadding.PaddingBottom = UDim.new(0.2, 0)
+				SelectedPadding.PaddingLeft = UDim.new(0.1, 0)
+				SelectedPadding.PaddingRight = UDim.new(0.1, 0)
+
+				local Dropped = false
+				local OptionInstances = {}
+
+				local SettingTree = {
+					Title = Config.Title,
+					Type = _T,
+					Value = Config.Default
+				}
+
+				SettingTree.Load = function(Value)
+					Selected.Text = Config["Title"] .. " · " .. Value
+					SettingTree.Value = Value
+					Config.Callback(Value)
+				end
+
+				table.insert(Tree.Settings, SettingTree)
+
+				for _, Option in Config["Options"] do
+					local Clone = Selected:Clone()
+					Clone.Parent = Dropdown
+					Clone.Position = UDim2.new(Selected.Position.X.Scale, 0, Selected.Position.Y.Scale + (_ * Selected.Size.Y.Scale), 0)
+					Clone.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+					Clone.Text = Option
+					Clone.Visible = false
+					table.insert(OptionInstances, Clone)
+
+					Connections[#Connections + 1] = Clone.MouseButton1Down:Connect(function()
+						Selected.Text = Config["Title"] .. " · " .. Option
+						SettingTree.Value = Option
+						Config.Callback(Option)
+
+						Dropped = false
+						for _, Inst in OptionInstances do
+							Inst.Visible = false
+						end
+					end)
+				end
+				
+				Selected.MouseButton1Down:Connect(function()
+					Dropped = not Dropped
+					for _, Inst in OptionInstances do
+						Inst.Visible = Dropped
+					end
+				end)
+			elseif _T == "Slider" then
+				local Slider = Instance.new("Frame")
+				Slider.BackgroundTransparency = 1
+				Slider.Size = UDim2.new(0.8, 0, 0, 50)
+				Slider.Parent = Settings.SF
+
+				local Title = Instance.new("TextLabel")
+				Title.Parent = Slider
+				Title.BackgroundTransparency = 1
+				Title.TextScaled = true
+				Title.Text = Config["Title"]
+				Title.FontFace = Font.new("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+				Title.TextColor3 = Color3.new(1, 1, 1)
+				Title.TextXAlignment = Enum.TextXAlignment.Left
+				Title.Size = UDim2.new(0.5, 0, 0.35, 0)
+
+				local Display = Instance.new("TextLabel")
+				Display.Parent = Slider
+				Display.BackgroundTransparency = 1
+				Display.TextScaled = true
+				Display.FontFace = Font.new("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+				Display.TextColor3 = Color3.new(1, 1, 1)
+				Display.TextXAlignment = Enum.TextXAlignment.Right
+				Display.Size = UDim2.new(0.5, 0, 0.35, 0)
+				Display.Position = UDim2.new(0.5, 0, 0, 0)
+				Display.Text = Config["Default"]
+
+				local Bar = Instance.new("Frame")
+				Bar.Parent = Slider
+				Bar.Size = UDim2.new(0.8, 0, 0.1, 0)
+				Bar.AnchorPoint = Vector2.new(0.5, 0)
+				Bar.Position = UDim2.new(0.5, 0, 0.65, 0)
+				Bar.BorderSizePixel = 0
+				Bar.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+
+				local Button = Instance.new("TextButton")
+				Button.Parent = Bar
+				Button.Size = UDim2.new(1, 0, 3, 0)
+				Button.Text = ""
+				Button.AnchorPoint = Vector2.new(0.5, 0.5)
+				Button.Position = UDim2.new(0, 0, 0.5, 0)
+				Button.BackgroundColor3 = ThemeColor
+				table.insert(Recolorable, Button)
+
+				local ButtonCorner = Instance.new("UICorner")
+				ButtonCorner.Parent = Button
+				ButtonCorner.CornerRadius = UDim.new(1, 0)
+
+				local ButtonRatio = Instance.new("UIAspectRatioConstraint")
+				ButtonRatio.Parent = Button
+
+				local Dragging = false
+
+				Connections[#Connections + 1] = Button.InputBegan:Connect(function(Input)
+					if Input.UserInputType == Enum.UserInputType.MouseButton1 then
+						Dragging = true
+					end
+				end)
+
+				Connections[#Connections + 1] = Button.InputEnded:Connect(function(Input)
+					if Input.UserInputType == Enum.UserInputType.MouseButton1 then
+						Dragging = false
+					end
+				end)
+
+				local SettingTree = {
+					Title = Config.Title,
+					Type = _T,
+					Value = Config.Default
+				}
+
+				SettingTree.Load = function(Value)
+					Button.Position = UDim2.new((Value / Config["Max"]), 0, 0.5, 0)
+					Display.Text = Value
+					Config["Callback"](Value)
+					SettingTree.Value = Value
+				end
+
+				table.insert(Tree.Settings, SettingTree)
+
+				Connections[#Connections + 1] = UserInputService.InputChanged:Connect(function(Input)
+					if Dragging and Input.UserInputType == Enum.UserInputType.MouseMovement then
+						local MouseX = math.clamp(Mouse.X - Bar.AbsolutePosition.X, 0, Bar.AbsoluteSize.X)
+						local Value = Config["Min"] + (MouseX / Bar.AbsoluteSize.X) * (Config["Max"] - Config["Min"])
+						Value = math.floor(Value * 100) / 100
+						Display.Text = Value
+						Button.Position = UDim2.new((Value / Config["Max"]), 0, 0.5, 0)
+						SettingTree.Value = Value
+						Config["Callback"](Value)
+					end
+				end)
+
+				Button.Position = UDim2.new((Config["Default"] / Config["Max"]), 0, 0.5, 0)
 			end
 		end
 	end
@@ -932,6 +1123,17 @@ Library.getModule = function(Query)
 			if Module.Name:lower() == Query:lower() then
 				return Module
 			end
+		end
+	end
+end
+
+Library.getSetting = function(ModuleName, SettingName)
+	local Module = Library.getModule(ModuleName)
+	if not Module then return end
+
+	for _, Setting in Module.Settings do
+		if Setting.Title == SettingName then
+			return Setting.Value
 		end
 	end
 end
@@ -996,6 +1198,9 @@ Library.Recolor = function(NewColor)
 		if Inst:IsA("Frame") then
 			Inst.BackgroundColor3 = NewColor
 		end
+		if Inst:IsA("UIStroke") then
+			Inst.Color = NewColor
+		end
 	end
 end
 
@@ -1013,7 +1218,8 @@ Library.Save = function(Name)
 			for _, Setting in Module.Settings do
 				table.insert(Settings, {
 					Title = Setting.Title,
-					Value = Setting.Value
+					Value = Setting.Value,
+					Bind = Setting.Keybind
 				})
 			end
 			
@@ -1031,11 +1237,13 @@ Library.Load = function(Name)
 
 		local JsonData = HttpService:JSONDecode(readfile(FileName))
 		for Name, Data in JsonData do
-			local Toggled, SavedSettings = Data[1], Data[2]
+			local Toggled, SavedSettings, Bind = Data[1], Data[2], Data[3]
 			if Name == "KillScript" then continue end
 			
 			local Module = Library.getModule(Name)
 			if not Module then continue end
+
+			Module.Keybind = Bind
 
 			if Toggled and not Module["Default"] then
 				Module["ToggleFunction"](1)
@@ -1086,11 +1294,13 @@ local Info = TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out
 local Intro = TweenService:Create(Holder, Info, { Position = UDim2.new(0, 0, 0.05, 1) })
 local Outro = TweenService:Create(Holder, Info, { Position = UDim2.new(0, 0, 0, -3) })
 
+local Toggled = false
 Connections[#Connections + 1] = UserInputService.InputEnded:Connect(function(Input, GPE)
 	if GPE then return end
 	if table.find(Library.CommandBarBinds, Input.KeyCode) then
 		Intro:Play()
 		CommandBar:CaptureFocus()
+		Toggled = true
 	end
 end)
 
@@ -1102,6 +1312,7 @@ Connections[#Connections + 1] = CommandBar.FocusLost:Connect(function(enterPress
 	
 	if not enterPressed then return end
 
+	Toggled = false
 	local Split = Command:split(" ")
 	local Command = Library.GetCommand(Split[1])
 	if not Command then return end
@@ -1142,6 +1353,30 @@ Connections[#Connections + 1] = CommandBar:GetPropertyChangedSignal("Text"):Conn
 		
 	local Complete = GetComplete()
 	AutoComplete.Text = New .. Complete:sub(New:len() + 1)
+end)
+
+Arrow.MouseButton1Down:Connect(function()
+	Toggled = not Toggled
+	if Toggled then
+		Arrow.Rotation = 0
+		Intro:Play()
+		CommandBar:CaptureFocus()
+	else
+		Arrow.Rotation = 180
+		local Command = CommandBar.Text
+		CommandBar.Text = ""
+		Outro:Play()
+		CommandBar:ReleaseFocus()
+		
+		if not enterPressed then return end
+
+		local Split = Command:split(" ")
+		local Command = Library.GetCommand(Split[1])
+		if not Command then return end
+
+		table.remove(Split, 1)
+		Command.Callback(Split)
+	end
 end)
 
 Library.ModuleList = ModuleList
