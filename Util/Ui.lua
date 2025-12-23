@@ -95,6 +95,16 @@ ClickGui.Size = UDim2.new(1, 0, 1, 0)
 ClickGui.Position = UDim2.new(0.5, 0, 0.5, 0)
 ClickGui.Name = "ClickGui"
 
+local Watermark = Instance.new("ImageLabel")
+Watermark.Parent = ClickGui
+Watermark.ImageTransparency = 0.5
+Watermark.AnchorPoint = Vector2.new(0.5, 0.5)
+Watermark.Image = "rbxassetid://17640797571"
+Watermark.Size = UDim2.new(0.1278, 0, 0.7186, 0)
+Watermark.Name = "Watermark"
+Watermark.BackgroundTransparency = 1
+Watermark.Position = UDim2.new(0.0639, 0, 0.933, 0)
+
 local Module = Instance.new("Frame")
 Module.BorderSizePixel = 0
 Module.BackgroundTransparency = 1
@@ -348,16 +358,6 @@ Hud.Parent = Screen
 Hud.BackgroundTransparency = 1
 Hud.Size = UDim2.new(1, 0, 1, 0)
 Hud.Name = "Hud"
-
-local Watermark = Instance.new("ImageLabel")
-Watermark.Parent = Hud
-Watermark.ImageTransparency = 0.5
-Watermark.AnchorPoint = Vector2.new(0.5, 0.5)
-Watermark.Image = "rbxassetid://17640797571"
-Watermark.Size = UDim2.new(0.1278, 0, 0.7186, 0)
-Watermark.Name = "Watermark"
-Watermark.BackgroundTransparency = 1
-Watermark.Position = UDim2.new(0.0639, 0, 0.933, 0)
 
 local WatermarkRatio = Instance.new("UIAspectRatioConstraint")
 WatermarkRatio.Parent = Watermark
