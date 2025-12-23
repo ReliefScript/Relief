@@ -9,6 +9,7 @@ local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- Variables & Functions
 
@@ -437,9 +438,17 @@ Relief.addModule("Movement", "Bhop", function(Toggled)
 			task.wait()
 			SimulateKey(Enum.KeyCode.Space)
 		end)
-		Thread:Maid("BhopCA", LocalPlayer.CharacterAdded:Connect(HandleCharacter))
 	else
 		Thread:Disconnect("Bhop")
 		Thread:Unmaid("BhopCA")
+	end
+end)
+
+local BoundsRemote = ReplicatedStorage.Remotes.Replication.Fighter.OutOfBounds
+Relief.addModule("World", "AntiBoundsKill", function(Toggled)
+	if Toggled then
+		BoundsRemote.Parent = nil
+	else
+		BoundsRemote.Parent = ReplicatedStorage.Remotes.Replication.Fighter	
 	end
 end)
