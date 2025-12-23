@@ -1190,7 +1190,7 @@ Library.Recolor = function(NewColor)
 	for _, Inst in Recolorable do
 		if Inst:IsA("TextLabel") or Inst:IsA("TextButton") or Inst:IsA("ImageLabel") then
 			if Inst.Name == "Bar" then Inst.BackgroundColor3 = ApplyBrightness(NewColor, 0.8) continue end
-			if Inst.Name == "ToggleButton" then Inst.BackgroundColor3 = ApplyBrightness(NewColor, 0.8) continue end
+			if Inst.Name == "ToggleButton" then Inst.BackgroundColor3 = NewColor continue end
 			if Inst.TextColor3 ~= Color3.new(1, 1, 1) then
 				Inst.TextColor3 = NewColor
 			end
