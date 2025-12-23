@@ -1222,7 +1222,7 @@ Library.Save = function(Name)
 				table.insert(Settings, {
 					Title = Setting.Title,
 					Value = Setting.Value,
-					Bind = Setting.Keybind
+					Bind = Setting.Keybind.Name
 				})
 			end
 			
@@ -1246,7 +1246,7 @@ Library.Load = function(Name)
 			local Module = Library.getModule(Name)
 			if not Module then continue end
 
-			Module.Keybind = Bind
+			Module.Keybind = Enum.KeyCode[Bind]
 
 			if Toggled and not Module["Default"] then
 				Module["ToggleFunction"](1)
