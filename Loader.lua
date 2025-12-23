@@ -204,7 +204,7 @@ getgenv().Thread = Thread
 
 local SH_TOGGLED = false
 local LINK = "gg/msFnMfhuhV"
-local ADS = {"RELIEF ON TOP", "JOIN US", "BEST BOGB SCRIPT", "INF MONEY", "NO BANS"}
+local ADS = {"RELIEF ON TOP", "JOIN US", "WE OWN YOU", "LOL EZ"}
 Relief.addModule("Utility", "Advertise", function(Toggled)
 	if Toggled then
 		Thread:New("Advertise", function()
