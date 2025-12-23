@@ -1246,7 +1246,7 @@ Library.Load = function(Name)
 			local Module = Library.getModule(Name)
 			if not Module then continue end
 
-			if Bind ~= "None" then
+			if Bind and Bind ~= "None" then
 				Module.Keybind = Enum.KeyCode[Bind]
 			end
 
