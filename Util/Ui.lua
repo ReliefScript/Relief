@@ -847,6 +847,7 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 				ToggleBar.Size = UDim2.new(0.15, 0, 0.4, 0)
 				ToggleBar.Text = ""
 				ToggleBar.Position = UDim2.new(0.1, 0, 0.6, 0)
+				ToggleBar.Name = "Bar"
 				table.insert(Recolorable, ToggleBar)
 
 				local BarCorner = Instance.new("UICorner")
@@ -863,6 +864,7 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 				BarButton.BorderColor3 = Color3.new(0, 0, 0)
 				BarButton.Position = UDim2.new(0, 0, 0.5, 0)
 				BarButton.Text = ""
+				BarButton.Name = "ToggleButton"
 				table.insert(Recolorable, BarButton)
 
 				local BarButtonCorner = Instance.new("UICorner")
@@ -1187,11 +1189,12 @@ Library.Recolor = function(NewColor)
 	ThemeColor = NewColor
 	for _, Inst in Recolorable do
 		if Inst:IsA("TextLabel") or Inst:IsA("TextButton") or Inst:IsA("ImageLabel") then
+			if Inst.Name == "Bar" then Inst.BackgroundColor3 = ApplyBrightness(NewColor, 0.8) continue end
+			if Inst.Name == "ToggleButton" then Inst.BackgroundColor3 = ApplyBrightness(NewColor, 0.8) continue end
 			if Inst.TextColor3 ~= Color3.new(1, 1, 1) then
 				Inst.TextColor3 = NewColor
 			end
 			if Inst.BackgroundColor3 ~= Color3.new(0, 0, 0) and Inst.BackgroundColor3 ~= Color3.new(1, 1, 1) and Inst.BackgroundColor3 ~= Color3.fromRGB(166, 166, 166) then
-				if Inst.Name == "Bar" then Inst.BackgroundColor3 = ApplyBrightness(NewColor, 0.8) continue end
 				Inst.BackgroundColor3 = NewColor
 			end
 		end
