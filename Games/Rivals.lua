@@ -173,27 +173,26 @@ Relief.addModule("Combat", "Aimbot", function(Toggled)
 		DrawFov()
         Thread:New("Aimbot", function()
             RunService.RenderStepped:Wait()
-            
-            if Camera.CameraType ~= Enum.CameraType.Scriptable then return end
-      
-            local Target = GetClosestPlayer()
-            if not Target then return end
 
-			local screenPos, onScreen = Camera:WorldToViewportPoint(Target.Position)
-            if not onScreen then return end
-      
-            local viewport = Camera.ViewportSize
-            local screenCenter = Vector2.new(viewport.X / 2, viewport.Y / 2)
-            local target2D = Vector2.new(screenPos.X, screenPos.Y)
-			
-			local delta = target2D - screenCenter
-            delta *= Relief.getSetting("Aimbot", "Strength")
+			if Camera.CameraType ~= Enum.CameraType.Scriptable then return end
 
-            VirtualInputManager:SendMouseMoveDeltaEvent(
-                delta.X,
-                delta.Y,
-                game
-            )
+			local Target = GetClosestPlayer()
+			if not Target then return end
+
+			local camPos = Camera.CFrame.Position
+			local targetPos = Target.Position
+
+			local currentLook = Camera.CFrame.LookVector
+			local desiredLook = (targetPos - camPos).Unit
+
+			local strength = Relief.getSetting("Aimbot", "Strength")
+
+			local smoothLook = currentLook:Lerp(desiredLook, strength)
+
+			Camera.CFrame = CFrame.new(
+				camPos,
+				camPos + smoothLook
+			)
         end)
   	else
 		Thread:Disconnect("Aimbot")
