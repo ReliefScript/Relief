@@ -1246,7 +1246,9 @@ Library.Load = function(Name)
 			local Module = Library.getModule(Name)
 			if not Module then continue end
 
-			Module.Keybind = Enum.KeyCode[Bind]
+			if Bind ~= "None" then
+				Module.Keybind = Enum.KeyCode[Bind]
+			end
 
 			if Toggled and not Module["Default"] then
 				Module["ToggleFunction"](1)
