@@ -1008,6 +1008,7 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 						for _, Inst in OptionInstances do
 							Inst.Visible = false
 						end
+						if Library.SaveName and not Library.Killed then Library.Save(Library.SaveName) end
 					end)
 				end
 				
@@ -1079,6 +1080,7 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 				Connections[#Connections + 1] = Button.InputEnded:Connect(function(Input)
 					if Input.UserInputType == Enum.UserInputType.MouseButton1 then
 						Dragging = false
+						if Library.SaveName and not Library.Killed then Library.Save(Library.SaveName) end
 					end
 				end)
 
@@ -1145,6 +1147,7 @@ Library.setKeybind = function(Query, Keybind)
 	if not Module then return end
 
 	Module.Keybind = Keybind
+	if Library.SaveName and not Library.Killed then Library.Save(Library.SaveName) end
 end
 
 Library.getEnv = function(Query)
@@ -1224,7 +1227,8 @@ Library.Save = function(Name)
 					Value = Setting.Value,
 				})
 			end
-			
+
+			warn("SAVING: ", Module.Name, Setting.Keybind.Name)
 			Data[Module.Name] = {Module.Toggle, Settings, Setting.Keybind and Setting.Keybind.Name or "None"}
 		end
 	end
@@ -1248,6 +1252,7 @@ Library.Load = function(Name)
 			if Bind and Bind ~= "None" then
 				Module.Keybind = Enum.KeyCode[Bind]
 			end
+			warn("LOADING: ", Module.Name, Bind)
 
 			if Toggled and not Module["Default"] then
 				Module["ToggleFunction"](1)
