@@ -1229,7 +1229,7 @@ Library.Save = function(Name)
 			end
 
 			warn("SAVING: ", Module.Name, Setting.Keybind and Setting.Keybind.Name or "None")
-			Data[Module.Name] = {Module.Toggle, Settings, Setting.Keybind and Setting.Keybind.Name or "None"}
+			Data[Module.Name] = {Module.Toggle, Setting.Keybind and Setting.Keybind.Name or "None", Settings}
 		end
 	end
 
@@ -1243,7 +1243,7 @@ Library.Load = function(Name)
 
 		local JsonData = HttpService:JSONDecode(readfile(FileName))
 		for Name, Data in JsonData do
-			local Toggled, SavedSettings, Bind = Data[1], Data[2], Data[3]
+			local Toggled, Bind, SavedSettings = Data[1], Data[2], Data[3]
 			if Name == "KillScript" then continue end
 			
 			local Module = Library.getModule(Name)
