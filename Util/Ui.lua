@@ -1228,7 +1228,7 @@ Library.Save = function(Name)
 				})
 			end
 
-			Data[Module.Name] = {Module.Toggle, Module.Keybind and Module.Keybind.Name or "None", Settings}
+			Data[Module.Name] = {Module.Toggle, Settings, Module.Keybind and Module.Keybind.Name or "None"}
 		end
 	end
 
@@ -1242,7 +1242,7 @@ Library.Load = function(Name)
 
 		local JsonData = HttpService:JSONDecode(readfile(FileName))
 		for Name, Data in JsonData do
-			local Toggled, Bind, SavedSettings = Data[1], Data[2], Data[3]
+			local Toggled, SavedSettings, Bind = Data[1], Data[2], Data[3]
 			if Name == "KillScript" then continue end
 			
 			local Module = Library.getModule(Name)
