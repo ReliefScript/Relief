@@ -1222,11 +1222,10 @@ Library.Save = function(Name)
 				table.insert(Settings, {
 					Title = Setting.Title,
 					Value = Setting.Value,
-					Bind = Setting.Keybind and Setting.Keybind.Name or "None"
 				})
 			end
 			
-			Data[Module.Name] = {Module.Toggle, Settings}
+			Data[Module.Name] = {Module.Toggle, Settings, Setting.Keybind and Setting.Keybind.Name or "None"}
 		end
 	end
 
