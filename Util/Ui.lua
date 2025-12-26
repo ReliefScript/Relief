@@ -1228,7 +1228,7 @@ Library.Save = function(Name)
 				})
 			end
 
-			warn("SAVING: ", Module.Name, Setting.Keybind.Name)
+			warn("SAVING: ", Module.Name, Setting.Keybind and Setting.Keybind.Name or "None")
 			Data[Module.Name] = {Module.Toggle, Settings, Setting.Keybind and Setting.Keybind.Name or "None"}
 		end
 	end
