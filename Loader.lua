@@ -202,6 +202,25 @@ end
 
 getgenv().Thread = Thread
 
+local Connector = workspace:FindFirstChild("GlobalPianoConnector")
+if Connector then
+	Relief.addModule("World", "PianoCrash", function(Toggled)
+		if Toggled then
+			Thread:New("Crash", function()
+				task.wait()
+
+				if not Connector then return end
+
+				for _ = 1, 61 do
+					Connector:FireServer("play", _)
+				end
+			end)
+		else
+			Thread:Disconnect("Crash")
+		end
+	end)
+end
+
 local SH_TOGGLED = false
 local LINK = "gg/msFnMfhuhV"
 local ADS = {"RELIEF ON TOP", "JOIN US", "WE OWN YOU", "LOL EZ"}
