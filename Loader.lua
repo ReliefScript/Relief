@@ -1086,6 +1086,8 @@ local function MakeMotionCommand(Name, TargetOffsetFunc, OnStart, OnEnd)
 			Thread:Disconnect(ThreadName)
 		end
 
+		table.insert(ThreadNames, Name)
+
 		local x = 0
 		Thread:New(Name, function()
 			local Targets = GetPlayer(Args[1])
@@ -1097,6 +1099,11 @@ local function MakeMotionCommand(Name, TargetOffsetFunc, OnStart, OnEnd)
 			local Char = LocalPlayer.Character
 			if not Char then return task.wait() end
 
+			local Hum = Char:FindFirstChildOfClass("Humanoid")
+			if not Hum then return task.wait() end
+
+			if not Targets:FindFirstChild(Target.Name) then Camera.CameraSubject = Hum return task.wait() end
+
 			local Root = Char:FindFirstChild("HumanoidRootPart")
 			if not Root then return task.wait() end
 			
@@ -1105,9 +1112,6 @@ local function MakeMotionCommand(Name, TargetOffsetFunc, OnStart, OnEnd)
 
 			local TRoot = TChar:FindFirstChild("HumanoidRootPart")
 			if not TRoot then return task.wait() end
-
-			local Hum = Char:FindFirstChildOfClass("Humanoid")
-			if not Hum then return task.wait() end
 
 			local THum = TChar:FindFirstChildOfClass("Humanoid")
 			if not THum then return task.wait() end
@@ -1176,22 +1180,6 @@ MakeMotionCommand(
 		return TRoot.CFrame
 		* CFrame.new(0, -(TRoot.Size.Y) - (Head.Size.Y / 2), -math.abs(math.sin(x) * 2) - 1)
 		* CFrame.Angles(0, math.rad(180), 0)
-	end,
-	function(Hum) Hum.Sit = true end,
-	function(Hum) Hum.Sit = false Hum:ChangeState(2) end
-)
-
-MakeMotionCommand(
-	"dog",
-	function(Char, TChar, Root, TRoot, x)
-		local Size = Char:GetExtentsSize()
-		local TSize = TChar:GetExtentsSize()
-
-		return TRoot.CFrame
-		* CFrame.new(0, -TSize.Y / 2, 0)
-		* CFrame.new(0, Size.Y / 2, 0)
-		* CFrame.Angles(math.rad(-90), 0, 0)
-		* CFrame.new(4, 0, 0)
 	end,
 	function(Hum) Hum.Sit = true end,
 	function(Hum) Hum.Sit = false Hum:ChangeState(2) end
