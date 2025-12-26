@@ -1102,7 +1102,7 @@ local function MakeMotionCommand(Name, TargetOffsetFunc, OnStart, OnEnd)
 			local Hum = Char:FindFirstChildOfClass("Humanoid")
 			if not Hum then return task.wait() end
 
-			if not Targets:FindFirstChild(Target.Name) then Camera.CameraSubject = Hum return task.wait() end
+			if not Players:FindFirstChild(Target.Name) then Camera.CameraSubject = Hum return task.wait() end
 
 			local Root = Char:FindFirstChild("HumanoidRootPart")
 			if not Root then return task.wait() end
