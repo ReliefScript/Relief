@@ -1228,8 +1228,7 @@ Library.Save = function(Name)
 				})
 			end
 
-			warn("SAVING: ", Module.Name, Setting.Keybind and Setting.Keybind.Name or "None")
-			Data[Module.Name] = {Module.Toggle, Setting.Keybind and Setting.Keybind.Name or "None", Settings}
+			Data[Module.Name] = {Module.Toggle, Module.Keybind and Module.Keybind.Name or "None", Settings}
 		end
 	end
 
@@ -1252,7 +1251,6 @@ Library.Load = function(Name)
 			if Bind and Bind ~= "None" then
 				Module.Keybind = Enum.KeyCode[Bind]
 			end
-			warn("LOADING: ", Module.Name, Bind)
 
 			if Toggled and not Module["Default"] then
 				Module["ToggleFunction"](1)
