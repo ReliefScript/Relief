@@ -139,13 +139,8 @@ local function Chat(Message)
 	Folder.RBXGeneral:SendAsync(Message)
 end
 
-local Special = utf8.char(0x0640)
+local Special = utf8.char(0x060D)
 local function ConvertBypass(Text)
-	Text = Text:gsub("l", "<LETTER_L>")
-    Text = Text:gsub("I", "<LETTER_I>")
-    Text = Text:gsub("<LETTER_L>", "I")
-    Text = Text:gsub("<LETTER_I>", "l")
- 
     local Reverse = Text:reverse()
     local Split = Reverse:split(" ")
     local New = {}
