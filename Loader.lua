@@ -306,7 +306,7 @@ Relief.addModule("Movement", "ForceR6", function(Toggled)
 			if not Char then return end
 
 			local Hum = Char:WaitForChild("Humanoid")
-			if Hum.RigType ~= Enum.HumanoidRigType.R6 then return end
+			if not Hum or Hum.RigType ~= Enum.HumanoidRigType.R15 then return end
 
 			Animate(Char)
 		end
@@ -315,6 +315,9 @@ Relief.addModule("Movement", "ForceR6", function(Toggled)
 		Thread:Maid("R6", LocalPlayer.CharacterAdded:Connect(HandleCharacter))
 	else
 		Thread:Unmaid("R6")
+
+		local Hum = Char:WaitForChild("Humanoid")
+		if not Hum then return end
 
 		StopAnimations(Humanoid)
 		for _, Data in AnimCache do
