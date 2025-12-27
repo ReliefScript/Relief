@@ -316,7 +316,10 @@ Relief.addModule("Movement", "ForceR6", function(Toggled)
 	else
 		Thread:Unmaid("R6")
 
-		local Hum = Char:WaitForChild("Humanoid")
+		local Char = LocalPlayer.Character
+		if not Char then return end
+		
+		local Hum = Char:FindFirstChildOfClass("Humanoid")
 		if not Hum then return end
 
 		StopAnimations(Humanoid)
