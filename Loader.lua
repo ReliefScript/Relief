@@ -317,14 +317,14 @@ Relief.addModule("Movement", "ForceR6", function(Toggled)
 		local Hum = Char:FindFirstChildOfClass("Humanoid")
 		if not Hum then return end
 
-		StopAnimations(Humanoid)
+		StopAnimations(Hum)
 		for _, Data in AnimCache do
 			local Child, Id = Data[1], Data[2]
 			if not Child then continue end
 
 			Child.AnimationId = Id
 		end
-		StopAnimations(Humanoid)
+		StopAnimations(Hum)
 
 		AnimCache = {}
 	end
