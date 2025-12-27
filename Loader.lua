@@ -202,6 +202,133 @@ end
 
 getgenv().Thread = Thread
 
+-- SKID 0ZBUG START
+local Animations = {
+    Idle = {
+        Animation1 = 12521158637,
+        Animation2 = 12521162526
+    },
+    Run = {
+        RunAnim = 12518152696
+    },
+    Walk = {
+        WalkAnim = 12518152696
+    },
+    Jump = {
+    	JumpAnim = 12520880485,
+        ["!ID!"] = 12520880485
+    },
+    Fall = {
+        FallAnim = 12520972571
+    },
+    Climb = {
+    	ClimbAnim = 12520982150
+    },
+    Dance = {
+    	Animation1 = 12521009666,
+    	Animation2 = 12521151637,
+    	Animation3 = 12521015053
+    },
+    Dance2 = {
+    	Animation1 = 12521169800,
+    	Animation2 = 12521173533,
+    	Animation3 = 12521027874
+    },
+    Dance3 = {
+    	Animation1 = 12521178362,
+    	Animation2 = 12521181508,
+    	Animation3 = 12521184133
+    },
+    Laugh = {
+    	LaughAnim = 12521018724
+    },
+    Cheer = {
+    	CheerAnim = 12521021991
+    },
+    Sit = {
+    	SitAnim = 12520993168
+    },
+    Wave = {
+    	WaveAnim = 12521004586
+    },
+    Point = {
+    	PointAnim = 12521007694
+    },
+    ToolNone = {
+    	ToolNoneAnim = 12520996634
+    },
+    ToolSlash = {
+    	ToolSlashAnim = 12520999032
+    },
+    ToolLunge = {
+    	ToolLungeAnim = 12521002003
+    }
+}
+
+local function StopAnimations(Humanoid)
+	for _, Animation in Humanoid:GetPlayingAnimationTracks() do
+	    Animation:Stop()
+	end
+end
+
+local AnimCache = {}
+local function LoadAnimations(Animate)
+	AnimCache = {}
+	for Animation, Child in Animations do
+	    for ChildName, ID in Child do
+			local Found = Animate:FindFirstChild(Animation:lower())
+			if not Found then continue end
+
+			local Child = Found:FindFirstChild(ChildName)
+			if not Child then continue end
+
+			table.insert(AnimCache, {Child, Child.AnimationId})
+			Child.AnimationId = ("rbxassetid://%s"):format(ID)
+	    end
+	end
+end
+
+local function Animate(Character)
+	local Humanoid = Character:WaitForChild("Humanoid")
+	local Animate = Character:WaitForChild("Animate")
+	
+	task.wait(0.5)
+	
+	StopAnimations(Humanoid)
+	LoadAnimations(Animate)
+	StopAnimations(Humanoid)
+end
+-- SKID 0ZBUG END
+
+Relief.addModule("Movement", "ForceR6", function(Toggled)
+	if Toggled then
+		local function HandleCharacter(Char)
+			if not Char then return end
+
+			local Hum = Char:WaitForChild("Humanoid")
+			if Hum.RigType ~= Enum.HumanoidRigType.R6 then return end
+
+			Animate(Char)
+		end
+
+		HandleCharacter(LocalPlayer.Character)
+		Thread:Maid("R6", LocalPlayer.CharacterAdded:Connect(HandleCharacter))
+	else
+		Thread:Unmaid("R6")
+
+		StopAnimations(Humanoid)
+		for _, Data in AnimCache do
+			local Child, Id = Data[1], Data[2]
+			if not Child then continue end
+
+			Child.AnimationId = Id
+		end
+		StopAnimations(Humanoid)
+
+		AnimCache = {}
+	end
+end)
+
 local Connector = workspace:FindFirstChild("GlobalPianoConnector")
 if Connector then
 	Relief.addModule("World", "PianoCrash", function(Toggled)
