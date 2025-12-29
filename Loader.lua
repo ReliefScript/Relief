@@ -198,6 +198,43 @@ end
 
 getgenv().Thread = Thread
 
+local Vehicles = {}
+
+for _, Model in workspace:GetChildren() do
+	local Button = Model:FindFirstChild("Button")
+	if Button and Model:FindFirstChildOfClass("IntValue") then
+		table.insert(Vehicles, Button)
+	end
+end
+
+if #Vehicles > 0 then
+	Relief.addModule("World", "VehicleSpam", function(Toggled)
+		if Toggled then
+			Thread:New("VehicleSpam", function()
+				task.wait()
+
+				local Char = LocalPlayer.Character
+				if not Char then return end
+				
+				local Root = Char:FindFirstChild("HumanoidRootPart")
+				if not Root then return end
+
+				for _, Vehicle in Vehicles do
+					Vehicle.CFrame = Root.CFrame
+				end
+			
+				task.wait()
+			
+				for _, Vehicle in Vehicles do
+					Vehicle.CFrame = CFrame.new(0, 9e9, 0)
+				end
+			end)
+		else
+			
+		end
+	end)
+end
+
 -- SKID 0ZBUG START
 local Animations = {
     Idle = {
