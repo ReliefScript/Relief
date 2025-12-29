@@ -685,6 +685,13 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 		end
 		if Library.SaveName and not Library.Killed and not isLoading then Library.Save(Library.SaveName) end
 	end
+
+	Tree["Delete"] = function()
+		if Tree.Toggle then
+			Tree.ToggleFunction(1)
+		end
+		NewModule:Destroy()
+	end
 	
 	local SettingToggle = false
 	
@@ -1295,6 +1302,13 @@ Library.GetCommand = function(Query)
 			end
 		end
 	end
+end
+
+Library.deleteModule = function(Query)
+	local Found = Library.getModule(Query)
+	if not Found then return end
+
+	Found.Delete()
 end
 
 local Info = TweenInfo.new(0.2, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
