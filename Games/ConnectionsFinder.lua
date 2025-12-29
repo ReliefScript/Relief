@@ -81,16 +81,16 @@ local Messages = {
 
 local Invite = "discord . gg/msFnMfhuhV"
 Relief.deleteModule("Advertise")
-Relief.addModule("Utility", "Advertise", function(Toggled)
+Relief.addModule("Utility", "AdvertiseCF", function(Toggled)
     if Toggled then
-        Thread:New("Advertise", function()
+        Thread:New("AdvertiseCF", function()
             for _, Message in Messages do
-                if not Relief.isToggled("Advertise") then break end
+                if not Relief.isToggled("AdvertiseCF") then break end
         		Chat("<font color='#0F0' size='40'><b>"..Bypass(Invite .. " | " .. Decode(Message))..'</b></font>')
         		task.wait(5.3)
         	end
         end)
     else
-        Thread:Disconnect("Advertise")
+        Thread:Disconnect("AdvertiseCF")
     end
 end)
