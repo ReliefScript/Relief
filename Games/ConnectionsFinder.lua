@@ -9,7 +9,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- Variables & Functions
 
-local Thread = _G.Thread
+local Thread = getgenv().Thread
 
 local function Chat(Text)
     ReplicatedStorage.Remotes.ChattedEvent:FireServer("Chatted", Text)
