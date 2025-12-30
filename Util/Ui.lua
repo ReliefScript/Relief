@@ -10,6 +10,7 @@ local LocalPlayer = Players.LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 
 local Recolorable = {}
+local RecolorCallbacks = {}
 local Connections = {}
 local Library = {}
 
@@ -661,7 +662,6 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 	Title.Text = Name
 
 	local TInfo = TweenInfo.new(0.4, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
-	table.insert(Recolorable, Title)
 
 	local Tree = {
 		["Name"] = Name,
@@ -673,6 +673,12 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 		["Default"] = Default,
 		["Settings"] = {},
 	}
+
+	table.insert(RecolorCallbacks, function()
+		if Tree.Toggle then
+			TweenService:Create(Title, TInfo, { TextColor3 = ThemeColor }):Play()
+		end
+	end)
 
 	Tree["ToggleFunction"] = function(isLoading)
 		Tree.Toggle = not Tree.Toggle
@@ -691,12 +697,14 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 			Tree.ToggleFunction(1)
 		end
 		NewModule:Destroy()
+		Tree = nil
 	end
 	
 	local SettingToggle = false
 	
 	if Default then
 		Tree.ToggleFunction(1)
+		Title.TextColor3 = ThemeColor
 	end
 	
 	Connections[#Connections + 1] = UserInputService.InputBegan:Connect(function(Input, GPE)
@@ -706,13 +714,8 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 		end
 	end)
 
-	local isSettings = not SettingConfig or #SettingConfig == 0
-	if isSettings then
-		Expand.Visible = false
-	end
-
 	Connections[#Connections + 1] = NewModule.InputBegan:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton2 and not isSettings then
+		if input.UserInputType == Enum.UserInputType.MouseButton2 then
 			SettingToggle = not SettingToggle
 			Settings.Visible = SettingToggle
 			Separator.Visible = SettingToggle
@@ -725,19 +728,32 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 				Expand.Rotation = -90
 			end
 		end
-		
-		if Tree.Toggle then
-			if input.UserInputType == Enum.UserInputType.MouseMovement then
-				TweenService:Create(Title, TInfo, { TextColor3 = ThemeColor }):Play()
-			elseif input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-				Tree.ToggleFunction()
+	end)
+
+	local hovering = false
+	NewModule.InputBegan:Connect(function(input)
+		if Tree.Toggle then return end
+		if input.UserInputType == Enum.UserInputType.MouseMovement then
+			if not hovering then
+				hovering = true
+				tweenConnection = RunService.RenderStepped:Connect(function()
+					Title.TextColor3 = ThemeColor
+				end)
 			end
-		else
-			if input.UserInputType == Enum.UserInputType.MouseMovement then
-				TweenService:Create(Title, TInfo, { TextColor3 = ThemeColor }):Play()
-			elseif input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-				Tree.ToggleFunction()
+		elseif input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			Tree.ToggleFunction()
+		end
+	end)
+
+	NewModule.InputEnded:Connect(function(input)
+		if Tree.Toggle then return end
+		if input.UserInputType == Enum.UserInputType.MouseMovement then
+			hovering = false
+			if tweenConnection then
+				tweenConnection:Disconnect()
+				tweenConnection = nil
 			end
+			Title.TextColor3 = Color3.new(1, 1, 1)
 		end
 	end)
 
@@ -855,7 +871,6 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 				ToggleBar.Text = ""
 				ToggleBar.Position = UDim2.new(0.1, 0, 0.6, 0)
 				ToggleBar.Name = "Bar"
-				table.insert(Recolorable, ToggleBar)
 
 				local BarCorner = Instance.new("UICorner")
 				BarCorner.Parent = ToggleBar
@@ -872,7 +887,6 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 				BarButton.Position = UDim2.new(0, 0, 0.5, 0)
 				BarButton.Text = ""
 				BarButton.Name = "ToggleButton"
-				table.insert(Recolorable, BarButton)
 
 				local BarButtonCorner = Instance.new("UICorner")
 				BarButtonCorner.Parent = BarButton
@@ -894,6 +908,13 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 					Type = _T,
 					Value = false
 				}
+
+				table.insert(RecolorCallbacks, function()
+					if SettingTree.Value then
+						ToggleBar.BackgroundColor3 = ThemeColor
+						BarButton.BackgroundColor3 = ThemeColor
+					end
+				end)
 
 				local _Toggle = false
 				local function Toggled(isLoading)
@@ -1067,7 +1088,10 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 				Button.AnchorPoint = Vector2.new(0.5, 0.5)
 				Button.Position = UDim2.new(0, 0, 0.5, 0)
 				Button.BackgroundColor3 = ThemeColor
-				table.insert(Recolorable, Button)
+
+				table.insert(RecolorCallbacks, function()
+					Button.BackgroundColor3 = ThemeColor
+				end)
 
 				local ButtonCorner = Instance.new("UICorner")
 				ButtonCorner.Parent = Button
@@ -1122,6 +1146,74 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 			end
 		end
 	end
+
+	local BindSetting = Instance.new("Frame")
+	BindSetting.BackgroundTransparency = 1
+	BindSetting.Size = UDim2.new(0.8, 0, 0, 50)
+	BindSetting.Parent = Settings.SF
+	BindSetting.Name = "z"
+
+	local BindLayout = Instance.new("UIListLayout")
+	BindLayout.Parent = BindSetting
+	BindLayout.HorizontalFlex = Enum.UIFlexAlignment.SpaceBetween
+	BindLayout.FillDirection = Enum.FillDirection.Horizontal
+	BindLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+
+	local BindButton = Instance.new("TextButton")
+	BindButton.Parent = BindSetting
+	BindButton.Size = UDim2.new(0.67, 0, 0.6, 0)
+	BindButton.BorderSizePixel = 0
+	BindButton.BackgroundColor3 = ThemeColor
+	BindButton.TextScaled = true
+	BindButton.TextColor3 = Color3.new(1, 1, 1)
+	BindButton.FontFace = Font.new("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+	BindButton.Text = "Bind"
+	BindButton.BackgroundTransparency = 0.5
+
+	local BindPadding = Instance.new("UIPadding")
+	BindPadding.Parent = BindButton
+	BindPadding.PaddingTop = UDim.new(0.1, 0)
+	BindPadding.PaddingBottom = UDim.new(0.1, 0)
+	BindPadding.PaddingLeft = UDim.new(0.1, 0)
+	BindPadding.PaddingRight = UDim.new(0.1, 0)
+
+	local ResetBind = BindButton:Clone()
+	ResetBind.Parent = BindSetting
+	ResetBind.Size = UDim2.new(0.3, 0, BindButton.Size.Y.Scale, 0)
+	ResetBind.Text = "R"
+	ResetBind.BackgroundTransparency = 0.8
+
+	table.insert(RecolorCallbacks, function()
+		ResetBind.BackgroundColor3 = ThemeColor
+		BindButton.BackgroundColor3 = ThemeColor
+	end)
+
+	ResetBind.MouseButton1Down:Connect(function()
+		BindButton.Text = "Bind"
+		Tree.Keybind = nil
+	end)
+
+	BindButton.MouseButton1Down:Connect(function()
+		BindButton.Text = "Press a key..."
+		C = UserInputService.InputEnded:Connect(function(Input, GPE)
+			if GPE then return end
+
+			if Input.UserInputType == Enum.UserInputType.Keyboard then
+				BindButton.Text = Input.KeyCode.Name
+				Tree.Keybind = Input.KeyCode
+			else
+				BindButton.Text = "Bind"
+				Tree.Keybind = nil
+			end
+
+			C:Disconnect()
+		end)
+	end)
+
+	Tree.LoadBind = function(Name)
+		BindButton.Text = Name
+	end
+
 	NewSettings.Parent = nil
 
 	CategoryInfo["Modules"][#CategoryInfo["Modules"] + 1] = Tree
@@ -1197,9 +1289,11 @@ end
 
 Library.Recolor = function(NewColor)
 	ThemeColor = NewColor
+	for _, Callback in RecolorCallbacks do
+		Callback()
+	end
 	for _, Inst in Recolorable do
 		if Inst:IsA("TextLabel") or Inst:IsA("TextButton") or Inst:IsA("ImageLabel") then
-			if Inst.Name == "Bar" then Inst.BackgroundColor3 = ApplyBrightness(NewColor, 0.8) continue end
 			if Inst.Name == "ToggleButton" then Inst.BackgroundColor3 = NewColor continue end
 			if Inst.TextColor3 ~= Color3.new(1, 1, 1) then
 				Inst.TextColor3 = NewColor
@@ -1257,6 +1351,7 @@ Library.Load = function(Name)
 
 			if Bind and Bind ~= "None" then
 				Module.Keybind = Enum.KeyCode[Bind]
+				Module.LoadBind(Bind)
 			end
 
 			if Toggled and not Module["Default"] then
