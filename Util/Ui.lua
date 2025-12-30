@@ -1123,6 +1123,7 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 				}
 
 				SettingTree.Load = function(Value)
+					Value = tonumber(Value)
 					Button.Position = UDim2.new((Value / Config["Max"]), 0, 0.5, 0)
 					Display.Text = Value
 					Config["Callback"](Value)
