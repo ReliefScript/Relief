@@ -1382,12 +1382,97 @@ Library.AutoSaveName = function(Name)
 	Library.SaveName = Name
 end
 
+local CommandList = Instance.new("CanvasGroup")
+CommandList.Parent = Screen
+CommandList.Active = true
+CommandList.Draggable = true
+CommandList.Size = UDim2.new(0.15, 0, 0.3, 0)
+CommandList.BorderSizePixel = 0
+CommandList.BackgroundColor3 = Color3.new(0, 0, 0)
+CommandList.GroupTransparency = 0.2
+CommandList.AnchorPoint = Vector2.new(0.5, 0.5)
+CommandList.Position = UDim2.new(0.5, 0, 0.5, 0)
+CommandList.Visible = false
+
+local ListTop = Instance.new("TextLabel")
+ListTop.Parent = CommandList
+ListTop.BorderSizePixel = 0
+ListTop.Size = UDim2.new(1, 0, .1, 0)
+ListTop.Text = "COMMANDS"
+ListTop.TextScaled = true
+ListTop.TextColor3 = Color3.new(1, 1, 1)
+ListTop.BackgroundColor3 = Color3.new(1, 1, 1)
+ListTop.BackgroundTransparency = 0.9
+ListTop.FontFace = Font.new("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+
+local LTPadding = Instance.new("UIPadding")
+LTPadding.Parent = ListTop
+LTPadding.PaddingLeft = UDim.new(0.02, 0)
+LTPadding.PaddingTop = UDim.new(0.15, 0)
+LTPadding.PaddingBottom = UDim.new(0.15, 0)
+
+local Close = Instance.new("TextButton")
+Close.Parent = ListTop
+Close.Size = UDim2.new(0.1, 0, 1, 0)
+Close.Position = UDim2.new(0.9, 0, 0, 0)
+Close.Text = "X"
+Close.FontFace = Font.new("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+Close.TextColor3 = Color3.new(1, 1, 1)
+Close.BackgroundTransparency = 1
+Close.TextScaled = true
+
+Close.MouseButton1Down:Connect(function()
+	CommandList.Visible = false
+end)
+
+local ClosePadding = Instance.new("UIPadding")
+ClosePadding.Parent = ListTop
+ClosePadding.PaddingTop = UDim.new(0.2, 0)
+ClosePadding.PaddingBottom = UDim.new(0.2, 0)
+
+local NotifSep = Instance.new("Frame")
+NotifSep.Parent = CommandList
+NotifSep.BorderSizePixel = 0
+NotifSep.BackgroundColor3 = ThemeColor
+NotifSep.Size = UDim2.new(1, 0, 0, 1)
+NotifSep.Position = UDim2.new(0, 0, ListTop.Size.Y.Scale, 0)
+table.insert(Recolorable, NotifSep)
+
+local CommandHolder = Instance.new("ScrollingFrame")
+CommandHolder.Parent = CommandList
+CommandHolder.Size = UDim2.new(1, 0, 1 - ListTop.Size.Y.Scale, -2)
+CommandHolder.AnchorPoint = Vector2.new(0, 1)
+CommandHolder.Position = UDim2.new(0, 0, 1, 0)
+CommandHolder.BackgroundTransparency = 1
+CommandHolder.CanvasSize = UDim2.new(0, 0, 0, 0)
+CommandHolder.AutomaticCanvasSize = Enum.AutomaticSize.Y
+CommandHolder.ScrollBarThickness = 0
+
+local Cmd = Instance.new("TextLabel")
+Cmd.Size = UDim2.new(1, 0, 0.1, 0)
+Cmd.TextScaled = true
+Cmd.TextColor3 = Color3.new(1, 1, 1)
+Cmd.FontFace = Font.new("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+Cmd.BackgroundTransparency = 1
+Cmd.TextXAlignment = Enum.TextXAlignment.Left
+
+local CmdPadding = Instance.new("UIPadding")
+CmdPadding.Parent = Cmd
+CmdPadding.PaddingLeft = UDim.new(0.03, 0)
+CmdPadding.PaddingTop = UDim.new(0.15, 0)
+CmdPadding.PaddingBottom = UDim.new(0.15, 0)
+CmdPadding.PaddingRight = UDim.new(0.03, 0)
+
 Library.Commands = {}
 Library.AddCommand = function(Aliases, Callback)
 	table.insert(Library.Commands, {
 		Aliases = Aliases,
 		Callback = Callback
 	})
+
+	local Clone = Cmd:Clone()
+	Clone.Parent = CommandHolder
+	Clone.Text = #Library.Commands .. ". " .. table.concat(Aliases, ", ")
 end
 
 Library.GetCommand = function(Query)
@@ -1498,5 +1583,101 @@ end)
 
 Library.ModuleList = ModuleList
 Library.MobileButton = MobileButton
+Library.CommandList = CommandList
+Library.Arrow = Arrow
+
+local Notifications = Instance.new("Frame")
+Notifications.Parent = Screen
+Notifications.Size = UDim2.new(0.15, 0, 0.95, 0)
+Notifications.AnchorPoint = Vector2.new(1, 0.5)
+Notifications.Position = UDim2.new(1, 0, 0.5, 0)
+Notifications.BackgroundTransparency = 1
+
+local NotifCount = 0
+local Notis = {}
+local NotiInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
+
+Library.Notify = function(Text, Length)
+	Text = Text or "???"
+	Length = Length or 5
+
+	NotifCount += 1
+
+	local Notification = Instance.new("CanvasGroup")
+	Notification.Parent = Notifications
+	Notification.Size = UDim2.new(0.9, 0, 0.1, 0)
+	Notification.BorderSizePixel = 0
+	Notification.BackgroundColor3 = Color3.new(0, 0, 0)
+	Notification.GroupTransparency = 1
+	Notification.AnchorPoint = Vector2.new(0.5, 1)
+	Notification.Position = UDim2.new(0.5, 0, 1 - ((NotifCount - 1) / 9), 0)
+	TweenService:Create(Notification, NotiInfo, { GroupTransparency = 0.2 }):Play()
+	table.insert(Notis, Notification)
+
+	local TopBar = Instance.new("TextLabel")
+	TopBar.Parent = Notification
+	TopBar.BorderSizePixel = 0
+	TopBar.Size = UDim2.new(1, 0, .2, 0)
+	TopBar.Text = "RELIEF"
+	TopBar.TextScaled = true
+	TopBar.TextColor3 = Color3.new(1, 1, 1)
+	TopBar.BackgroundColor3 = Color3.new(1, 1, 1)
+	TopBar.BackgroundTransparency = 0.9
+	TopBar.TextXAlignment = Enum.TextXAlignment.Left
+	TopBar.FontFace = Font.new("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+
+	local TBPadding = Instance.new("UIPadding")
+	TBPadding.Parent = TopBar
+	TBPadding.PaddingLeft = UDim.new(0.02, 0)
+	TBPadding.PaddingTop = UDim.new(0.15, 0)
+	TBPadding.PaddingBottom = UDim.new(0.15, 0)
+
+	local NotifSep = Instance.new("Frame")
+	NotifSep.Parent = Notification
+	NotifSep.BorderSizePixel = 0
+	NotifSep.BackgroundColor3 = ThemeColor
+	NotifSep.Size = UDim2.new(1, 0, 0, 1)
+	NotifSep.Position = UDim2.new(0, 0, TopBar.Size.Y.Scale, 0)
+	table.insert(Recolorable, NotifSep)
+
+	local NotifText = Instance.new("TextLabel")
+	NotifText.Parent = Notification
+	NotifText.Size = UDim2.new(1, 0, 1 - TopBar.Size.Y.Scale, 0)
+	NotifText.AnchorPoint = Vector2.new(0, 1)
+	NotifText.Position = UDim2.new(0, 0, 1, 0)
+	NotifText.BackgroundTransparency = 1
+	NotifText.TextColor3 = Color3.new(1, 1, 1)
+	NotifText.FontFace = Font.new("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+	NotifText.TextScaled = true
+	NotifText.Text = Text
+
+	local NTPadding = Instance.new("UIPadding")
+	NTPadding.Parent = NotifText
+	NTPadding.PaddingTop = UDim.new(0.2, 0)
+	NTPadding.PaddingBottom = UDim.new(0.2, 0)
+	NTPadding.PaddingLeft = UDim.new(0.1, 0)
+	NTPadding.PaddingRight = UDim.new(0.1, 0)
+
+	task.spawn(function()
+		task.wait(Length)
+		
+		task.spawn(function()
+			local Tween = TweenService:Create(Notification, NotiInfo, { GroupTransparency = 1 })
+			Tween:Play()
+			Tween.Completed:Once(function()
+				Notification:Destroy()
+			end)
+		end)
+
+		NotifCount -= 1
+		table.remove(Notis, table.find(Notis, Notification))
+		
+		for _, Noti in Notis do
+			local Pos = UDim2.new(0.5, 0, 1 - ((_ - 1) / 9), 0)
+			local Tween = TweenService:Create(Noti, NotiInfo, { Position = Pos })
+			Tween:Play()
+		end
+	end)
+end
 
 return Library
