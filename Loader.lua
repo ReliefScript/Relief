@@ -1420,7 +1420,7 @@ Relief.AddCommand({"bind"}, function(Args)
 end)
  
 Relief.AddCommand({"commands", "cmds"}, function(Args)
-    Library.CommandList.Visible = not Library.CommandList.Visible
+    Relief.CommandList.Visible = not Relief.CommandList.Visible
 end)
 
 -- Loader
