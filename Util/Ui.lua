@@ -730,31 +730,32 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 		end
 	end)
 
+	local tweenConnection
 	local hovering = false
-	NewModule.InputBegan:Connect(function(input)
-		if Tree.Toggle then return end
-		if input.UserInputType == Enum.UserInputType.MouseMovement then
-			if not hovering then
-				hovering = true
-				tweenConnection = RunService.RenderStepped:Connect(function()
-					Title.TextColor3 = ThemeColor
-				end)
-			end
-		elseif input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+	NewModule.InputBegan:Connect(function(Input)
+		if Input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 			Tree.ToggleFunction()
 		end
 	end)
 
-	NewModule.InputEnded:Connect(function(input)
+	NewModule.MouseEnter:Connect(function()
 		if Tree.Toggle then return end
-		if input.UserInputType == Enum.UserInputType.MouseMovement then
-			hovering = false
-			if tweenConnection then
-				tweenConnection:Disconnect()
-				tweenConnection = nil
-			end
-			Title.TextColor3 = Color3.new(1, 1, 1)
+		if not hovering then
+			hovering = true
+			tweenConnection = RunService.RenderStepped:Connect(function()
+				Title.TextColor3 = ThemeColor
+			end)
 		end
+	end)
+
+	NewModule.MouseLeave:Connect(function()
+		if Tree.Toggle then return end
+		hovering = false
+		if tweenConnection then
+			tweenConnection:Disconnect()
+			tweenConnection = nil
+		end
+		Title.TextColor3 = Color3.new(1, 1, 1)
 	end)
 
 	Connections[#Connections + 1] = NewModule.InputEnded:Connect(function(input)
