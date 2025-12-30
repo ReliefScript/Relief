@@ -870,6 +870,7 @@ end, {}, nil, true)
 
 Relief.addModule("Render", "MobileButton", function(Toggled)
     Relief.MobileButton.Visible = Toggled
+	Relief.Arrow.Visible = Toggled
 end, {}, nil, true)
 
 Relief.AddCommand({"whitelist", "wl"}, function(Args)
@@ -1421,18 +1422,7 @@ Relief.AddCommand({"bind"}, function(Args)
 end)
  
 Relief.AddCommand({"commands", "cmds"}, function(Args)
-    local Names = {}
-    for _, Command in Relief.Commands do
-        local Compile = table.concat(Command.Aliases, ", ") 
-        local Formatted = ("[%s]"):format(Compile)
-        table.insert(Names, Formatted)
-    end
-    
-    local NameCompile = table.concat(Names, " ")
-    local Message = ('<font color="#FFFF00">%s</font>'):format(NameCompile)
-    task.defer(function()
-        Folder.RBXGeneral:DisplaySystemMessage(Message)
-    end)
+    Library.CommandList.Visible = not Library.CommandList.Visible
 end)
 
 -- Loader
