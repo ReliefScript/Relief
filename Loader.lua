@@ -1453,9 +1453,8 @@ end)
 Relief.Load(SaveName)
 
 if not Found then
-	Relief.Notify(("Game not found in Relief Hub. Loading universal."), 5)
+	Relief.Notify("Game not found in Relief Hub. Loading universal.", 5)
 end
-
 
 local AnimSocket =  loadstring(game:HttpGet("https://raw.github.com/0zBug/AnimSocket/main/main.lua"))()
 
