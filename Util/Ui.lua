@@ -733,7 +733,7 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 	local tweenConnection
 	local hovering = false
 	NewModule.InputBegan:Connect(function(Input)
-		if Input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
 			Tree.ToggleFunction()
 		end
 	end)
