@@ -13,8 +13,6 @@ local Games = {
 local Relief = loadstring(game:HttpGet("https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Util/Ui.lua"))()
 getgenv().Relief = Relief
 
-local Notifications = loadstring(game:HttpGet("https://raw.githubusercontent.com/PeaPattern/notif-lib/main/main.lua"))()
-
 Relief.addCategory("Movement", "rbxassetid://1114393432")
 Relief.addCategory("Combat", "rbxassetid://7485051715")
 Relief.addCategory("Render", "rbxassetid://13321848320")
@@ -93,7 +91,7 @@ for Id, Link in Games do
 	FId = Id
 	toLoad = function()
     	loadstring(game:HttpGet(Link))()
-    	Notifications:Notify(("Relief Hub by Atlas | %d Loaded | Invited To Discord!"):format(Id), 5)
+    	Relief.Notify(("Relief Hub by Atlas | %d Loaded | Invited To Discord!"):format(Id), 5)
 	end
     break
 end
@@ -1455,7 +1453,7 @@ end)
 Relief.Load(SaveName)
 
 if not Found then
-	Notifications:Notify(("Game not found in Relief Hub. Loading universal."), 5)
+	Relief.Notify(("Game not found in Relief Hub. Loading universal."), 5)
 end
 
 
