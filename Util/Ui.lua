@@ -1449,6 +1449,9 @@ CommandHolder.CanvasSize = UDim2.new(0, 0, 0, 0)
 CommandHolder.AutomaticCanvasSize = Enum.AutomaticSize.Y
 CommandHolder.ScrollBarThickness = 0
 
+local CmdLayout = Instance.new("UIListLayout")
+CmdLayout.Parent = CommandHolder
+
 local Cmd = Instance.new("TextLabel")
 Cmd.Size = UDim2.new(1, 0, 0.1, 0)
 Cmd.TextScaled = true
