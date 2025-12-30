@@ -800,12 +800,14 @@ Relief.addModule("Movement", "Fly", function(Toggled)
     end
 end, {
     {
-        ["Type"] = "TextBox",
+        ["Type"] = "Slider",
         ["Title"] = "Speed",
-        ["Placeholder"] = "amount",
+        ["Min"] = 0,
+		["Max"] = 10,
+		["Default"] = 0.5,
         ["Callback"] = function(Num)
 			local Env = Relief.getEnv("Fly")
-            Env.FlySpeed = tonumber(Num) or 1
+            Env.FlySpeed = Num
         end
     }
 })
