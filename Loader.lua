@@ -32,8 +32,7 @@ local HttpService = game:GetService("HttpService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
 
-if not isfile("time") then
-	writefile("time", tostring(tick()))
+local function JoinDiscord()
 	request({
 		Url = "http://127.0.0.1:6463/rpc?v=1",
 		Method = "POST",
@@ -51,25 +50,16 @@ if not isfile("time") then
 	})
 end
 
+if not isfile("time") then
+	writefile("time", tostring(tick()))
+	JoinDiscord()
+end
+
 local t = readfile("time")
 local l = tick() - tonumber(t)
 if l > 14400 then
 	delfile("time")
-	request({
-		Url = "http://127.0.0.1:6463/rpc?v=1",
-		Method = "POST",
-		Headers = {
-			["Content-Type"] = "application/json",
-			["Origin"] = "https://discord.com",
-		},
-		Body = HttpService:JSONEncode({
-			cmd = "INVITE_BROWSER",
-			args = {
-				code = "msFnMfhuhV"
-			},
-			nonce = HttpService:GenerateGUID(false)
-		}),
-	})
+	JoinDiscord()
 	writefile("time", tostring(tick()))
 end
 
