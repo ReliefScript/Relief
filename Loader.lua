@@ -1430,7 +1430,7 @@ Relief.AddCommand({"friendspam", "fs"}, function(Args)
 	Thread:New("FriendSpam", function()
 		LocalPlayer:RequestFriendship(Target)
 
-		Connection = LocalPlayer.FriendStatusCHanged:Connect(function(Player)
+		Connection = LocalPlayer.FriendStatusChanged:Connect(function(Player)
 			if Player == Target then
 				Connection:Disconnect()
 				task.wait()
