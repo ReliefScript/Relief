@@ -419,7 +419,7 @@ end
 local SH_TOGGLED = false
 local LINK = "gg/msFnMfhuhV"
 local ADS = {"RELIEF ON TOP", "JOIN US", "WE OWN YOU", "LOL EZ"}
-Relief.addModule("Utility", "Advertise", function(Toggled)
+Relief.addModule("Player", "Advertise", function(Toggled)
 	if Toggled then
 		Thread:New("Advertise", function()
 			for i = 1, #ADS do
