@@ -1464,6 +1464,16 @@ Relief.AddCommand({"crash"}, function(Args)
 	for i = 1, 1000 do
 		Track:Play()
 	end
+
+	Thread:Maid("PlayerAddedCrash", Players.PlayerAdded:Connect(function()
+		for i = 1, 1000 do
+			Track:Play()
+		end		
+	end)
+end)
+
+Relief.AddCommand({"uncrash"}, function(Args)
+
 end)
 
 -- Loader
