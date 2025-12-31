@@ -225,6 +225,8 @@ local function HandlePlayer(Player)
 	end))
 
 	Thread:Maid(Player.Name .. "_Handle", Player.FriendStatusChanged:Connect(function(Target, New)
+		if Player == LocalPlayer then return end
+		
 		if New.Value == 4 then
 			FriendLog(("%s sent friend request to %s."):format(Target.Name, Player.Name))
 			Connection = Thread:Maid(Target.Name .. "_" .. Player.Name, Player.FriendStatusChanged:Connect(function(NewTarget, NewStatus)
@@ -236,12 +238,11 @@ local function HandlePlayer(Player)
 					if NewStatus.Value == 2 then
 						FriendLog(("%s accepted %s's friend request."):format(Player.Name, Target.Name))
 					end
+					
 					Connection:Disconnect()
 				end
 			end))
 		end
-
-		if Player == LocalPlayer then return end
 
 		local Old = Log[Player][Target]
 		if Old.Value == 2 and New.Value == 1 then
