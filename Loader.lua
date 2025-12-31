@@ -210,6 +210,33 @@ end
 
 getgenv().Thread = Thread
 
+Relief.addModule("World", "Crash", function(Toggled)
+	if Toggled then
+		local Char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+		if not Char then return end
+	
+		local Hum = Char:WaitForChild("Humanoid")
+		if not Hum then return end
+	
+		Thread:New("AnimCrash", function()
+			task.wait()
+			for _ = 1, 100 do
+				local Anim = Instance.new("Animation")
+				Anim.AnimationId = `http{HttpService:GenerateGUID()}=108713182294229`
+				local Track = Hum:LoadAnimation(Anim)
+				Track:Play(21474836471234)
+				task.spawn(function()
+					RunService.PreRender:Wait()
+					Track:AdjustSpeed(-math.huge)
+				end)
+			end
+		end)
+	else
+		Thread:Disconnect("AnimCrash")
+		GetCommand("respawn").Callback()
+	end
+end)
+
 local Vehicles = {}
 
 for _, Model in workspace:GetChildren() do
@@ -1432,37 +1459,6 @@ end)
 
 Relief.AddCommand({"unfriendspam", "unfs"}, function(Args)
 	Thread:Disconnect("FriendSpam")
-end)
-
-Relief.AddCommand({"crash"}, function(Args)
-	local Char = LocalPlayer.Character
-	if not Char then return Relief.Notify("No character.", 3) end
-
-	local Hum = Char:FindFirstChildOfClass("Humanoid")
-	if not Hum then return Relief.Notify("No humanoid.", 3) end
-
-	Thread:New("AnimCrash", function()
-		task.wait()
-		for _ = 1, 100 do
-			local Anim = Instance.new("Animation")
-			Anim.AnimationId = `http{HttpService:GenerateGUID()}=108713182294229`
-			local Track = Hum:LoadAnimation(Anim)
-			Track:Play(21474836471234)
-			task.spawn(function()
-				RunService.PreRender:Wait()
-				Track:AdjustSpeed(-math.huge)
-			end)
-		end
-	end)
-
-	Relief.Notify("Initalized crash.", 3) 
-end)
-
-Relief.AddCommand({"uncrash"}, function(Args)
-	Relief.Notify("Stopped crash.", 3) 
-
-	Thread:Disconnect("AnimCrash")
-	GetCommand("respawn").Callback()
 end)
 
 -- Loader
