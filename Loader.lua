@@ -1479,12 +1479,12 @@ if not Found then
 	Relief.Notify("Game not found in Relief Hub. Loading universal.", 5)
 end
 
-local AnimSocket =  loadstring(game:HttpGet("https://raw.github.com/0zBug/AnimSocket/main/main.lua"))()
+local AnimSocket = loadstring(game:HttpGet("https://raw.github.com/0zBug/AnimSocket/main/main.lua"))()
 
 local Channel = AnimSocket.Connect("Relief")
 
 Channel.OnMessage:Connect(function(Player, Message)
-	if Player ~= LocalPlayer and not table.find(getgenv().Whitelist, Player) then
+	if Player ~= LocalPlayer and not table.find(getgenv().Whitelist, Player.UserId) then
 		table.insert(getgenv().Whitelist, Player.UserId)
 		Channel:Send("i skidded this from 0zbug")
 	end
