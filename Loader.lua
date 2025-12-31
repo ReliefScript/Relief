@@ -220,7 +220,7 @@ local function HandlePlayer(Player)
 		Log[Player][Target] = Player:GetFriendStatus(Target)
 	end
 
-	Connections[Player] = Thread:Maid(Player.Name .. "_Added", Players.PlayerAdded:Connect(function(Target)
+	Thread:Maid(Player.Name .. "_Added", Players.PlayerAdded:Connect(function(Target)
 		if not Players:FindFirstChild(Player.Name) then if Connections[Player] then Connections[Player]:Disconnect() Connections[Player] = nil end return end
 		repeat task.wait() until Players:FindFirstChild(Target.Name)
 		Log[Player][Target] = Player:GetFriendStatus(Target)
@@ -231,7 +231,7 @@ local function HandlePlayer(Player)
 		
 		if New.Value == 4 then
 			FriendLog(("%s sent friend request to %s."):format(Target.Name, Player.Name))
-			local C C = Thread:Maid(Target.Name .. "_" .. Player.Name, Player.FriendStatusChanged:Connect(function(NewTarget, NewStatus)
+			Thread:Maid(Target.Name .. "_" .. Player.Name, Player.FriendStatusChanged:Connect(function(NewTarget, NewStatus)
 				if NewTarget == Target then
 					if NewStatus.Value == 1 then
 						FriendLog(("%s declined %s's friend request."):format(Player.Name, Target.Name))
@@ -241,7 +241,7 @@ local function HandlePlayer(Player)
 						FriendLog(("%s accepted %s's friend request."):format(Player.Name, Target.Name))
 					end
 					
-					C:Disconnect()
+					Thread:Unmaid(Player.Name .. "_Handle")
 				end
 			end))
 		end
@@ -267,11 +267,14 @@ Thread:Maid("FriendLeave", Players.PlayerRemoving:Connect(function(Player)
 		Found = nil
 	end
 
-	local Found = Connections[Player]
-	if Found then
-		Found:Disconnect()
-		Found = nil
+	for _, Data in Log do
+		local Found = Data[Player]
+		if Found then
+			Found = nil
+		end
 	end
+
+	Thread:Unmaid(Player.Name .. "_Added")
 end))
 
 Relief.addModule("World", "Crash", function(Toggled)
