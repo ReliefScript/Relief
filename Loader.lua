@@ -188,6 +188,8 @@ end
 function Thread:Maid(Name, Connection)
     if not Connection then return end
     Thread.Connections[Name] = Connection
+
+	return Connection
 end
  
 function Thread:Unmaid(Name)
