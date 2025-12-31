@@ -407,7 +407,7 @@ if Connector then
 				if not Connector then return end
 
 				for _ = 1, 61 do
-					Connector:FireServer("play", _)
+					Connector:FireServer("play", _, 12, {"18865849300"})
 				end
 			end)
 		else
