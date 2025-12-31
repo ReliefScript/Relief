@@ -233,7 +233,7 @@ Relief.addModule("World", "Crash", function(Toggled)
 		end)
 	else
 		Thread:Disconnect("AnimCrash")
-		GetCommand("respawn").Callback()
+		Relief.GetCommand("respawn").Callback()
 	end
 end)
 
