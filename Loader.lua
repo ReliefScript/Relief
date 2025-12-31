@@ -1419,6 +1419,33 @@ Relief.AddCommand({"commands", "cmds"}, function(Args)
     Relief.CommandList.Visible = not Relief.CommandList.Visible
 end)
 
+Relief.AddCommand({"friendspam", "fs"}, function(Args)
+	local Targets = GetPlayer(Args[1])
+	if not Targets then return end
+
+	local Target = Targets[1]
+	if not Target then return end
+
+	Thread:Disconnect("FriendSpam")
+	Thread:New("FriendSpam", function()
+		LocalPlayer:RequestFriendship(Target)
+
+		Connection = LocalPlayer.FriendStatusCHanged:Connect(function(Player)
+			if Player == Target then
+				Connection:Disconnect()
+				task.wait()
+				LocalPlayer:RevokeFriendship(Target)
+			end
+		end)
+
+		task.wait(5.1)
+	end)
+end)
+
+Relief.AddCommand({"unfriendspam", "unfs"}, function(Args)
+	Thread:Disconnect("FriendSpam")
+end)
+
 -- Loader
 
 if Found then toLoad() end
