@@ -1462,16 +1462,7 @@ Relief.AddCommand({"uncrash"}, function(Args)
 	Relief.Notify("Stopped crash.", 3) 
 
 	Thread:Disconnect("AnimCrash")
-	
-	local Char = LocalPlayer.Character
-	if not Char then return end
-
-	local Hum = Char:FindFirstChildOfClass("Humanoid")
-	if not Hum then return end
-
-	for _, Track in Hum:GetPlayingAnimationTracks() do
-		Track:Stop()
-	end
+	GetCommand("respawn").Callback()
 end)
 
 -- Loader
