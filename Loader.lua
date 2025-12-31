@@ -397,7 +397,7 @@ Relief.addModule("Movement", "ForceR6", function(Toggled)
 	end
 end)
 
-local Connector = workspace:FindFirstChild("GlobalPianoConnector")
+local Connector = game:FindFirstChild("GlobalPianoConnector", true)
 if Connector then
 	Relief.addModule("World", "PianoCrash", function(Toggled)
 		if Toggled then
