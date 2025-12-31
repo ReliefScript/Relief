@@ -616,8 +616,6 @@ Relief.addModule("Combat", "LoopFling", function(Toggled)
                     local TRoot = TChar.HumanoidRootPart
                     local THum = TChar.Humanoid
  
-                    Camera.CameraSubject = THum
- 
                     for _, BP in Char:GetChildren() do
                         if BP:IsA("BasePart") then
                             BP.Velocity, BP.RotVelocity = Vector3.zero, Vector3.zero
@@ -645,8 +643,6 @@ Relief.addModule("Combat", "LoopFling", function(Toggled)
  
             local Hum = Char:FindFirstChildOfClass("Humanoid")
             if not Hum then return end
- 
-            Camera.CameraSubject = Hum
  
             repeat
                 Root.CFrame = OldPos
@@ -952,8 +948,6 @@ Relief.AddCommand({"loopfling", "lf"}, function(Args)
                 local TRoot = TChar.HumanoidRootPart
                 local THum = TChar.Humanoid
  
-                Camera.CameraSubject = THum
- 
                 for _, BP in Char:GetChildren() do
                     if BP:IsA("BasePart") then
                         BP.Velocity, BP.RotVelocity = Vector3.zero, Vector3.zero
@@ -981,8 +975,6 @@ Relief.AddCommand({"loopfling", "lf"}, function(Args)
  
         local Hum = Char:FindFirstChildOfClass("Humanoid")
         if not Hum then return end
- 
-        Camera.CameraSubject = Hum
  
         repeat
             Root.CFrame = OldPos
@@ -1055,8 +1047,6 @@ Relief.AddCommand({"fling"}, function(Args)
             local TRoot = TChar.HumanoidRootPart
             local THum = TChar.Humanoid
  
-            Camera.CameraSubject = THum
- 
             for _, BP in Char:GetChildren() do
                 if BP:IsA("BasePart") then
                     BP.Velocity, BP.RotVelocity = Vector3.zero, Vector3.zero
@@ -1084,8 +1074,6 @@ Relief.AddCommand({"fling"}, function(Args)
  
     local Hum = Char:FindFirstChildOfClass("Humanoid")
     if not Hum then return end
- 
-    Camera.CameraSubject = Hum
  
     repeat
         Root.CFrame = OldPos
@@ -1283,7 +1271,7 @@ local function MakeMotionCommand(Name, TargetOffsetFunc, OnStart, OnEnd)
 			local Hum = Char:FindFirstChildOfClass("Humanoid")
 			if not Hum then return task.wait() end
 
-			if not Players:FindFirstChild(Target.Name) then Camera.CameraSubject = Hum return task.wait() end
+			if not Players:FindFirstChild(Target.Name) then return task.wait() end
 
 			local Root = Char:FindFirstChild("HumanoidRootPart")
 			if not Root then return task.wait() end
