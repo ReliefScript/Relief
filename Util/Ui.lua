@@ -1593,7 +1593,7 @@ Library.Arrow = Arrow
 local Notifications = Instance.new("Frame")
 Notifications.Parent = Screen
 Notifications.Size = UDim2.new(0.15, 0, 0.95, 0)
-Notifications.AnchorPoint = Vector2.new(1, 0.5)
+Notifications.AnchorPoint = Vector2.new(0, 0.5)
 Notifications.Position = UDim2.new(0, 0, 0.5, 0)
 Notifications.BackgroundTransparency = 1
 
