@@ -1471,7 +1471,7 @@ Relief.AddCommand({"crash"}, function(Args)
 		for i = 1, 1000 do
 			Track:Play()
 		end		
-	end)
+	end))
 
 	Relief.Notify("Initalized crash.", 3) 
 end)
