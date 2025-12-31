@@ -220,6 +220,7 @@ local function HandlePlayer(Player)
 
 	Connections[Player] = Thread:Maid(Player.Name .. "_Added", Players.PlayerAdded:Connect(function(Target)
 		if not Players:FindFirstChild(Player.Name) then Connections[Player]:Disconnect() Connections[Player] = nil return end
+		repeat task.wait() until Players:FindFirstChild(Target)
 		Log[Player][Target] = Player:GetFriendStatus(Target)
 	end))
 
