@@ -219,7 +219,7 @@ local function HandlePlayer(Player)
 	end
 
 	Connections[Player] = Thread:Maid(Player.Name .. "_Added", Players.PlayerAdded:Connect(function(Target)
-		if not Players:FindFirstChild(Player.Name) then Connections[Player]:Disconnect() Connections[Player] = nil return end
+		if not Players:FindFirstChild(Player.Name) then if Connections[Player] then Connections[Player]:Disconnect() Connections[Player] = nil end return end
 		repeat task.wait() until Players:FindFirstChild(Target.Name)
 		Log[Player][Target] = Player:GetFriendStatus(Target)
 	end))
@@ -239,7 +239,9 @@ local function HandlePlayer(Player)
 						FriendLog(("%s accepted %s's friend request."):format(Player.Name, Target.Name))
 					end
 					
-					Connection:Disconnect()
+					if Connection then
+						Connection:Disconnect()
+					end
 				end
 			end))
 		end
