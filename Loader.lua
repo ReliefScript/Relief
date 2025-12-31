@@ -210,7 +210,7 @@ Relief.addModule("World", "Crash", function(Toggled)
 	
 		Thread:New("AnimCrash", function()
 			task.wait()
-			for _ = 1, 10 do
+			for _ = 1, 5 do
 				local Anim = Instance.new("Animation")
 				Anim.AnimationId = `http{HttpService:GenerateGUID()}=108713182294229`
 				local Track = Hum:LoadAnimation(Anim)
