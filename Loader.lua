@@ -1297,8 +1297,6 @@ local function MakeMotionCommand(Name, TargetOffsetFunc, OnStart, OnEnd)
 			local THum = TChar:FindFirstChildOfClass("Humanoid")
 			if not THum then return task.wait() end
 
-			Camera.CameraSubject = THum
-
 			for _, BP in Char:GetChildren() do
 				if BP:IsA("BasePart") then
 					BP.Velocity, BP.RotVelocity = Vector3.zero, Vector3.zero
@@ -1324,8 +1322,6 @@ local function MakeMotionCommand(Name, TargetOffsetFunc, OnStart, OnEnd)
 		if not Hum then return end
 
 		if OnEnd then OnEnd(Hum) end
-
-		Camera.CameraSubject = Hum
 	end)
 end
 
