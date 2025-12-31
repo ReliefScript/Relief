@@ -200,6 +200,75 @@ end
 
 getgenv().Thread = Thread
 
+Relief.addModule("Utility", "FriendLogs", function()end)
+
+local Log = {}
+local Connections = {}
+
+local function FriendLog(Text)
+	if Relief.isToggled("FriendLogs") then
+		Relief.Notify(Text, 5)
+	end
+end
+
+local function HandlePlayer(Player)
+	Log[Player] = {}
+
+	for _, Target in Players:GetPlayers() do
+		Log[Player][Target] = Player:GetFriendStatus(Target)
+	end
+
+	Connections[Player] = Thread:Maid(Player.Name .. "_Added", Players.PlayerAdded:Connect(function(Target)
+		Log[Player][Target] = Player:GetFriendStatus(Target)
+	end))
+
+	Thread:Maid(Player.Name .. "_Handle", Player.FriendStatusChanged:Connect(function(Target, New)
+		if New.Value == 4 then
+			FriendLog(("%s sent friend request to %s."):format(Target.Name, Player.Name))
+			Connection = Thread:Maid(Target.Name .. "_" .. Player.Name, Player.FriendStatusChanged:Connect(function(NewTarget, NewStatus)
+				if NewTarget == Target then
+					if NewStatus.Value == 1 then
+						FriendLog(("%s declined %s's friend request."):format(Player.Name, Target.Name))
+					end
+
+					if NewStatus.Value == 2 then
+						FriendLog(("%s accepted %s's friend request."):format(Player.Name, Target.Name))
+					end
+					Connection:Disconnect()
+				end
+			end))
+		end
+
+		if Player == LocalPlayer then return end
+
+		local Old = Log[Player][Target]
+		if Old.Value == 2 and New.Value == 1 then
+			FriendLog(("%s and %s are no longer friends."):format(Target.Name, Player.Name))
+		end
+
+		Log[Player][Target] = New
+	end))
+end
+
+for _, Player in Players:GetPlayers() do
+	HandlePlayer(Player)
+end
+
+Thread:Maid("HandleFriend", Players.PlayerAdded:Connect(HandlePlayer))
+
+Thread:Maid("FriendLeave", Players.PlayerRemoving:Connect(function(Player)
+	local Found = Log[Player]
+	if Found then
+		Found = nil
+	end
+
+	local Found = Connections[Player]
+	if Found then
+		Found:Disconnect()
+		Found = nil
+	end
+end))
+
 Relief.addModule("World", "Crash", function(Toggled)
 	if Toggled then
 		local Char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
