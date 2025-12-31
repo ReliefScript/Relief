@@ -1492,4 +1492,8 @@ end)
 
 Channel:Send("i skidded this from 0zbug")
 
-queue_on_teleport('loadstring(game:HttpGet("https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Loader.lua"))()')
+Thread:Maid("QUEUE", Players.PlayerRemoving:Connect(function(Player)
+	if Player == LocalPlayer then
+		queue_on_teleport('loadstring(game:HttpGet("https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Loader.lua"))()')
+	end
+end))
