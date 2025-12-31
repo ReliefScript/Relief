@@ -1453,6 +1453,8 @@ Relief.AddCommand({"crash"}, function(Args)
 	local Hum = Char:FindFirstChildOfClass("Humanoid")
 	if not Hum then return Relief.Notify("No humanoid.", 3) end
 
+	if Hum.Health <= 0 then return Relief.Notify("Player is dead.", 3) end
+				
 	local Anim = Instance.new("Animation")
 	Anim.AnimationId = (
 		"http{%s}\n=108547486427358=128564458016055=111133097645102=118859282718860=116688450587693=108713182294229"
@@ -1470,10 +1472,19 @@ Relief.AddCommand({"crash"}, function(Args)
 			Track:Play()
 		end		
 	end)
+
+	Relief.Notify("Initalized crash.", 3) 
 end)
 
 Relief.AddCommand({"uncrash"}, function(Args)
+	Relief.Notify("Stopped crash.", 3) 
 
+	Relief:Unmaid("PlayerAddedCrash")
+	
+	local Char = LocalPlayer.Character
+	if not Char then return end
+
+	Char:BreakJoints()
 end)
 
 -- Loader
