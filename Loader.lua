@@ -365,7 +365,7 @@ Relief.addModule("Movement", "ForceR6", function(Toggled)
 		if not Char then return end
 		
 		local Hum = Char:FindFirstChildOfClass("Humanoid")
-		if not Hum then return end
+		if not Hum or Hum.RigType ~= Enum.HumanoidRigType.R15 then return end
 
 		StopAnimations(Hum)
 		for _, Data in AnimCache do
