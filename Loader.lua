@@ -1453,25 +1453,19 @@ Relief.AddCommand({"crash"}, function(Args)
 	local Hum = Char:FindFirstChildOfClass("Humanoid")
 	if not Hum then return Relief.Notify("No humanoid.", 3) end
 
-	if Hum.Health <= 0 then return Relief.Notify("Player is dead.", 3) end
-				
-	local Anim = Instance.new("Animation")
-	Anim.AnimationId = (
-		"http{%s}\n=108547486427358=128564458016055=111133097645102=118859282718860=116688450587693=108713182294229"
-	):format(HttpService:GenerateGUID(false):lower())
-
-	local Track = Hum:LoadAnimation(Anim)
-	Track:AdjustSpeed(0/0)
-	
-	for i = 1, 1000 do
-		Track:Play()
-	end
-
-	Thread:Maid("PlayerAddedCrash", Players.PlayerAdded:Connect(function()
-		for i = 1, 1000 do
-			Track:Play()
-		end		
-	end))
+	Thread:New("AnimCrash", function()
+		task.wait()
+		for _ = 1, 100 do
+			local Anim = Instance.new("Animation")
+			Anim.AnimationId = `http{HttpService:GenerateGUID()}=108713182294229`
+			local Track = Hum:LoadAnimation(Anim)
+			Track:Play(21474836471234)
+			task.spawn(function()
+				RunService.PreRender:Wait()
+				Track:AdjustSpeed(-math.huge)
+			end)
+		end
+	end)
 
 	Relief.Notify("Initalized crash.", 3) 
 end)
@@ -1479,12 +1473,17 @@ end)
 Relief.AddCommand({"uncrash"}, function(Args)
 	Relief.Notify("Stopped crash.", 3) 
 
-	Relief:Unmaid("PlayerAddedCrash")
+	Thread:Disconnect("AnimCrash")
 	
 	local Char = LocalPlayer.Character
 	if not Char then return end
 
-	Char:BreakJoints()
+	local Hum = Char:FindFirstChildOfClass("Humanoid")
+	if not Hum then return end
+
+	for _, Track in Hum:GetPlayingAnimationTracks() do
+		Track:Stop()
+	end
 end)
 
 -- Loader
