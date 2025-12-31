@@ -219,6 +219,7 @@ local function HandlePlayer(Player)
 	end
 
 	Connections[Player] = Thread:Maid(Player.Name .. "_Added", Players.PlayerAdded:Connect(function(Target)
+		if not Players:FindFirstChild(Player.Name) then Connections[Player]:Disconnect() Connections[Player] = nil return end
 		Log[Player][Target] = Player:GetFriendStatus(Target)
 	end))
 
