@@ -48,7 +48,6 @@ local function JoinDiscord()
 			nonce = HttpService:GenerateGUID(false)
 		}),
 	})
-	setclipboard("discord.gg/msFnMfhuhV")
 end
 
 if not isfile("time") then
@@ -71,6 +70,8 @@ local function ServerHop()
 	TeleportService:TeleportToPlaceInstance(game.PlaceId, RandomServer.id)
 	Relief.KillScript()
 end
+
+setclipboard("discord.gg/msFnMfhuhV")
 
 local Found = false
 local FId = nil
@@ -1560,7 +1561,7 @@ end)
 Relief.Load(SaveName)
 
 if not Found then
-	Relief.Notify("Game not found in Relief Hub. Loading universal.", 5)
+	Relief.Notify("Game not found in Relief Hub | Loading universal | Set Discord To Clipboard!", 5)
 end
 
 local AnimSocket = loadstring(game:HttpGet("https://raw.github.com/0zBug/AnimSocket/main/main.lua"))()
