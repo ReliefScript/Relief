@@ -169,6 +169,7 @@ end
 local Thread = {
     Cache = {},
     Connections = {},
+	Tables = {}
 }
  
 function Thread:New(Name, Callback)
@@ -200,6 +201,35 @@ function Thread:Unmaid(Name)
  
     Found:Disconnect()
     Thread.Connections[Name] = nil
+end
+
+function Thread:Table(Name, Callback)
+	if not Thread.Tables[Name] then
+		Thread.Tables[Name] = {}
+	end
+
+	local T = true
+	Thread.Tables[Name] = T
+
+	task.spawn(function()
+        while T do
+            Callback()
+        end
+    end)
+
+	local Tree = {}
+
+	function Tree:Disconnect()
+		T = nil
+	end
+
+	return Tree
+end
+
+function Thread:Untable(Name)
+	if Thread.Tables[Name] then
+        Thread.Tables[Name] = nil
+    end
 end
 
 getgenv().Thread = Thread
@@ -249,6 +279,8 @@ local function HandlePlayer(Player)
 		if Player == LocalPlayer then return end
 
 		local Old = Log[Player][Target]
+		if not Old then return end
+
 		if Old.Value == 2 and New.Value == 1 then
 			FriendLog(("<u>%s</u> and <u>%s</u> are no longer friends."):format(Target.Name, Player.Name), Color3.new(1, 0, 0))
 		end
@@ -830,6 +862,10 @@ Relief.addModule("Movement", "Fly", function(Toggled)
  
         Thread:New("Fly", function()
             task.wait()
+			if UserInputService:GetFocusedTextBox() then
+				return
+			end
+
             local Char = LocalPlayer.Character
             if not Char then return end
  
@@ -1183,7 +1219,7 @@ Relief.AddCommand({"fling"}, function(Args)
         end
     until (Root.Position - OldPos.Position).Magnitude < 5
 end)
- 
+
 Relief.AddCommand({"goto"}, function(Args)
     local Targets = GetPlayer(Args[1])
     if not Targets then return end
@@ -1531,6 +1567,89 @@ Relief.AddCommand({"unfriendspam", "unfs"}, function(Args)
 	Thread:Disconnect("FriendSpam")
 end)
 
+local Syncing = false
+Relief.AddCommand({"animationsync", "animsync", "as"}, function(Args)
+	local Targets = GetPlayer(Args[1])
+	if not Targets then return end
+
+	local Target = Targets[1]
+	if not Target then return end
+
+	Relief.GetCommand("unas").Callback()
+	Syncing = true
+
+	local function HandleTrack(Track)
+		local Char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+		if not Char then return end
+
+		local Hum = Char:WaitForChild("Humanoid")
+		if not Hum then return end
+
+		local Anim = Track.Animation
+		local Copy = Hum:LoadAnimation(Anim)
+		
+		Track.Stopped:Connect(function()
+			Copy:Stop()
+		end)
+
+		Copy:Play()
+
+		local function Check()
+			if not Copy then return 1 end
+			if not Track then return 1 end
+		end
+
+		task.spawn(function()
+			local T T = Thread:Table("TP", function()
+				task.wait()
+				if Check() then T:Disconnect() return end
+				Copy.TimePosition = Track.TimePosition
+				task.wait()
+			end)
+		end)
+	end
+
+	local function HandleCharacter(Char)
+		local Hum = Char:WaitForChild("Humanoid")
+
+		Thread:Untable("TP")
+		Thread:Unmaid("OnTrack")
+
+		for _, Track in Hum:GetPlayingAnimationTracks() do
+			HandleTrack(Track)
+		end
+
+		Thread:Maid("OnTrack", Hum.AnimationPlayed:Connect(HandleTrack))
+	end
+
+	HandleCharacter(Target.Character)
+	Thread:Maid("AnimCA", Target.CharacterAdded:Connect(HandleCharacter))
+
+	Thread:Maid("AnimLeft", Players.PlayerRemoving:Connect(function(Plr)
+		if Plr == Target then
+			Relief.GetCommand("unas").Callback()
+		end
+	end))
+end)
+
+Relief.AddCommand({"unanimationsync", "unanimsync", "unas"}, function()
+	Syncing = false
+	Thread:Untable("TP")
+	Thread:Unmaid("OnTrack")
+	Thread:Unmaid("AnimCA")
+	Thread:Unmaid("AnimLeft")
+
+	local Char = LocalPlayer.Character
+	if not Char then return end
+
+	local Hum = Char:FindFirstChildOfClass("Humanoid")
+	if not Hum then return end
+
+	for _, Tracks in Hum:GetPlayingAnimationTracks() do
+		Tracks:Stop()
+	end
+end)
+
 -- Loader
 
 if Found then toLoad() end
@@ -1546,6 +1665,10 @@ Relief.addModule("Utility", "KillScript", function(Toggled)
     	for _, Connection in Thread.Connections do
         	Connection:Disconnect()
     	end
+
+		for Name, Data in Thread.Tables do
+			Thread.Tables[Name] = nil
+		end
 
 		getgenv().Thread = nil
 		getgenv().Whitelist = nil
