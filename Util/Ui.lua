@@ -1652,6 +1652,7 @@ Library.Notify = function(Text, Length)
 	NotifText.BackgroundTransparency = 1
 	NotifText.TextColor3 = Color3.new(1, 1, 1)
 	NotifText.FontFace = Font.new("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+	NotifText.RichText = true
 	NotifText.TextScaled = true
 	NotifText.Text = Text
 
