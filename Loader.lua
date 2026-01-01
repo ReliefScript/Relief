@@ -209,7 +209,7 @@ local Connections = {}
 
 local function FriendLog(Text, Color)
 	if Relief.isToggled("FriendLogs") then
-		Relief.Notify(Text, 5)
+		Relief.Notify(Text, 5, Color)
 	end
 end
 
