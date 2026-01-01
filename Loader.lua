@@ -239,7 +239,7 @@ local function HandlePlayer(Player)
 						FriendLog(("%s accepted %s's friend request."):format(Player.Name, Target.Name))
 					end
 					
-					Thread:Unmaid(Player.Name .. "_Handle")
+					Thread:Unmaid(Target.Name .. "_Handle")
 				end
 			end))
 		end
