@@ -209,7 +209,7 @@ local Connections = {}
 
 local function FriendLog(Text, Color)
 	if Relief.isToggled("FriendLogs") then
-		Relief.Notify(Text, 5, Color)
+		Relief.Notify(Text, 8, Color)
 	end
 end
 
@@ -228,18 +228,18 @@ local function HandlePlayer(Player)
 
 	Thread:Maid(Player.Name .. "_Handle", Player.FriendStatusChanged:Connect(function(Target, New)
 		if New.Value == 4 then
-			FriendLog(("<b>%s</b> sent friend request to <b>%s</b>."):format(Target.Name, Player.Name), Color3.new(1, 1, 0))
+			FriendLog(("<u>%s</u> sent friend request to <u>%s</u>."):format(Target.Name, Player.Name), Color3.new(1, 1, 0))
 			Thread:Maid(Target.Name .. "_" .. Player.Name, Player.FriendStatusChanged:Connect(function(NewTarget, NewStatus)
 				if NewTarget == Target then
 					if NewStatus.Value == 1 then
-						FriendLog(("<b>%s</b> declined <b>%s</b>'s friend request."):format(Player.Name, Target.Name), Color3.new(1, 0, 0))
+						FriendLog(("<u>%s</u> declined <u>%s</u>'s friend request."):format(Player.Name, Target.Name), Color3.new(1, 0, 0))
 					end
 
 					if NewStatus.Value == 2 then
-						FriendLog(("<b>%s</b> accepted <b>%s</b>'s friend request."):format(Player.Name, Target.Name), Color3.new(0, 1, 0))
+						FriendLog(("<u>%s</u> accepted <u>%s</u>'s friend request."):format(Player.Name, Target.Name), Color3.new(0, 1, 0))
 					end
 					
-					Thread:Unmaid(Target.Name .. "_Handle")
+					Thread:Unmaid(Target.Name .. "_" .. Player.Name)
 				end
 			end))
 		end
@@ -248,7 +248,7 @@ local function HandlePlayer(Player)
 
 		local Old = Log[Player][Target]
 		if Old.Value == 2 and New.Value == 1 then
-			FriendLog(("<b>%s</b> and <b>%s</b> are no longer friends."):format(Target.Name, Player.Name), Color3.new(1, 0, 0))
+			FriendLog(("<u>%s</u> and <u>%s</u> are no longer friends."):format(Target.Name, Player.Name), Color3.new(1, 0, 0))
 		end
 
 		Log[Player][Target] = New
