@@ -48,6 +48,7 @@ local function JoinDiscord()
 			nonce = HttpService:GenerateGUID(false)
 		}),
 	})
+	setclipboard("discord.gg/msFnMfhuhV")
 end
 
 if not isfile("time") then
@@ -81,7 +82,7 @@ for Id, Link in Games do
 	FId = Id
 	toLoad = function()
     	loadstring(game:HttpGet(Link))()
-    	Relief.Notify(("Relief Hub by Atlas | %d Loaded | Invited To Discord!"):format(Id), 5)
+    	Relief.Notify(("Relief Hub by Atlas | %d Loaded | Set Discord To Clipboard!"):format(Id), 5)
 	end
     break
 end
