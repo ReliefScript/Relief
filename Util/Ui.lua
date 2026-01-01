@@ -1601,9 +1601,10 @@ local NotifCount = 0
 local Notis = {}
 local NotiInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
 
-Library.Notify = function(Text, Length)
+Library.Notify = function(Text, Length, Color)
 	Text = Text or "???"
 	Length = Length or 5
+	Color = Color or Color3.new(1, 1, 1)
 
 	NotifCount += 1
 
@@ -1655,6 +1656,7 @@ Library.Notify = function(Text, Length)
 	NotifText.RichText = true
 	NotifText.TextScaled = true
 	NotifText.Text = Text
+	NotifText.TextColor3 = Color
 
 	local NTPadding = Instance.new("UIPadding")
 	NTPadding.Parent = NotifText
