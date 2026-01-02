@@ -1,4 +1,4 @@
-if getgenv().Relief then getgenv().Relief.Notify("Relief already loaded.", 5, Color3.new(1, 1, 0)) end
+if getgenv().Relief then getgenv().Relief.Notify("Relief already loaded.", 5, Color3.new(1, 1, 0)) return end
 
 -- Config
 
