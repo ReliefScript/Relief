@@ -314,33 +314,6 @@ Thread:Maid("FriendLeave", Players.PlayerRemoving:Connect(function(Player)
 	Thread:Unmaid(Player.Name .. "_Added")
 end))
 
-Relief.addModule("World", "Crash", function(Toggled)
-	if Toggled then
-		local Char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-		if not Char then return end
-	
-		local Hum = Char:WaitForChild("Humanoid")
-		if not Hum then return end
-	
-		Thread:New("AnimCrash", function()
-			task.wait()
-			for _ = 1, 5 do
-				local Anim = Instance.new("Animation")
-				Anim.AnimationId = `http{HttpService:GenerateGUID()}=108713182294229`
-				local Track = Hum:LoadAnimation(Anim)
-				Track:Play(21474836471234)
-				task.spawn(function()
-					RunService.PreRender:Wait()
-					Track:AdjustSpeed(-math.huge)
-				end)
-			end
-		end)
-	else
-		Thread:Disconnect("AnimCrash")
-		Relief.GetCommand("respawn").Callback()
-	end
-end)
-
 local Vehicles = {}
 
 for _, Model in workspace:GetChildren() do
