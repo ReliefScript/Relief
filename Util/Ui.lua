@@ -1526,7 +1526,7 @@ local function HandleCmdBar(WasArrow)
 	Outro:Play()
 	CommandBar:ReleaseFocus()
 	
-	if not enterPressed and not WasArrow then return end
+	if not WasArrow then return end
 
 	Toggled = false
 	local Split = Command:split(" ")
@@ -1539,7 +1539,7 @@ end
 
 local ArrowToggled = false
 Connections[#Connections + 1] = CommandBar.FocusLost:Connect(function(enterPressed)
-	if ArrowToggled then return end
+	if not enterPressed or ArrowToggled then return end
 	HandleCmdBar()
 end)
 
