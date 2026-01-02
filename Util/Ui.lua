@@ -1540,7 +1540,7 @@ end
 local ArrowToggled = false
 Connections[#Connections + 1] = CommandBar.FocusLost:Connect(function(enterPressed)
 	if ArrowToggled then return end
-	HandleCmdBar(false, enterPressed)
+	HandleCmdBar(enterPressed)
 end)
 
 local function GetAlias(Query)
