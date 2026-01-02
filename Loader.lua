@@ -1672,14 +1672,14 @@ Relief.addModule("Utility", "KillScript", function(Toggled)
 			Thread.Tables[Name] = nil
 		end
 
-		getgenv().Thread = nil
-		getgenv().Whitelist = nil
-		getgenv().Relief = nil
-		getgenv().IsWhitelisted = nil
-		getgenv().Commands = nil
-		getgenv().AddCommand = nil
-		getgenv().GetCommand = nil
-		TextChatService.OnIncomingMessage = nil
+		getgenv().Thread = false
+		getgenv().Whitelist = false
+		getgenv().Relief = false
+		getgenv().IsWhitelisted = false
+		getgenv().Commands = false
+		getgenv().AddCommand = false
+		getgenv().GetCommand = false
+		TextChatService.OnIncomingMessage = false
 	end
 end)
 
