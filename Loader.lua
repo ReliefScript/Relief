@@ -238,12 +238,59 @@ end
 
 getgenv().Thread = Thread
 
-local Old = nil
+local Chars = {
+	"0001", "0002", "0003", "0004",
+	"0005", "0006", "0007", "0008",
+	"000C", "000D", "000E", "000F",
+	"0010", "0011", "0012", "0013",
+	"0014", "0015", "0016", "0017",
+	"0018", "0019", "001A", "001B",
+	"001C", "001D", "001E", "001F"
+}
+
+local function RandomChars(Length)
+	local Compile = ""
+
+	for _ = 1, Length do
+		Compile ..= utf8.char("0x" .. Chars[math.random(#Chars)])
+	end
+
+	return Compile
+end
+
+Relief.addModule("Utility", "ChatSpam", function(Toggled)
+	if Toggled then
+		Thread:New("ChatSpam", function()
+			if not Relief.isToggled("ChatSpam") then return end
+
+			for _ = 1, 10 do
+				task.spawn(function()
+					local Message = Relief.getSetting("ChatSpam", "Message")
+					Chat(Message .. RandomChars(4))
+				end)
+				task.wait()
+			end
+
+			task.wait(30)
+		end)
+	else
+		Thread:Disconnect("ChatSpam")
+	end
+end, {
+	{
+		["Type"] = "TextBox",
+		["Title"] = "Message",
+		["Placeholder"] = "msg here",
+		["Default"] = "relief on top",
+		["Callback"] = function()end
+	}
+})
+
+local Old = Camera.FieldOfView
 local ZoomInfo = TweenInfo.new(0.4, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
 
 Relief.addModule("Render", "Zoom", function(Toggled)
 	if Toggled then
-		Old = Camera.FieldOfView
 		local Amount = Relief.getSetting("Zoom", "Amount")
 		if Relief.getSetting("Zoom", "Smooth") then
 			TweenService:Create(Camera, ZoomInfo, { FieldOfView = Amount }):Play()
@@ -745,6 +792,9 @@ Relief.addModule("Combat", "LoopFling", function(Toggled)
  
                     local Root = Char:FindFirstChild("HumanoidRootPart")
                     if not Root then return 1 end
+
+					local Hum = Char:FindFirstChildOfClass("Humanoid")
+                    if not Hum then return 1 end
  
                     local TChar = Target.Character
                     if not TChar then return 1 end
@@ -766,9 +816,12 @@ Relief.addModule("Combat", "LoopFling", function(Toggled)
                     Flung = true
                     local Char = LocalPlayer.Character
                     local Root = Char.HumanoidRootPart
+					local Hum = Char.Humanoid
                     local TChar = Target.Character
                     local TRoot = TChar.HumanoidRootPart
                     local THum = TChar.Humanoid
+
+					Hum:ChangeState(0)
  
                     for _, BP in Char:GetChildren() do
                         if BP:IsA("BasePart") then
@@ -1081,6 +1134,9 @@ Relief.AddCommand({"loopfling", "lf"}, function(Args)
  
                 local Root = Char:FindFirstChild("HumanoidRootPart")
                 if not Root then return 1 end
+
+				local Hum = Char:FindFirstChildOfClass("Humanoid")
+				if not Hum then return 1 end
  
                 local TChar = Target.Character
                 if not TChar then return 1 end
@@ -1102,9 +1158,12 @@ Relief.AddCommand({"loopfling", "lf"}, function(Args)
                 Flung = true
                 local Char = LocalPlayer.Character
                 local Root = Char.HumanoidRootPart
+				local Hum = Char.Humanoid
                 local TChar = Target.Character
                 local TRoot = TChar.HumanoidRootPart
                 local THum = TChar.Humanoid
+
+				Hum:ChangeState(0)
  
                 for _, BP in Char:GetChildren() do
                     if BP:IsA("BasePart") then
@@ -1180,6 +1239,9 @@ Relief.AddCommand({"fling"}, function(Args)
  
             local Root = Char:FindFirstChild("HumanoidRootPart")
             if not Root then return 1 end
+
+			local Hum = Char:FindFirstChildOfClass("Humanoid")
+			if not Hum then return 1 end
  
             local TChar = Target.Character
             if not TChar then return 1 end
@@ -1201,9 +1263,12 @@ Relief.AddCommand({"fling"}, function(Args)
             Flung = true
             local Char = LocalPlayer.Character
             local Root = Char.HumanoidRootPart
+			local Hum = Char.Humanoid
             local TChar = Target.Character
             local TRoot = TChar.HumanoidRootPart
             local THum = TChar.Humanoid
+
+			Hum:ChangeState(0)
  
             for _, BP in Char:GetChildren() do
                 if BP:IsA("BasePart") then
