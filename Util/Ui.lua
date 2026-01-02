@@ -1520,13 +1520,13 @@ Connections[#Connections + 1] = UserInputService.InputEnded:Connect(function(Inp
 	end
 end)
 
-local function HandleCmdBar(WasArrow)
+local function HandleCmdBar(ep)
 	local Command = CommandBar.Text
 	CommandBar.Text = ""
 	Outro:Play()
 	CommandBar:ReleaseFocus()
 	
-	if not WasArrow then return end
+	if not ep then return end
 
 	Toggled = false
 	local Split = Command:split(" ")
@@ -1539,8 +1539,8 @@ end
 
 local ArrowToggled = false
 Connections[#Connections + 1] = CommandBar.FocusLost:Connect(function(enterPressed)
-	if not enterPressed or ArrowToggled then return end
-	HandleCmdBar()
+	if ArrowToggled then return end
+	HandleCmdBar(false, enterPressed)
 end)
 
 local function GetAlias(Query)
