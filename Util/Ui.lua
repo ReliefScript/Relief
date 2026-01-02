@@ -522,7 +522,7 @@ local function Dragify(Category)
 	end)
 
 	Connections[#Connections + 1] = Expand.InputBegan:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 			local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
 			local goalSize, goalSize2, goalSize3
 			if isExpanded then
@@ -714,19 +714,29 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 		end
 	end)
 
+	local function ExpandSettings()
+		SettingToggle = not SettingToggle
+		Settings.Visible = SettingToggle
+		Separator.Visible = SettingToggle
+		if SettingToggle then
+			NewSettings.Parent = Modules
+			NewSettings.Name = NewModule.Name .. "a"
+			Expand.Rotation = 0
+		else
+			NewSettings.Parent = nil
+			Expand.Rotation = -90
+		end
+	end
+
 	Connections[#Connections + 1] = NewModule.InputBegan:Connect(function(input)
 		if input.UserInputType == Enum.UserInputType.MouseButton2 then
-			SettingToggle = not SettingToggle
-			Settings.Visible = SettingToggle
-			Separator.Visible = SettingToggle
-			if SettingToggle then
-				NewSettings.Parent = Modules
-				NewSettings.Name = NewModule.Name .. "a"
-				Expand.Rotation = 0
-			else
-				NewSettings.Parent = nil
-				Expand.Rotation = -90
-			end
+			ExpandSettings()
+		end
+	end)
+
+	Connections[#Connections + 1] = Expand.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			ExpandSettings()
 		end
 	end)
 
@@ -1104,13 +1114,13 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 				local Dragging = false
 
 				Connections[#Connections + 1] = Button.InputBegan:Connect(function(Input)
-					if Input.UserInputType == Enum.UserInputType.MouseButton1 then
+					if Input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 						Dragging = true
 					end
 				end)
 
 				Connections[#Connections + 1] = Button.InputEnded:Connect(function(Input)
-					if Input.UserInputType == Enum.UserInputType.MouseButton1 then
+					if Input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 						Dragging = false
 						if Library.SaveName and not Library.Killed then Library.Save(Library.SaveName) end
 					end
@@ -1510,13 +1520,13 @@ Connections[#Connections + 1] = UserInputService.InputEnded:Connect(function(Inp
 	end
 end)
 
-Connections[#Connections + 1] = CommandBar.FocusLost:Connect(function(enterPressed)
+local function HandleCmdBar(WasArrow)
 	local Command = CommandBar.Text
 	CommandBar.Text = ""
 	Outro:Play()
 	CommandBar:ReleaseFocus()
 	
-	if not enterPressed then return end
+	if not enterPressed and not WasArrow then return end
 
 	Toggled = false
 	local Split = Command:split(" ")
@@ -1525,6 +1535,12 @@ Connections[#Connections + 1] = CommandBar.FocusLost:Connect(function(enterPress
 
 	table.remove(Split, 1)
 	Command.Callback(Split)
+end
+
+local ArrowToggled = false
+Connections[#Connections + 1] = CommandBar.FocusLost:Connect(function(enterPressed)
+	if ArrowToggled then return end
+	HandleCmdBar()
 end)
 
 local function GetAlias(Query)
@@ -1563,25 +1579,14 @@ end)
 
 Arrow.MouseButton1Down:Connect(function()
 	Toggled = not Toggled
+	ArrowToggled = Toggled
 	if Toggled then
 		Arrow.Rotation = 0
 		Intro:Play()
 		CommandBar:CaptureFocus()
 	else
 		Arrow.Rotation = 180
-		local Command = CommandBar.Text
-		CommandBar.Text = ""
-		Outro:Play()
-		CommandBar:ReleaseFocus()
-		
-		if not enterPressed then return end
-
-		local Split = Command:split(" ")
-		local Command = Library.GetCommand(Split[1])
-		if not Command then return end
-
-		table.remove(Split, 1)
-		Command.Callback(Split)
+		HandleCmdBar(true)
 	end
 end)
 
