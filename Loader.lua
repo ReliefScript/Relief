@@ -1702,7 +1702,7 @@ Relief.addModule("Utility", "KillScript", function(Toggled)
 		getgenv().Commands = false
 		getgenv().AddCommand = false
 		getgenv().GetCommand = false
-		TextChatService.OnIncomingMessage = false
+		TextChatService.OnIncomingMessage = nil
 	end
 end)
 
