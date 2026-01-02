@@ -31,6 +31,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TextChatService = game:GetService("TextChatService")
 local TeleportService = game:GetService("TeleportService")
 local HttpService = game:GetService("HttpService")
+local TweenService = game:GetService("TweenService")
 
 local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
@@ -236,6 +237,54 @@ function Thread:Untable(Name)
 end
 
 getgenv().Thread = Thread
+
+local Old = nil
+local ZoomInfo = TweenInfo.new(0.4, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
+
+Relief.addModule("Render", "Zoom", function(Toggled)
+	if Toggled then
+		Old = Camera.FieldOfView
+		local Amount = Relief.getSetting("Zoom", "Amount")
+		if Relief.getSetting("Zoom", "Smooth") then
+			TweenService:Create(Camera, ZoomInfo, { FieldOfView = Amount }):Play()
+		else
+			Camera.FieldOfView = Amount
+		end
+
+		local Module = Relief.getModule("Zoom")
+		local Bind = Module.Keybind
+		if not Bind then return end
+
+		Thread:Unmaid("Zoom")
+		Thread:Maid("Zoom", UserInputService.InputEnded:Connect(function(Input, GPE)
+			if Input.KeyCode == Bind then
+				Thread:Unmaid("Zoom")
+				Module.ToggleFunction()
+			end
+		end))
+	else
+		if Relief.getSetting("Zoom", "Smooth") then
+			TweenService:Create(Camera, ZoomInfo, { FieldOfView = Old }):Play()
+		else
+			Camera.FieldOfView = Old
+		end
+		Thread:Unmaid("Zoom")
+	end
+end, {
+	{
+		["Type"] = "Toggle",
+		["Title"] = "Smooth",
+		["Callback"] = function()end
+	},
+	{
+		["Type"] = "Slider",
+		["Title"] = "Amount",
+		["Min"] = 1,
+		["Max"] = 120,
+		["Default"] = 30,
+		["Callback"] = function()end
+	}
+})
 
 Relief.addModule("Utility", "FriendLogs", function()end)
 
