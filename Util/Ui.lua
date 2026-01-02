@@ -1114,13 +1114,13 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 				local Dragging = false
 
 				Connections[#Connections + 1] = Button.InputBegan:Connect(function(Input)
-					if Input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+					if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
 						Dragging = true
 					end
 				end)
 
 				Connections[#Connections + 1] = Button.InputEnded:Connect(function(Input)
-					if Input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+					if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
 						Dragging = false
 						if Library.SaveName and not Library.Killed then Library.Save(Library.SaveName) end
 					end
