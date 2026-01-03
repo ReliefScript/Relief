@@ -940,9 +940,6 @@ Relief.addModule("Movement", "Fly", function(Toggled)
  
         Thread:New("Fly", function()
             task.wait()
-			if UserInputService:GetFocusedTextBox() then
-				return
-			end
 
             local Char = LocalPlayer.Character
             if not Char then return end
@@ -964,12 +961,14 @@ Relief.addModule("Movement", "Fly", function(Toggled)
  
             local camCF = Camera.CFrame
             local moveDir = Vector3.zero
- 
-            for key, dir in Directions do
-                if UserInputService:IsKeyDown(Enum.KeyCode[key]) then
-                    moveDir += Vector3.new(dir[1], dir[2], dir[3])
-                end
-            end
+
+			if not UserInputService:GetFocusedTextBox() then
+	            for key, dir in Directions do
+	                if UserInputService:IsKeyDown(Enum.KeyCode[key]) then
+	                    moveDir += Vector3.new(dir[1], dir[2], dir[3])
+	                end
+	            end
+			end
  
             if moveDir.Magnitude > 0 then
                 moveDir = moveDir.Unit
