@@ -1309,6 +1309,105 @@ Relief.AddCommand({"fling"}, function(Args)
     until (Root.Position - OldPos.Position).Magnitude < 5
 end)
 
+Relief.AddCommand({"void"}, function(Args)
+    local Targets = GetPlayer(Args[1])
+    if not Targets then return end
+ 
+    workspace.FallenPartsDestroyHeight = 0/0
+    local Old = nil
+    local Flung = false
+ 
+    local Char = LocalPlayer.Character
+    if not Char then return end
+ 
+    local Root = Char:FindFirstChild("HumanoidRootPart")
+    if not Root then return end
+ 
+    local OldPos = Root.CFrame
+ 
+    for _, Target in Targets do
+        if Target == LocalPlayer then continue end
+		if IsWhitelisted(Target) then continue end
+
+        local Start = tick()
+ 
+        local function Check()
+            local Char = LocalPlayer.Character
+            if not Char then return 1 end
+ 
+            local Root = Char:FindFirstChild("HumanoidRootPart")
+            if not Root then return 1 end
+
+			local Hum = Char:FindFirstChildOfClass("Humanoid")
+			if not Hum then return 1 end
+ 
+            local TChar = Target.Character
+            if not TChar then return 1 end
+ 
+            local THum = TChar:FindFirstChildOfClass("Humanoid")
+            if not THum then return 1 end
+ 
+            local TRoot = TChar:FindFirstChild("HumanoidRootPart")
+            if not TRoot then return 1 end
+            if TRoot.Velocity.Magnitude > 500 then return 1 end
+ 
+            local TimeFlung = tick() - Start
+            if TimeFlung >= 3 then return 1 end
+        end
+ 
+        if Check() then continue end
+        
+        Repeat(function()
+            Flung = true
+            local Char = LocalPlayer.Character
+            local Root = Char.HumanoidRootPart
+			local Hum = Char.Humanoid
+            local TChar = Target.Character
+            local TRoot = TChar.HumanoidRootPart
+            local THum = TChar.Humanoid
+
+			Hum:ChangeState(0)
+ 
+            for _, BP in Char:GetChildren() do
+                if BP:IsA("BasePart") then
+                    BP.Velocity, BP.RotVelocity = Vector3.zero, Vector3.zero
+                end
+            end
+            
+            local Prediction = Old and (Old.Position - TRoot.Position) * -75 or Vector3.zero
+            local Offset = CFrame.new(math.random(-2, 2), math.random(-2, 2), math.random(-2, 2))
+            Root.CFrame = (TRoot.CFrame * CFrame.Angles(os.clock() * 49218, os.clock() * 1849, os.clock() * 32178) * Offset) + Prediction
+            Old = TRoot.CFrame
+ 
+            Root.Velocity = Vector3.new(0, -9e25, 0)
+            Root.RotVelocity = Vector3.new(0, 0, 0)
+            task.wait()
+        end, Check)
+    end
+ 
+    if not Flung then return end
+ 
+    local Char = LocalPlayer.Character
+    if not Char then return end
+ 
+    local Root = Char:FindFirstChild("HumanoidRootPart")
+    if not Root then return end
+ 
+    local Hum = Char:FindFirstChildOfClass("Humanoid")
+    if not Hum then return end
+ 
+    repeat
+        Root.CFrame = OldPos
+        Hum:ChangeState(2)
+        
+        for _, BP in Char:GetDescendants() do
+            if BP:IsA("BasePart") then
+                BP.Velocity, BP.RotVelocity = Vector3.zero, Vector3.zero
+            end
+        end
+    until (Root.Position - OldPos.Position).Magnitude < 5
+end)
+
 Relief.AddCommand({"goto"}, function(Args)
     local Targets = GetPlayer(Args[1])
     if not Targets then return end
