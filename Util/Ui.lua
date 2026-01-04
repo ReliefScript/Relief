@@ -842,7 +842,7 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 				table.insert(Tree.Settings, SettingTree)
 
 				Connections[#Connections + 1] = TextBox.FocusLost:Connect(function()
-					Config["Callback"](TextBox.Text)
+					task.spawn(Config.Callback, TextBox.Text)
 					SettingTree.Value = TextBox.Text
 					if Library.SaveName and not Library.Killed then Library.Save(Library.SaveName) end
 				end)
