@@ -54,7 +54,7 @@ local LayeredEnums = {
     Enum.AccessoryType.DressSkirt,
 }
 
-local function IsLayered(Query)
+function Polymall:IsLayered(Query)
     if type(Query) == "number" then
       	if Query >= 64 and Query <= 72 then
       		return 1
@@ -107,7 +107,7 @@ function Polymall.Outfit:Add(Id)
   	table.insert(self.Accessories, {
         AssetId = Id,
         AccessoryType = AccessoryTypes[Info.AssetTypeId],
-        IsLayered = IsLayered(Info.AssetTypeId),
+        IsLayered = Polymall:IsLayered(Info.AssetTypeId),
         Order = 1
   	})
 end
@@ -225,7 +225,7 @@ function Polymall.Outfit:Copy(Target)
         table.insert(Accessories, {
 			AssetId = Accessory.AssetId,
 			AccessoryType = Accessory.AccessoryType,
-			IsLayered = IsLayered(Accessory.AccessoryType),
+			IsLayered = Polymall:IsLayered(Accessory.AccessoryType),
 			Order = 1
 		})
     end
