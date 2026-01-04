@@ -59,7 +59,7 @@ function Polymall:IsLayered(Query)
       	if Query >= 64 and Query <= 72 then
       		return 1
       	end
-    elseif type(Query) == EnumCheck("AccessoryType", Query) then
+    elseif EnumCheck("AccessoryType", Query) then
         if table.find(LayeredEnums, Query) then
             return 1
         end
