@@ -682,7 +682,7 @@ Library.addModule = function(Category, Name, Callback, SettingConfig, KeyBind, D
 
 	Tree["ToggleFunction"] = function(isLoading)
 		Tree.Toggle = not Tree.Toggle
-		Callback(Tree.Toggle)
+		task.spawn(Callback, Tree.Toggle)
 		Library.renderModules()
 		if Tree.Toggle then
 			TweenService:Create(Title, TInfo, { TextColor3 = ThemeColor }):Play()
