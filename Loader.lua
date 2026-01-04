@@ -317,6 +317,14 @@ if ReplicatedStorage:FindFirstChild("BloxbizRemotes") then
 			Thread:Unmaid("BloxBizCrash_CA")
 			Thread:UnmaidTable("BloxBizCrash_AntiCrash")
 			Polymall:Reset()
+
+			local Char = LocalPlayer.Character
+			if not Char then return end
+
+			local Root = Char:FindFirstChild("HumanoidRootPart")
+			if not Root then return end
+
+			Root.Anchored = false
 		end
 	end, {
 		{
