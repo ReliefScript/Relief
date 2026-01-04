@@ -173,7 +173,8 @@ end
 local Thread = {
     Cache = {},
     Connections = {},
-	Tables = {}
+	Tables = {},
+	MaidTables = {}
 }
  
 function Thread:New(Name, Callback)
@@ -230,6 +231,23 @@ function Thread:Table(Name, Callback)
 	return Tree
 end
 
+function Thread:MaidTable(Name, Connection)
+	if not Thread.MaidTables[Name] then
+		Thread.MaidTables[Name] = {}
+	end
+
+	Thread.Tables[Name] = Connection
+end
+
+function Thread:UnmaidTable(Name)
+	if Thread.MaidTables[Name] then
+		for _, C in Thread.MaidTables[Name] do
+			C:Disconnect()
+		end
+		Thread.MaidTables[Name] = nil
+	end
+end
+
 function Thread:Untable(Name)
 	if Thread.Tables[Name] then
         Thread.Tables[Name] = nil
@@ -237,6 +255,78 @@ function Thread:Untable(Name)
 end
 
 getgenv().Thread = Thread
+
+if ReplicatedStorage:FindFirstChild("BloxbizRemotes") then
+	local Polymall = loadstring(game:HttpGet("https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Util/Polymall.lua"))()
+	Relief.Notify("Polymall detected. Modules & commands loaded.", 10, Color3.new(0, 1, 0))
+
+	local Ids = {119214918476081,108573644740118,73173078369432,137181890778968,119937246441539,104041035159356,85101436382733,136745261370486,12815936684,16113566042,16885502190,12627822673,133141889933164,93480671226784,14077706164,13354767988,120850011723186,12779250207,16828997908,15151330736,123746248186771,11544509982,15653839553,121745762220131,73261169895709,81310495418540,125934438457713,9040843755,12908655279,12164526478,81264069811135,119297028944729,140502815961842,127954981915891,74641752725704,86270899242454,16110951997,111829886301647,10924431202,11420201050,107540622199340,134304918860650,121481071514650,120120030668286,129735449154790,132856513716188,14215767967,13487195474,12725518393,114474262831128,111156410476629,11420196607,83715371352964,110974053154138,110405445717736,15657219291,73834144554328,11863500298,15940853754,14458602427,89892588488089,108353125909976,16844716573,99071397772030,89458122090922,86204600764638,18755203195,81412312171614,76442869843605,72515840232428,15220208387,100996902816203,18513379473,13323738902,103670674709297,98876268933149,138527041533756,100243750573909,13259675567,81695862449510,16736930760,133093973882603,16736937752,76665205062090,16841189165,104415181457039,139421249721489,76476925992198,18322091668,72628400373948,87023882344497,15228123131,95724986851415,118318381661203,71488500583079,117963204618693,134761557583248,12780520254,128846742296992,111329536376996,17499783347,13948001865,89031718834842,98244264617327,73340282929285,72407080620270,88429242417177,95181349708488,100010455202688,130708845795870,14242889809,87300877566604,104546427844508,122882935324502,97494132040817,72728408429085,78137492688131,139636300005447}
+
+	Relief.addModule("World", "BloxBizCrash", function(Toggled)
+		if Toggled then
+			Relief.Notify("Loading crash, please be patient.")
+
+			local Layered = Polymall.Outfit:New()
+
+			for _, Id in Ids do
+				Layered:Add(Id)
+			end
+
+			local function HandleCharacter(Char)
+				if not Char then return end
+
+				if Relief.getSetting("BloxBizCrash", "Anchor") then
+					local Root = Char:WaitForChild("HumanoidRootPart")
+					Root.Anchored = true
+				end
+
+				Thread:MaidTable("BloxBizCrash_AntiCrash", Char.ChildAdded:Connect(function(Inst)
+					if Inst:IsA("Accessory") then
+						Inst:Destroy()
+					end
+				end))
+			end
+
+			HandleCharacter(LocalPlayer.Character)
+			Thread:Maid("BloxBizCrash_CA", LocalPlayer.CharacterAdded:Connect(HandleCharacter))
+
+			Thread:New("BloxBizCrash", function()
+				Layered:Scale({
+					BodyTypeScale = 1,
+					WidthScale = 1,
+					ProportionScale = 0,
+					HeadScale = 1,
+					HeightScale = 1,
+					DepthScale = 1
+				})
+				Layered:Load()
+				task.wait()
+				Layered:Scale({
+					BodyTypeScale = 0,
+					WidthScale = 0,
+					ProportionScale = 0,
+					HeadScale = 0,
+					HeightScale = 0,
+					DepthScale = 0
+				})
+				Layered:Load()
+				task.wait()
+			end)
+		else
+			Thread:Disconnect("BloxBizCrash")
+			Thread:Unmaid("BloxBizCrash_CA")
+			Thread:UnmaidTable("BloxBizCrash_AntiCrash")
+			Polymall:Reset()
+		end
+	end, {
+		{
+			["Type"] = "Toggle",
+			["Default"] = true,
+			["Title"] = "Anchor",
+			["Callback"] = function()end
+		}
+	})
+end
 
 local Chars = {
 	"0001", "0002", "0003", "0004",
@@ -420,6 +510,7 @@ for _, Model in workspace:GetChildren() do
 end
 
 if #Vehicles > 0 then
+	Relief.Notify("Vehicles detected. Modules & commands loaded.", 10, Color3.new(0, 1, 0))
 	Relief.addModule("World", "VehicleSpam", function(Toggled)
 		if Toggled then
 			Thread:New("VehicleSpam", function()
@@ -582,6 +673,7 @@ end)
 
 local Connector = game:FindFirstChild("GlobalPianoConnector", true)
 if Connector then
+	Relief.Notify("Piano detected. Modules & commands loaded.", 10, Color3.new(0, 1, 0))
 	Relief.addModule("World", "PianoCrash", function(Toggled)
 		if Toggled then
 			Thread:New("Crash", function()
@@ -1856,6 +1948,13 @@ Relief.addModule("Utility", "KillScript", function(Toggled)
 
 		for Name, Data in Thread.Tables do
 			Thread.Tables[Name] = nil
+		end
+
+		for Name, Data in Thread.MaidTables do
+			for _, C in Thread.MaidTables[Name] do
+				C:Disconnect()
+			end
+			Thread.MaidTables[Name] = nil
 		end
 
 		getgenv().Thread = false
