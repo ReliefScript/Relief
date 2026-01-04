@@ -731,7 +731,7 @@ end, {
 			if Toggled then
 				SH_TOGGLED = true
 				Thread:New("ServerHop", function()
-					repeat task.wait() until #Players:GetPlayers() < 5 or not Relief.isToggled("Advertise") or not SH_TOGGLED
+					repeat task.wait() until #Players:GetPlayers() < 6 or not Relief.isToggled("Advertise") or not SH_TOGGLED
 					if not Relief.isToggled("Advertise") or not SH_TOGGLED then return end
 					ServerHop()
 				end)
@@ -1998,6 +1998,9 @@ Channel.OnMessage:Connect(function(Player, Message)
 	if Player ~= LocalPlayer and not table.find(getgenv().Whitelist, Player.UserId) then
 		table.insert(getgenv().Whitelist, Player.UserId)
 		Channel:Send("i skidded this from 0zbug")
+		if Relief.isToggled("Advertise") and Relief.getSetting("Advertise", "AutoServerHop") then
+			ServerHop()
+		end
 	end
 end)
 
