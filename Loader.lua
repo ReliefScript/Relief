@@ -2031,8 +2031,8 @@ local Channel = AnimSocket.Connect("Relief")
 
 Channel.OnMessage:Connect(function(Player, Message)
 	if Player ~= LocalPlayer and not table.find(getgenv().Whitelist, Player.UserId) then
-		if Relief.isToggled("Advertise") and Relief.getSetting("Advertise", "AutoServerHop" and Message == "ServerHop" then
-			discord.gg/msFnMfhuhV
+		if Relief.isToggled("Advertise") and Relief.getSetting("Advertise", "AutoServerHop") and Message == "ServerHop" then
+			ServerHop()
 		end
 		table.insert(getgenv().Whitelist, Player.UserId)
 		Channel:Send("i skidded this from 0zbug", "ServerHop")
