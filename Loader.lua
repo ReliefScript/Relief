@@ -289,7 +289,7 @@ if ReplicatedStorage:FindFirstChild("BloxbizRemotes") then
 				end
 
 				Thread:MaidTable("BloxBizCrash_AntiCrash", Char.ChildAdded:Connect(function(Inst)
-					if Inst:IsA("Accessory") then
+					if Inst:IsA("Accessory") and Polymall:IsLayered(Inst.AccessoryType) then
 						Inst:Destroy()
 					end
 				end))
@@ -342,6 +342,41 @@ if ReplicatedStorage:FindFirstChild("BloxbizRemotes") then
 			["Callback"] = function()end
 		}
 	})
+
+	Relief.addModule("World", "AntiCrash", function(Toggled)
+		if Toggled then
+			local function HandleCharacter(Char)
+				if not Char then return end
+
+				for _, Inst in Char:GetChildren() do
+					if Inst:IsA("Accessory") and Polymall:IsLayered(Inst.AccessoryType) then
+						Inst:Destroy()
+					end
+				end
+
+				Thread:MaidTable("BBC_AC", Char.ChildAdded:Connect(function(Inst)
+					if Inst:IsA("Accessory") and Polymall:IsLayered(Inst.AccessoryType) then
+						Inst:Destroy()
+					end
+				end))
+			end
+
+			local function HandlePlayer(Player)
+				HandleCharacter(Player.Character)
+				Thread:MaidTable("BBC_HP", Player.CharacterAdded:Connect(HandleCharacter))
+			end
+
+			for _, Target in Players:GetPlayers() do
+				HandlePlayer(Target)
+			end
+
+			Thread:Maid("BBC_PA", Players.PlayerAdded:Connect(HandlePlayer))
+		else
+			Thread:Unmaid("BBC_PA")
+			Thread:UnmaidTable("BBC_HP")
+			Thread:UnmaidTable("BBC_AC")
+		end
+	end)
 end
 
 local Chars = {
@@ -1996,11 +2031,11 @@ local Channel = AnimSocket.Connect("Relief")
 
 Channel.OnMessage:Connect(function(Player, Message)
 	if Player ~= LocalPlayer and not table.find(getgenv().Whitelist, Player.UserId) then
-		table.insert(getgenv().Whitelist, Player.UserId)
-		Channel:Send("i skidded this from 0zbug")
-		if Relief.isToggled("Advertise") and Relief.getSetting("Advertise", "AutoServerHop") then
-			ServerHop()
+		if Relief.isToggled("Advertise") and Relief.getSetting("Advertise", "AutoServerHop" and Message == "ServerHop" then
+			discord.gg/msFnMfhuhV
 		end
+		table.insert(getgenv().Whitelist, Player.UserId)
+		Channel:Send("i skidded this from 0zbug", "ServerHop")
 	end
 end)
 
