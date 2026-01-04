@@ -275,9 +275,17 @@ if ReplicatedStorage:FindFirstChild("BloxbizRemotes") then
 			local function HandleCharacter(Char)
 				if not Char then return end
 
-				if Relief.getSetting("BloxBizCrash", "Anchor") then
-					local Root = Char:WaitForChild("HumanoidRootPart")
-					Root.Anchored = true
+				task.spawn(function()
+					if Relief.getSetting("BloxBizCrash", "Anchor") then
+						local Root = Char:WaitForChild("HumanoidRootPart")
+						Root.Anchored = true
+					end
+				end)
+
+				for _, Inst in Char:GetChildren() do
+					if Inst:IsA("Accessory") then
+						Inst:Destroy()
+					end
 				end
 
 				Thread:MaidTable("BloxBizCrash_AntiCrash", Char.ChildAdded:Connect(function(Inst)
