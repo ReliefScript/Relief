@@ -1981,7 +1981,7 @@ Relief.AddCommand({"unanimationsync", "unanimsync", "unas"}, function()
 	end
 end)
 
-Relief.addCommand({"follow"}, function(Args)
+Relief.AddCommand({"follow"}, function(Args)
 	local Targets = GetPlayer(Args[1])
 	if not Targets then return end
 
@@ -2005,7 +2005,7 @@ Relief.addCommand({"follow"}, function(Args)
 	end)
 end)
 
-Relief.addCommand({"unfollow"}, function()
+Relief.AddCommand({"unfollow"}, function()
 	Thread:Disconnect("Follow")
 end)
 
