@@ -753,6 +753,7 @@ Relief.addModule("Player", "Advertise", function(Toggled)
 			for i = 1, 10 do
 				x += 1
 				local i = (x % 4)
+				if (i) == 0 then i = 4 end
 				Chat(ConvertBypass(LINK) .. Special .. "｜" .. ADS[i])
 				task.wait()
 			end
