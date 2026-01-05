@@ -283,7 +283,7 @@ if ReplicatedStorage:FindFirstChild("BloxbizRemotes") then
 				end)
 
 				for _, Inst in Char:GetChildren() do
-					if Inst:IsA("Accessory") then
+					if Inst:IsA("Accessory") and Polymall:IsLayered(Inst.AccessoryType) then
 						Inst:Destroy()
 					end
 				end
