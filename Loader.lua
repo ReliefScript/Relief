@@ -748,12 +748,15 @@ local LINK = "gg/msFnMfhuhV"
 local ADS = {"RELIEF ON TOP", "JOIN US", "WE OWN YOU", "LOL EZ"}
 Relief.addModule("Player", "Advertise", function(Toggled)
 	if Toggled then
+		local x = 0
 		Thread:New("Advertise", function()
-			for i = 1, #ADS do
-				if not Relief.isToggled("Advertise") then break end
+			for i = 1, 10 do
+				x += 1
+				local i = (x % 4)
 				Chat(ConvertBypass(LINK) .. Special .. "｜" .. ADS[i])
-				task.wait(10)
+				task.wait()
 			end
+			task.wait(30)
 		end)
 	else
 		Thread:Disconnect("Advertise")
