@@ -1981,6 +1981,34 @@ Relief.AddCommand({"unanimationsync", "unanimsync", "unas"}, function()
 	end
 end)
 
+Relief.addCommand({"follow"}, function(Args)
+	local Targets = GetPlayer(Args[1])
+	if not Targets then return end
+
+	local Target = Targets[1]
+	if not Target then return end
+
+	Thread:Disconnect("Follow")
+	Thread:New("Follow", function()
+		task.wait()
+
+		local Char = LocalPlayer.Character
+		if not Char then return end
+
+		local Hum = Char:FindFirstChildOfClass("Humanoid")
+		if not Hum then return end
+
+		local TChar = Target.Character
+		if not TChar then return end
+
+		Hum:MoveTo(TChar:GetPivot().Position)
+	end)
+end)
+
+Relief.addCommand({"unfollow"}, function()
+	Thread:Disconnect("Follow")
+end)
+
 -- Loader
 
 if Found then toLoad() end
