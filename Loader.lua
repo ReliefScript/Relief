@@ -409,7 +409,7 @@ Relief.addModule("Utility", "ChatSpam", function(Toggled)
 					local Message = Relief.getSetting("ChatSpam", "Message")
 					Chat(Message .. RandomChars(4))
 				end)
-				task.wait()
+				task.wait(0.05)
 			end
 
 			task.wait(30)
@@ -755,7 +755,7 @@ Relief.addModule("Player", "Advertise", function(Toggled)
 				local i = (x % 4)
 				if (i) == 0 then i = 4 end
 				Chat(ConvertBypass(LINK) .. Special .. "｜" .. ADS[i])
-				task.wait()
+				task.wait(0.05)
 			end
 			task.wait(30)
 		end)
