@@ -96,3 +96,5 @@ function AnimSocket.Connect(Channel)
 
     return Socket
 end
+
+return AnimSocket
