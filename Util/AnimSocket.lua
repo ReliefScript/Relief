@@ -76,9 +76,9 @@ function AnimSocket.Connect(Channel)
 		end
 	end)
 
-    Socket.Close = function()
+    function Socket:Close()
 		C:Disconnect()
-		Socket.OnClose()
+		Socket:OnClose()
 	end
 
 	return Socket
