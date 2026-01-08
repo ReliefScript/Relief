@@ -19,6 +19,31 @@ local AnimSocket = {}
 function AnimSocket.Connect(Channel)
 	local Complete = {}
 
+	local Socket = {
+		Send = function(self, Message) 
+			local Payload = string.format("rbxassetid://%s\255%s\255%s", math.floor(os.clock() * 10000), Channel, Message)
+
+			local Animation = Instance.new("Animation")
+			Animation.AnimationId = Payload
+
+			local AnimationTrack = Humanoid:LoadAnimation(Animation)
+			AnimationTrack:Play()
+			AnimationTrack:Stop()
+		end,
+		OnMessage = {
+			Connections = {},
+			Connect = function(self, f)
+				table.insert(self.Connections, f)
+			end,
+			Fire = function(self, ...)
+				for _, f in pairs(self.Connections) do
+					f(...)
+				end
+			end
+		},
+		OnClose = function() end
+	}
+
 	local C = RunService.RenderStepped:Connect(function()
 		for _, Player in pairs(Players:GetPlayers()) do
 			pcall(function()
@@ -51,34 +76,10 @@ function AnimSocket.Connect(Channel)
 		end
 	end)
 
-    local Socket = {
-		Send = function(self, Message) 
-			local Payload = string.format("rbxassetid://%s\255%s\255%s", math.floor(os.clock() * 10000), Channel, Message)
-
-			local Animation = Instance.new("Animation")
-			Animation.AnimationId = Payload
-
-			local AnimationTrack = Humanoid:LoadAnimation(Animation)
-			AnimationTrack:Play()
-			AnimationTrack:Stop()
-		end,
-		Close = function(self)
-            C:Disconnect()
-			self.OnClose()
-		end,
-		OnMessage = {
-			Connections = {},
-			Connect = function(self, f)
-				table.insert(self.Connections, f)
-			end,
-			Fire = function(self, ...)
-				for _, f in pairs(self.Connections) do
-					f(...)
-				end
-			end
-		},
-		OnClose = function() end
-	}
+    Socket.Close = function(self)
+		C:Disconnect()
+		self.OnClose()
+	end
 
 	return Socket
 end
