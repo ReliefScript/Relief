@@ -1,3 +1,5 @@
+-- Skidded from 0zbug. Sockets wouldnt close properly and would leave back laggy connections.
+
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
