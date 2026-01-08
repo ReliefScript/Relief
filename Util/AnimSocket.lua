@@ -20,7 +20,6 @@ function AnimSocket.Connect(Channel)
 
     local Socket = {
         Send = function(self, Message) 
-            -- The first part of the payload is the Timestamp ID
             local Payload = string.format("rbxassetid://%s\255%s\255%s", math.floor(os.clock() * 10000), Channel, Message)
 
             local Animation = Instance.new("Animation")
