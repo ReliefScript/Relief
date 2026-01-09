@@ -1,4 +1,5 @@
 if getgenv().Relief then getgenv().Relief.Notify("Relief already loaded.", 5, Color3.new(1, 1, 0)) return end
+getgenv().Relief = "Loading"
 
 -- Config
 
@@ -32,6 +33,9 @@ local TextChatService = game:GetService("TextChatService")
 local TeleportService = game:GetService("TeleportService")
 local HttpService = game:GetService("HttpService")
 local TweenService = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui")
+local VirtualUser = game:GetService("VirtualUser")
+local ContextActionService = game:GetService("ContextActionService")
 
 local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
@@ -73,12 +77,23 @@ end
 local function ServerHop()
 	local StringData = game:HttpGet("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100")
 	local Data = HttpService:JSONDecode(StringData).data
-	local RandomServer = Data[math.random(#Data)]
+	local ValidServers = {}
+
+	for _, Server in Data do
+		if Server.playing < Server.maxPlayers and game.JobId ~= Server.id then
+			table.insert(ValidServers, Server)
+		end
+	end
+
+	if ValidServers == {} then return end
+	local RandomServer = ValidServers[math.random(#ValidServers)]
 	TeleportService:TeleportToPlaceInstance(game.PlaceId, RandomServer.id)
 	Relief.KillScript()
 end
 
-setclipboard("discord.gg/msFnMfhuhV")
+if setclipboard then
+	setclipboard("discord.gg/msFnMfhuhV")
+end
 
 local Found = false
 local FId = nil
@@ -152,25 +167,35 @@ local function Chat(Message)
 end
 
 local Special = utf8.char(0x060D)
+local function utf8_chars(str)
+    local chars = {}
+    for _, c in utf8.codes(str) do
+        table.insert(chars, utf8.char(c))
+    end
+    return chars
+end
+
+local function utf8_reverse(str)
+    local chars = utf8_chars(str)
+    local rev = {}
+    for i = #chars, 1, -1 do
+        table.insert(rev, chars[i])
+    end
+    return table.concat(rev)
+end
+
 local function ConvertBypass(Text)
-    local Reverse = Text:reverse()
-    local Split = Reverse:split(" ")
+    local Reverse = utf8_reverse(Text)
     local New = {}
- 
-    for _, Word in Split do
-        local Letters = Word:split("")
+
+    for Word in Reverse:gmatch("%S+") do
+        local Letters = utf8_chars(Word)
         local Fill = Special .. table.concat(Letters, Special)
         table.insert(New, Fill)
     end
- 
-    local Final = table.concat(New, " ")
-	return Final
-end
 
-local function Repeat(Callback, Until)
-    repeat
-        Callback()
-    until Until()
+    local Final = table.concat(New, " ")
+    return Final
 end
 
 local Thread = {
@@ -211,29 +236,6 @@ function Thread:Unmaid(Name)
     Thread.Connections[Name] = nil
 end
 
-function Thread:Table(Name, Callback)
-	if not Thread.Tables[Name] then
-		Thread.Tables[Name] = {}
-	end
-
-	local T = true
-	Thread.Tables[Name] = T
-
-	task.spawn(function()
-        while T do
-            Callback()
-        end
-    end)
-
-	local Tree = {}
-
-	function Tree:Disconnect()
-		T = nil
-	end
-
-	return Tree
-end
-
 function Thread:MaidTable(Name, Connection)
 	if not Thread.MaidTables[Name] then
 		Thread.MaidTables[Name] = {}
@@ -251,13 +253,204 @@ function Thread:UnmaidTable(Name)
 	end
 end
 
+function Thread:Table(Name, Callback)
+	if not Thread.Tables[Name] then
+		Thread.Tables[Name] = {}
+	end
+
+	local T = true
+	local NewIndex = #Thread.Tables[Name] + 1
+	table.insert(Thread.Tables[Name], NewIndex, T)
+
+	task.spawn(function()
+        while Thread.Tables[Name] and Thread.Tables[Name][NewIndex] do
+            Callback()
+        end
+    end)
+
+	local Tree = {}
+
+	function Tree:Disconnect()
+		T = nil
+	end
+
+	return Tree
+end
+
 function Thread:Untable(Name)
 	if Thread.Tables[Name] then
-        Thread.Tables[Name] = nil
+		for _, V in Thread.Tables[Name] do
+			Thread.Tables[Name][_] = nil
+		end
+		Thread.Tables[Name] = nil
     end
 end
 
 getgenv().Thread = Thread
+
+Relief.addModule("Movement", "PlayerTransporter", function(Toggled)
+	if Toggled then
+		local Char = LocalPlayer.Character
+		local Root = Char and Char:FindFirstChild("HumanoidRootPart")
+		local Pos = CFrame.new(Root and Root.Position or Vector3.new(0, 0, 0))
+
+		local Speed = 0.15
+		local Smooth = 0.03
+
+		local function PointsToVelocity(Point1, Point2)
+			return Vector3.new(
+				(Point2.X - Point1.X),
+				(0),
+				(Point2.Z - Point1.Z)
+			)
+		end
+
+		local Old = Root and Root.CFrame or CFrame.new(0, 0, 0)
+		Thread:New("PT_Movement", function()
+			task.wait()
+
+			local Char = LocalPlayer.Character
+			if not Char then return end
+
+			local Root = Char:FindFirstChild("HumanoidRootPart")
+			if not Root then return end
+
+			local Hum = Char:FindFirstChildOfClass("Humanoid")
+			if not Hum then return end
+
+			for _, Track in Hum:GetPlayingAnimationTracks() do
+				Track:Stop()
+			end
+
+			Hum:ChangeState(16)
+
+			local Dir = Vector3.zero
+			local Look = Vector3.new(Camera.CFrame.LookVector.X, 0, Camera.CFrame.LookVector.Z)
+			local Right = Vector3.new(Camera.CFrame.RightVector.X, 0, Camera.CFrame.RightVector.Z)
+
+			local Directions = {
+				["W"] = Look,
+				["A"] = -Right,
+				["S"] = -Look,
+				["D"] = Right,
+				["E"] = Vector3.new(0, 1.5, 0),
+				["Q"] = Vector3.new(0, -1.5, 0),
+			}
+
+			if not UserInputService:GetFocusedTextBox() then
+				for Name, Unit in Directions do
+					local Key = Enum.KeyCode[Name]
+					if UserInputService:IsKeyDown(Key) then
+						Dir += Unit
+					end
+				end
+			end
+
+			local Unit = (Dir * Speed)
+			if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then Unit *= 5 end
+
+			Pos += Unit
+
+			local Angle = Pos * CFrame.Angles(math.rad(90), 0, 0)
+			Root.CFrame = Root.CFrame:lerp(Angle, Smooth)
+			
+			local Velocity = PointsToVelocity(Old.Position, Root.Position)
+			Root.Velocity = Velocity * 145
+
+			Old = Root.CFrame
+		end)
+
+		Thread:New("PT_Stabilizer", function()
+			RunService.Stepped:Wait()
+
+			local Char = LocalPlayer.Character
+			if not Char then return end
+
+			for _, Part in Char:GetChildren() do
+				if Part:IsA("BasePart") then
+					Part.Velocity = Vector3.zero
+					Part.RotVelocity = Vector3.zero
+					Part.CanCollide = false
+				end
+			end
+		end)
+	else
+		Thread:Disconnect("PT_Movement")
+		Thread:Disconnect("PT_Stabilizer")
+
+		local Char = LocalPlayer.Character
+		if not Char then return end
+
+		local Hum = Char:FindFirstChildOfClass("Humanoid")
+		if not Hum then return end
+
+		for i = 1, 5 do
+			Hum:ChangeState(2)
+			task.wait()
+		end
+	end
+end)
+
+Relief.addModule("Player", "AntiAfk", function(Toggled)
+	if Toggled then
+		Thread:Maid("AntiAfk", LocalPlayer.Idled:Connect(function()
+			VirtualUser:Button2Down(Vector2.zero, Camera.CFrame)
+			task.wait(1)
+			VirtualUser:Button2Up(Vector2.zero, Camera.CFrame)
+			Relief.Notify("Prevented idle timeout.", 5, Color3.new(0, 1, 0))
+		end))
+	else
+
+	end
+end)
+
+local function HookChat(Callback)
+	local Exp = CoreGui:FindFirstChild("ExperienceChat")
+	if not Exp then return end
+
+	local Box = Exp:FindFirstChild("TextBox", true)
+	if not Box then return end
+
+	local Parent = Box.Parent
+	Box.MultiLine = true
+
+	local C = UserInputService.InputBegan:Connect(function(Input)
+		if Input.KeyCode ~= Enum.KeyCode.Return then return end
+		if not Box:IsFocused() then return end
+
+		local Message = Box.Text:gsub("%s+$", "")
+		Box.Text = ""
+		Box:ReleaseFocus()
+		if not Message:match("%S") then return end
+
+		local Text = Callback(Message)
+		if Text and Text:match("%S") then
+			Chat(Text)
+		end
+	end)
+
+	local Tree = {}
+
+	function Tree:Disconnect()
+		C:Disconnect()
+		Box.MultiLine = false
+	end
+
+	return Tree
+end
+
+Relief.addModule("Utility", "AutoChatBypass", function(Toggled)
+	local Env = Relief.getEnv("AutoChatBypass")
+	if Toggled then
+		Env.Hook = HookChat(function(Message)
+			return ConvertBypass(Message)
+		end)
+	else
+		if Env.Hook then
+			Env.Hook:Disconnect()
+		end
+	end
+end)
 
 if ReplicatedStorage:FindFirstChild("BloxbizRemotes") then
 	local Polymall = loadstring(game:HttpGet("https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Util/Polymall.lua"))()
@@ -266,40 +459,42 @@ if ReplicatedStorage:FindFirstChild("BloxbizRemotes") then
 	local Ids = {119214918476081,108573644740118,73173078369432,137181890778968,119937246441539,104041035159356,85101436382733,136745261370486,12815936684,16113566042,16885502190,12627822673,133141889933164,93480671226784,14077706164,13354767988,120850011723186,12779250207,16828997908,15151330736,123746248186771,11544509982,15653839553,121745762220131,73261169895709,81310495418540,125934438457713,9040843755,12908655279,12164526478,81264069811135,119297028944729,140502815961842,127954981915891,74641752725704,86270899242454,16110951997,111829886301647,10924431202,11420201050,107540622199340,134304918860650,121481071514650,120120030668286,129735449154790,132856513716188,14215767967,13487195474,12725518393,114474262831128,111156410476629,11420196607,83715371352964,110974053154138,110405445717736,15657219291,73834144554328,11863500298,15940853754,14458602427,89892588488089,108353125909976,16844716573,99071397772030,89458122090922,86204600764638,18755203195,81412312171614,76442869843605,72515840232428,15220208387,100996902816203,18513379473,13323738902,103670674709297,98876268933149,138527041533756,100243750573909,13259675567,81695862449510,16736930760,133093973882603,16736937752,76665205062090,16841189165,104415181457039,139421249721489,76476925992198,18322091668,72628400373948,87023882344497,15228123131,95724986851415,118318381661203,71488500583079,117963204618693,134761557583248,12780520254,128846742296992,111329536376996,17499783347,13948001865,89031718834842,98244264617327,73340282929285,72407080620270,88429242417177,95181349708488,100010455202688,130708845795870,14242889809,87300877566604,104546427844508,122882935324502,97494132040817,72728408429085,78137492688131,139636300005447}
 
 	Relief.addModule("World", "BloxBizCrash", function(Toggled)
+		local Env = Relief.getEnv("BloxBizCrash")
 		if Toggled then
 			Relief.Notify("Loading crash, please be patient.")
+
+			local function HandleCharacter(Char)
+				if not Char then return end
+
+				task.spawn(function()
+					local Root = Char:WaitForChild("HumanoidRootPart")
+					Env.Old = Root.CFrame
+					if Relief.getSetting("BloxBizCrash", "Hidden") then
+						Root.CFrame = CFrame.new(0, 9e20, 0)
+					end
+				end)
+
+				local function HandleInst(Inst)
+					if Inst:IsA("Accessory") and Polymall:IsLayered(Inst.AccessoryType) then
+						Inst:Destroy()
+					end
+				end
+
+				for _, Inst in Char:GetChildren() do
+					HandleInst(Inst)
+				end
+
+				Thread:MaidTable("BloxBizCrash_AntiCrash", Char.ChildAdded:Connect(HandleInst))
+			end
+
+			HandleCharacter(LocalPlayer.Character)
+			Thread:Maid("BloxBizCrash_CA", LocalPlayer.CharacterAdded:Connect(HandleCharacter))
 
 			local Layered = Polymall.Outfit:New()
 
 			for _, Id in Ids do
 				Layered:Add(Id)
 			end
-
-			local function HandleCharacter(Char)
-				if not Char then return end
-
-				task.spawn(function()
-					if Relief.getSetting("BloxBizCrash", "Anchor") then
-						local Root = Char:WaitForChild("HumanoidRootPart")
-						Root.Anchored = true
-					end
-				end)
-
-				for _, Inst in Char:GetChildren() do
-					if Inst:IsA("Accessory") and Polymall:IsLayered(Inst.AccessoryType) then
-						Inst:Destroy()
-					end
-				end
-
-				Thread:MaidTable("BloxBizCrash_AntiCrash", Char.ChildAdded:Connect(function(Inst)
-					if Inst:IsA("Accessory") and Polymall:IsLayered(Inst.AccessoryType) then
-						Inst:Destroy()
-					end
-				end))
-			end
-
-			HandleCharacter(LocalPlayer.Character)
-			Thread:Maid("BloxBizCrash_CA", LocalPlayer.CharacterAdded:Connect(HandleCharacter))
 
 			Thread:New("BloxBizCrash", function()
 				Layered:Scale({
@@ -335,13 +530,18 @@ if ReplicatedStorage:FindFirstChild("BloxbizRemotes") then
 			local Root = Char:FindFirstChild("HumanoidRootPart")
 			if not Root then return end
 
-			Root.Anchored = false
+			local Old = Env.Old
+			if Old then
+				Root.CFrame = Old
+			else
+				Relief.GetCommand("tospawn").Callback()
+			end
 		end
 	end, {
 		{
 			["Type"] = "Toggle",
 			["Default"] = true,
-			["Title"] = "Anchor",
+			["Title"] = "Hidden",
 			["Callback"] = function()end
 		}
 	})
@@ -749,7 +949,7 @@ end
 local SH_TOGGLED = false
 local LINK = "gg/msFnMfhuhV"
 local ADS = {"RELIEF ON TOP", "JOIN US", "WE OWN YOU", "LOL EZ"}
-Relief.addModule("Player", "Advertise", function(Toggled)
+Relief.addModule("Utility", "Advertise", function(Toggled)
 	if Toggled then
 		local x = 0
 		Thread:New("Advertise", function()
@@ -1161,6 +1361,103 @@ end, {
 		["Default"] = 0.5,
         ["Callback"] = function(Num)
 			local Env = Relief.getEnv("Fly")
+            Env.FlySpeed = Num
+        end
+    }
+})
+
+local Directions = {
+    ["W"] = {0, 0, 1},
+    ["A"] = {-1, 0, 0},
+    ["S"] = {0, 0, -1},
+    ["D"] = {1, 0, 0},
+    ["Q"] = {0, -1, 0},
+    ["E"] = {0, 1, 0},
+}
+
+Relief.addModule("Player", "Freecam", function(Toggled)
+	local Env = Relief.getEnv("Freecam")
+    if Toggled then
+		local Keys = {}
+		
+		ContextActionService:BindActionAtPriority("Freecam", function(Action, State, Input)
+			Keys[Input.KeyCode.Name] = (State == Enum.UserInputState.Begin) or false
+			return Enum.ContextActionResult.Sink
+		end, false, Enum.ContextActionPriority.High.Value, 
+			Enum.KeyCode.W,
+			Enum.KeyCode.A,
+			Enum.KeyCode.S,
+			Enum.KeyCode.D,
+			Enum.KeyCode.E,
+			Enum.KeyCode.Q
+		)
+
+		Env.FreecamSpeed = Env.FreecamSpeed or 1
+
+		local Part = Instance.new("Part")
+		Env.Part = Part
+		Part.Parent = workspace
+		Part.Transparency = 1
+		Part.Anchored = true
+		Part.CanCollide = false
+		Part.CFrame = Camera.CFrame
+
+		Camera.CameraSubject = Part
+
+		if Controls then Controls:Disable() warn('disabled') end
+ 
+        Thread:New("Freecam", function()
+            task.wait()
+ 
+            local camCF = Camera.CFrame
+            local moveDir = Vector3.zero
+
+			if not UserInputService:GetFocusedTextBox() then
+	            for key, dir in Directions do
+	                if Keys[key] then
+	                    moveDir += Vector3.new(dir[1], dir[2], dir[3])
+	                end
+	            end
+			end
+ 
+            if moveDir.Magnitude > 0 then
+                moveDir = moveDir.Unit
+            end
+ 
+            local velocity =
+                camCF.RightVector * moveDir.X +
+                camCF.UpVector * moveDir.Y +
+                camCF.LookVector * moveDir.Z
+ 
+            local newPos = Part.Position + velocity * Env.FreecamSpeed
+ 
+            Part.CFrame = CFrame.new(
+                newPos,
+                newPos + camCF.LookVector
+            )
+        end)
+    else
+        Thread:Disconnect("Freecam")
+		ContextActionService:UnbindAction("Freecam")
+		if Env.Part then Env.Part:Destroy() Env.Part = nil end
+
+        local Char = LocalPlayer.Character
+        if not Char then return end
+ 
+        local Hum = Char:FindFirstChildOfClass("Humanoid")
+        if not Hum or Hum.Health <= 0 then return end
+ 
+        Camera.CameraSubject = Hum
+    end
+end, {
+    {
+        ["Type"] = "Slider",
+        ["Title"] = "Speed",
+        ["Min"] = 0,
+		["Max"] = 10,
+		["Default"] = 0.5,
+        ["Callback"] = function(Num)
+			local Env = Relief.getEnv("Freecam")
             Env.FlySpeed = Num
         end
     }
@@ -1787,7 +2084,9 @@ end
 MakeMotionCommand(
 	"touch",
 	function(Char, TChar, Root, TRoot, x)
-		return TRoot.CFrame * CFrame.new(0, 0, math.abs(math.sin(x) * 2) + 1)
+		local P = TChar:FindFirstChild("Torso") or TChar:FindFirstChild("LowerTorso") or TRoot
+		local Offset = P.Name == "LowerTorso" and (Char:GetExtentsSize().Y / 8) or 0
+		return P.CFrame * CFrame.new(0, Offset, math.abs(math.sin(x) * 2) + 1)
 	end,
 	function(Hum) Hum:ChangeState(8) end,
 	function(Hum) Hum:ChangeState(2) end
@@ -1839,12 +2138,24 @@ MakeMotionCommand(
 MakeMotionCommand(
 	"orbit",
 	function(Char, TChar, Root, TRoot, x)
-		return TRoot.CFrame
+		return CFrame.new(TRoot.Position)
 		* CFrame.new(math.sin(x) * 5, 0, math.cos(x) * 5)
 		* CFrame.Angles(0, x, 0)
 	end,
 	function(Hum) Hum:ChangeState(8) end,
 	function(Hum) Hum:ChangeState(2) end
+)
+
+MakeMotionCommand(
+	"sniff",
+	function(Char, TChar, Root, TRoot, x)
+		local P = TChar:FindFirstChild("Torso") or TChar:FindFirstChild("LowerTorso") or TRoot
+		local Offset = P.Name == "LowerTorso" and (Char:GetExtentsSize().Y / 8) or 0
+		return P.CFrame
+		* CFrame.new(0, Offset - (Char:GetExtentsSize().Y / 2) - 0.5, 1)
+	end,
+	function(Hum) Hum.Sit = true end,
+	function(Hum) Hum.Sit = false Hum:ChangeState(2) end
 )
 
 Relief.AddCommand({"serverhop", "shop"}, ServerHop)
@@ -2016,6 +2327,259 @@ Relief.AddCommand({"unfollow"}, function()
 	Thread:Disconnect("Follow")
 end)
 
+Relief.AddCommand({"grabtools", "gt"}, function()
+	local Char = LocalPlayer.Character
+	if not Char then return end
+
+	local Hum = Char:FindFirstChildOfClass("Humanoid")
+	if not Hum then return end
+	
+	for _, Tool in workspace:GetChildren() do
+		if Tool:IsA("Tool") then
+			Hum:EquipTool(Tool)
+		end
+	end
+end)
+
+local Letters = {
+	["a"] = {
+		"◽◼️◽",
+		"◼️◽◼️",
+		"◼️◼️◼️",
+		"◼️◽◼️",
+		"◼️◽◼️"
+	},
+	["b"] = {
+		"◼️◼️◽",
+		"◼️◽◼️",
+		"◼️◼️◽",
+		"◼️◽◼️",
+		"◼️◼️◽"
+	},
+	["c"] = {
+		"◼️◼️◼️",
+		"◼️◽◽",
+		"◼️◽◽",
+		"◼️◽◽",
+		"◼️◼️◼️"
+	},
+	["d"] = {
+		"◼️◼️◽",
+		"◼️◽◼️",
+		"◼️◽◼️",
+		"◼️◽◼️",
+		"◼️◼️◽"
+	},
+	["e"] = {
+		"◼️◼️◼️",
+		"◼️◽◽",
+		"◼️◼️◼️",
+		"◼️◽◽",
+		"◼️◼️◼️"
+	},
+	["f"] = {
+		"◼️◼️◼️",
+		"◼️◽◽",
+		"◼️◼️◼️",
+		"◼️◽◽",
+		"◼️◽◽"
+	},
+	["g"] = {
+		"◼️◼️◼️",
+		"◼️◽◽",
+		"◼️◽◽",
+		"◼️◽◼️",
+		"◼️◼️◼️"
+	},
+	["h"] = {
+		"◼️◽◼️",
+		"◼️◽◼️",
+		"◼️◼️◼️",
+		"◼️◽◼️",
+		"◼️◽◼️"
+	},
+	["i"] = {
+		"◼️◼️◼️",
+		"◽◼️◽",
+		"◽◼️◽",
+		"◽◼️◽",
+		"◼️◼️◼️"
+	},
+	["j"] = {
+		"◼️◼️◼️",
+		"◽◼️◽",
+		"◽◼️◽",
+		"◽◼️◽",
+		"◼️◼️◽"
+	},
+	["k"] = {
+		"◼️◽◼️",
+		"◼️◼️◽",
+		"◼️◽◽",
+		"◼️◼️◽",
+		"◼️◽◼️"
+	},
+	["l"] = {
+		"◼️◽◽",
+		"◼️◽◽",
+		"◼️◽◽",
+		"◼️◽◽",
+		"◼️◼️◼️"
+	},
+	["m"] = {
+		"◼️◼️◽◼️◼️",
+		"◼️◽◼️◽◼️",
+		"◼️◽◽◽◼️",
+		"◼️◽◽◽◼️",
+		"◼️◽◽◽◼️"
+	},
+	["n"] = {
+		"◼️◽◽◼️",
+		"◼️◼️◽◼️",
+		"◼️◽◼️◼️",
+		"◼️◽◽◼️",
+		"◼️◽◽◼️"
+	},
+	["o"] = {
+		"◼️◼️◼️",
+		"◼️◽◼️",
+		"◼️◽◼️",
+		"◼️◽◼️",
+		"◼️◼️◼️"
+	},
+	["p"] = {
+		"◼️◼️◽",
+		"◼️◽◼️",
+		"◼️◼️◽",
+		"◼️◽◽",
+		"◼️◽◽"
+	},
+	["q"] = {
+		"◽◼️◽◽",
+		"◼️◽◼️◽",
+		"◼️◽◼️◽",
+		"◽◼️◼️◽",
+		"◽◽◽◼️"
+	},
+	["r"] = {
+		"◼️◼️◼️",
+		"◼️◽◼️",
+		"◼️◼️◽",
+		"◼️◽◼️",
+		"◼️◽◼️"
+	},
+	["s"] = {
+		"◼️◼️◼️",
+		"◼️◽◽",
+		"◼️◼️◼️",
+		"◽◽◼️",
+		"◼️◼️◼️"
+	},
+	["t"] = {
+		"◼️◼️◼️",
+		"◽◼️◽",
+		"◽◼️◽",
+		"◽◼️◽",
+		"◽◼️◽"
+	},
+	["u"] = {
+		"◼️◽◼️",
+		"◼️◽◼️",
+		"◼️◽◼️",
+		"◼️◽◼️",
+		"◼️◼️◼️"
+	},
+	["v"] = {
+		"◼️◽◼️",
+		"◼️◽◼️",
+		"◼️◽◼️",
+		"◽◼️◽",
+		"◽◼️◽"
+	},
+	["w"] = {
+		"◼️◽◽◽◼️",
+		"◼️◽◽◽◼️",
+		"◼️◽◽◽◼️",
+		"◼️◽◼️◽◼️",
+		"◼️◼️◽◼️◼️"
+	},
+	["x"] = {
+		"◼️◽◼️",
+		"◼️◽◼️",
+		"◽◼️◽",
+		"◼️◽◼️",
+		"◼️◽◼️"
+	},
+	["y"] = {
+		"◼️◽◼️",
+		"◼️◽◼️",
+		"◽◼️◽",
+		"◽◼️◽",
+		"◽◼️◽"
+	},
+	["z"] = {
+		"◼️◼️◼️",
+		"◽◽◼️",
+		"◽◼️◽",
+		"◼️◽◽",
+		"◼️◼️◼️"
+	},
+}
+
+Relief.AddCommand({"bigtext", "bt"}, function(Args)
+	local Message = Args[1]
+	local Length = Message:len()
+	if Length > 4 or Length < 3 then return end
+
+	local Compile = {
+		{},
+		{},
+		{},
+		{},
+		{}
+	}
+
+	for _, Letter in Message:split("") do 
+		local Lines = Letters[Letter]
+		if not Lines then continue end
+
+		for _, Line in Lines do
+			local Fix = Line:gsub("◼️", "🔳")
+			table.insert(Compile[_], Fix)
+		end
+	end
+
+	local Final = ""
+	for _, Data in Compile do
+		local Line = table.concat(Data, "_") .. utf8.char(0x000B)
+		Final ..= Line
+	end
+
+	Chat(Final)
+end)
+
+Relief.AddCommand({"friend"}, function(Args)
+	local Targets = GetPlayer(Args[1])
+
+	for _, Target in Targets do
+		LocalPlayer:RequestFriendship(Target)
+	end
+end)
+
+local AnimSocket = loadstring(game:HttpGet("https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Util/AnimSocket.lua"))()
+
+local Channel = AnimSocket.Connect("Relief")
+
+Relief.AddCommand({"send", "s"}, function(Args)
+	local Message = table.concat(Args, " ")
+	Channel:Send(HttpService:JSONEncode({
+		Key = "Message",
+		Data = {
+			Message = Message
+		}
+	}))
+end)
+
 -- Loader
 
 if Found then toLoad() end
@@ -2043,6 +2607,8 @@ Relief.addModule("Utility", "KillScript", function(Toggled)
 			Thread.MaidTables[Name] = nil
 		end
 
+		Channel:Close()
+
 		getgenv().Thread = false
 		getgenv().Whitelist = false
 		getgenv().Relief = false
@@ -2060,21 +2626,78 @@ if not Found then
 	Relief.Notify("Game not found in Relief Hub | Loading universal | Set Discord To Clipboard!", 5)
 end
 
-local AnimSocket = loadstring(game:HttpGet("https://raw.github.com/0zBug/AnimSocket/main/main.lua"))()
+local BubbleChat = CoreGui:WaitForChild("ExperienceChat")
+	:WaitForChild("bubbleChat")
+	:WaitForChild("BubbleChat_" .. LocalPlayer.UserId)
+	:WaitForChild("BubbleChatList")
 
-local Channel = AnimSocket.Connect("Relief")
+local function DisplayBubble(Text)
+	local Char = LocalPlayer.Character
+	if not Char then return end
 
-Channel.OnMessage:Connect(function(Player, Message)
-	if Player ~= LocalPlayer and not table.find(getgenv().Whitelist, Player.UserId) then
+	TextChatService:DisplayBubble(Char, Text)
+	BubbleChat.ChildAdded:Once(function(Obj)
+		local Frame = Obj:WaitForChild("ChatBubbleFrame")
+		Frame.BackgroundColor3 = Color3.new(0, 0.6, 1)
+		Frame:WaitForChild("Text").TextColor3 = Color3.new(1, 1, 1)
+		Obj:WaitForChild("Caret").ImageColor3 = Color3.new(0, 0.6, 1)
+	end)
+end
+
+local function SendTable(Key, Table)
+	if not Key then return end
+	Channel:Send(HttpService:JSONEncode({
+		Key = Key,
+		Data = Data or {}
+	}))
+end
+
+local Cooldowns = {}
+
+Channel.OnMessage:Connect(function(Target, Table)
+	if Taget == LocalPlayer then return end
+
+	local Decoded = HttpService:JSONDecode(Table)
+	if not Decoded then return end
+	
+	local Key = Decoded.Key
+	local Data = Decoded.Data
+
+	if Key == "Relief" then
 		if Relief.isToggled("Advertise") and Relief.getSetting("Advertise", "AutoServerHop") and Message == "ServerHop" then
 			ServerHop()
+		else
+			if table.find(getgenv().Whitelist, Target.UserId) then
+				table.insert(getgenv().Whitelist, Target.UserId)
+				Channel:Send("Relief")
+			end
 		end
-		table.insert(getgenv().Whitelist, Player.UserId)
-		Channel:Send("i skidded this from 0zbug", "ServerHop")
+	end
+
+	if Key == "Message" then
+		local Message = Data.Message
+		local Length = Message:len()
+		if not Message:match("%S") then return end
+		if Length >= 500 then return end
+		if Cooldowns[Target.UserId] then return end
+
+		Cooldowns[Target.UserId] = true
+		task.spawn(function()
+			task.wait(1)
+			Cooldowns[Target.UserId] = nil
+		end)
+
+		DisplayBubble(Message)
+
+		local Channel = TextChatService:FindFirstChild("RBXSystem", true)
+		if not Channel then return end
+		
+		local Formatted = ("<font color='rgb(0, 153, 255)'><b>[ %s ] ► %s</b></font>"):format(Target.DisplayName, Message)
+		local Message = Channel:DisplaySystemMessage(Formatted)
 	end
 end)
 
-Channel:Send("i skidded this from 0zbug")
+SendTable("Relief")
 
 Thread:Maid("QUEUE", Players.PlayerRemoving:Connect(function(Player)
 	if Player == LocalPlayer then
