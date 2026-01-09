@@ -198,6 +198,12 @@ local function ConvertBypass(Text)
     return Final
 end
 
+local function Repeat(Callback, Until)
+    repeat
+        Callback()
+    until Until()
+end
+
 local Thread = {
     Cache = {},
     Connections = {},
