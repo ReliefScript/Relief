@@ -76,7 +76,7 @@ Relief.AddCommand({"crash"}, function(Args)
 	LocalPlayer.CharacterAppearanceLoaded:Wait()
 
 	local Backpack = LocalPlayer:WaitForChild("Backpack")
-	repeat task.wait() until #Backpack:GetChildren() >= (CrashAmount / 2)
+	task.wait(2)
 
 	local Char = LocalPlayer.Character
 
