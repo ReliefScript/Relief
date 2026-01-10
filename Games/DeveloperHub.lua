@@ -73,11 +73,10 @@ Relief.AddCommand({"crash"}, function(Args)
 	end
 
 	LocalPlayer.Character:BreakJoints()
-	LocalPlayer.CharacterAppearanceLoaded:Wait()
+	LocalPlayer.CharacterAdded:Wait()
 
-	local Backpack = LocalPlayer:WaitForChild("Backpack")
-	task.wait(2)
-
+	task.wait(3)
+	local Backpack = LocalPlayer.Backpack
 	local Char = LocalPlayer.Character
 
 	for _, Tool in Backpack:GetChildren() do
