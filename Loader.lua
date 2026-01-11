@@ -944,7 +944,7 @@ if Connector then
 
 				for _ = 1, 61 do
 					Connector:FireServer("play", _, 12, {"18865849300"})
-					onnector:FireServer("stop", _)
+					Connector:FireServer("stop", _)
 				end
 			end)
 		else
