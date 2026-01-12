@@ -5,13 +5,22 @@ local RunService = game:GetService("RunService")
 
 repeat task.wait() until Players.LocalPlayer
 
+local function WaitForChildOfClass(Inst, Class)
+	local Found
+	repeat
+		Found = Inst:FindFirstChildOfClass(Class)
+		task.wait()
+	until Found
+	return Found
+end
+
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local Humanoid = Character:WaitForChild("Humanoid")
+local Humanoid = WaitForChildOfClass("Humanoid", Character)
 
 local CA = LocalPlayer.CharacterAdded:Connect(function(NewChar)
     Character = NewChar
-    Humanoid = Character:WaitForChild("Humanoid")
+    Humanoid =WaitForChildOfClass("Humanoid", Character)
 end)
 
 local AnimSocket = {}
