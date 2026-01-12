@@ -16,11 +16,11 @@ end
 
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local Humanoid = WaitForChildOfClass("Humanoid", Character)
+local Humanoid = WaitForChildOfClass(Character, "Humanoid")
 
 local CA = LocalPlayer.CharacterAdded:Connect(function(NewChar)
     Character = NewChar
-    Humanoid =WaitForChildOfClass("Humanoid", Character)
+    Humanoid = WaitForChildOfClass(Character, "Humanoid")
 end)
 
 local AnimSocket = {}
