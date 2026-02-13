@@ -248,7 +248,7 @@ function Thread:MaidTable(Name, Connection)
 		Thread.MaidTables[Name] = {}
 	end
 
-	Thread.Tables[Name] = Connection
+	table.insert(Thread.MaidTables[Name], Connection)
 end
 
 function Thread:UnmaidTable(Name)
@@ -1522,6 +1522,42 @@ Relief.addModule("Movement", "NoPlayerCollision", function(Toggled)
 	end
 end)
 
+Relief.addModule("Movement", "Blink", function(Toggled)
+	if Toggled then
+		local Char = LocalPlayer.Character
+		if not Char then return end
+
+		Old = Char
+		Char.Archivable = true
+		Char.Animate.Enabled = false
+		CharClone = Char:Clone()
+		CharClone.Parent = workspace
+		Camera.CameraSubject = CharClone.Humanoid
+		LocalPlayer.Character = CharClone
+		CharClone.Animate.Enabled = true
+
+		DConn = Old.Humanoid.Died:Once(function()
+
+		end)
+
+		for _, BP in CharClone:GetDescendants() do
+			if BP:IsA("BasePart") and BP.Transparency == 0 then
+				BP.Transparency = 0.5
+			end
+		end
+	else
+		if CharClone and Old then
+			local Pos = CharClone:GetPivot()
+			CharClone:Destroy()
+			LocalPlayer.Character = Old
+			Camera.CameraSubject = Old.Humanoid
+			Old:PivotTo(Pos)
+			Old.Animate.Enabled = true
+			DConn:Disconnect()
+		end
+	end
+end)
+
 Relief.addModule("Render", "ModuleList", function(Toggled)
     Relief.ModuleList.Visible = Toggled
 end, {}, nil, true)
@@ -1956,6 +1992,18 @@ Relief.AddCommand({"walkspeed", "ws", "speed"}, function(Args)
 	if not Hum then return end
 
 	Hum.WalkSpeed = Amount
+end)
+
+Relief.AddCommand({"hipheight", "hh"}, function(Args)
+	local Amount = tonumber(Args[1]) or 16
+	
+	local Char = LocalPlayer.Character
+	if not Char then return end
+
+	local Hum = Char:FindFirstChildOfClass("Humanoid")
+	if not Hum then return end
+
+	Hum.HipHeight = Amount
 end)
 
 Relief.AddCommand({"sit"}, function(Args)
