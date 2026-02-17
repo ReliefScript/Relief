@@ -44,21 +44,23 @@ local Req = syn and syn.request or request or http_request or fluxus and fluxus.
 
 local function JoinDiscord()
 	if Req then
-		Req({
-			Url = "http://127.0.0.1:6463/rpc?v=1",
-			Method = "POST",
-			Headers = {
-				["Content-Type"] = "application/json",
-				["Origin"] = "https://discord.com",
-			},
-			Body = HttpService:JSONEncode({
-				cmd = "INVITE_BROWSER",
-				args = {
-					code = "msFnMfhuhV"
+		task.spawn(function()
+			Req({
+				Url = "http://127.0.0.1:6463/rpc?v=1",
+				Method = "POST",
+				Headers = {
+					["Content-Type"] = "application/json",
+					["Origin"] = "https://discord.com",
 				},
-				nonce = HttpService:GenerateGUID(false)
-			}),
-		})
+				Body = HttpService:JSONEncode({
+					cmd = "INVITE_BROWSER",
+					args = {
+						code = "msFnMfhuhV"
+					},
+					nonce = HttpService:GenerateGUID(false)
+				}),
+			})
+		end)
 	end
 end
 
