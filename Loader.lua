@@ -4,13 +4,13 @@ getgenv().Relief = "Loading"
 -- Config
 
 local Games = {
-    [11137575513] = "https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Games/TheChosenOne.lua", -- The Chosen One
-    [12943245078] = "https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Games/TheChosenOne.lua", -- The Chosen One XL
-    [96017656548489] = "https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Games/BanOrBeBanned.lua", -- Ban or Get Banned
-	[17625359962] = "https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Games/Rivals.lua", -- Rivals
-	[117398147513099] = "https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Games/Rivals.lua", -- Rivals Match
-	[118614517739521] = "https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Games/BlindShot.lua", -- BlindShot,
-	[9008985963] = "https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Games/DeveloperHub.lua" -- Developer Hub
+    [11137575513] = "TheChosenOne.lua", -- The Chosen One
+    [12943245078] = "TheChosenOne.lua", -- The Chosen One XL
+    [96017656548489] = "BanOrBeBanned.lua", -- Ban or Get Banned
+	[17625359962] = "Rivals.lua", -- Rivals
+	[117398147513099] = "Rivals.lua", -- Rivals Match
+	[118614517739521] = "BlindShot.lua", -- BlindShot,
+	[9008985963] = "DeveloperHub.lua" -- Developer Hub
 }
 
 -- Universal
@@ -107,7 +107,7 @@ for Id, Link in Games do
 	Found = true
 	FId = Id
 	toLoad = function()
-    	loadstring(game:HttpGet(Link))()
+    	loadstring(game:HttpGet("https://raw.githubusercontent.com/ReliefScript/Relief/refs/heads/main/Games/" .. Link))()
     	Relief.Notify(("Relief Hub by Atlas | %d Loaded | Set Discord To Clipboard!"):format(Id), 5)
 	end
     break
@@ -409,7 +409,7 @@ Relief.addModule("Player", "AntiAfk", function(Toggled)
 			Relief.Notify("Prevented idle timeout.", 5, Color3.new(0, 1, 0))
 		end))
 	else
-
+		Thread:Unmaid("AntiAfk")
 	end
 end)
 
@@ -1538,10 +1538,6 @@ Relief.addModule("Movement", "Blink", function(Toggled)
 		LocalPlayer.Character = CharClone
 		CharClone.Animate.Enabled = true
 
-		DConn = Old.Humanoid.Died:Once(function()
-
-		end)
-
 		for _, BP in CharClone:GetDescendants() do
 			if BP:IsA("BasePart") and BP.Transparency == 0 then
 				BP.Transparency = 0.5
@@ -1559,6 +1555,65 @@ Relief.addModule("Movement", "Blink", function(Toggled)
 		end
 	end
 end)
+
+local RunService = game:GetService("RunService")
+
+Relief.addModule("Movement", "Speed", function(Toggled)
+	if Toggled then
+		Thread:Maid("Speed", RunService.Heartbeat:Connect(function(DT)
+			local Char = LocalPlayer.Character
+			if not Char then return end
+
+			local Root = Char:FindFirstChild("HumanoidRootPart")
+			if not Root then return end
+
+			local Dir = Vector3.zero
+
+			local Look = Camera.CFrame.LookVector
+			Look = Vector3.new(Look.X, 0, Look.Z)
+			if Look.Magnitude > 0 then
+				Look = Look.Unit
+			end
+
+			local Right = Camera.CFrame.RightVector
+			Right = Vector3.new(Right.X, 0, Right.Z)
+			if Right.Magnitude > 0 then
+				Right = Right.Unit
+			end
+
+			if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+				Dir += Look
+			end
+			if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+				Dir -= Look
+			end
+			if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+				Dir -= Right
+			end
+			if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+				Dir += Right
+			end
+
+			if Dir.Magnitude > 0 then
+				Dir = Dir.Unit
+				local Speed = Relief.getSetting("Speed", "Amount")
+				local Move = Dir * Speed * DT
+				Root.CFrame = Root.CFrame + Move
+			end
+		end))
+	else
+		Thread:Unmaid("Speed")
+	end
+end, {
+	{
+		["Type"] = "Slider",
+		["Title"] = "Amount",
+		["Min"] = 1,
+		["Max"] = 120,
+		["Default"] = 30,
+		["Callback"] = function()end
+	}
+})
 
 Relief.addModule("Render", "ModuleList", function(Toggled)
     Relief.ModuleList.Visible = Toggled
