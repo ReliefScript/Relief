@@ -35,8 +35,9 @@ local TeleportService = game:GetService("TeleportService")
 local HttpService = game:GetService("HttpService")
 local TweenService = game:GetService("TweenService")
 local CoreGui = game:GetService("CoreGui")
-local VirtualUser = game:GetService("VirtualUser")
 local ContextActionService = game:GetService("ContextActionService")
+--local VirtualUser = game:GetService("VirtualUser")
+--Detected --^
 
 local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
@@ -400,6 +401,8 @@ Relief.addModule("Movement", "PlayerTransporter", function(Toggled)
 	end
 end)
 
+--[[
+Detected
 Relief.addModule("Player", "AntiAfk", function(Toggled)
 	if Toggled then
 		Thread:Maid("AntiAfk", LocalPlayer.Idled:Connect(function()
@@ -412,6 +415,7 @@ Relief.addModule("Player", "AntiAfk", function(Toggled)
 		Thread:Unmaid("AntiAfk")
 	end
 end)
+]]
 
 local function HookChat(Callback)
 	local Exp = CoreGui:FindFirstChild("ExperienceChat")
