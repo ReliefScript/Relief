@@ -392,7 +392,7 @@ Relief.addModule("Movement", "PlayerTransporter", function(Toggled)
 		if not Char then return end
 
 		for _, Part in Char:GetChildren() do
-			if Part:IsA("BasePart") and Part.Name ~= "HumanoidRootPart then
+			if Part:IsA("BasePart") and Part.Name ~= "HumanoidRootPart" then
 				Part.CanCollide = true
 			end
 		end
