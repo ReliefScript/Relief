@@ -387,6 +387,7 @@ Relief.addModule("Movement", "PlayerTransporter", function(Toggled)
 	else
 		Thread:Disconnect("PT_Movement")
 		Thread:Disconnect("PT_Stabilizer")
+		task.wait()
 
 		local Char = LocalPlayer.Character
 		if not Char then return end
